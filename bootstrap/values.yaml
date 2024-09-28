@@ -35,5 +35,5 @@ apps:
   spark:
     enabled: true
   metrics_server:
-    enabled: true
+    enabled: false
 
