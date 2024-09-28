@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/sondn98/fabricator.git
     targetRevision: master
-    path: kubernetes/bootstrap
+    path: bootstrap
     helm:
       valueFiles:
         - values.yaml
