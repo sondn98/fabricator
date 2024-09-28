@@ -1,0 +1,226 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: trinodb/trino
+  tag: "403"
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+trino:
+  node.properties:
+    node.environment: kubernetes
+    node.data-dir: /data/trino
+    plugin.dir: /usr/lib/trino/plugin
+  # Default values from: https://github.com/trinodb/trino/blob/master/core/docker/default/etc/jvm.config
+  jvm.config: |
+    -server
+    -Xmx1G
+    -XX:-UseBiasedLocking
+    -XX:+UseG1GC
+    -XX:G1HeapRegionSize=32M
+    -XX:+ExplicitGCInvokesConcurrent
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:+UseGCOverheadLimit
+    -XX:+ExitOnOutOfMemoryError
+    -XX:ReservedCodeCacheSize=256M
+    -Djdk.attach.allowAttachSelf=true
+    -Djdk.nio.maxCachedBufferSize=2000000
+  log.properties:
+    io.trino: INFO
+  # https://trino.io/docs/current/admin/properties.html
+  config.properties: {}
+
+catalog: {}
+  # memory.properties: |
+  #   connector.name=memory
+  # tpcds.properties: |
+  #   connector.name=tpcds
+  #   tpcds.splits-per-node=4
+
+httpServer:
+  http:
+    enabled: true
+    port: 8080
+  https:
+    enabled: false
+    port: 8443
+  keystore:
+    path:
+    key:
+  truststore:
+    path:
+    key:
+
+authen:
+  type: null  # PASSWORD | OAUTH2 | KERBEROS | CERTIFICATE | JWT | HEADER
+  sharedSecret:
+
+  kerberos: {}
+    # config: /etc/krb5.conf
+    # keytab:
+    ## ref: https://web.mit.edu/kerberos/krb5-1.12/doc/appdev/gssapi.html#name-types
+    # nameType: # HOSTBASED_SERVICE (default) | USER_NAME
+    # service-name:
+    # principal-hostname:
+
+  ## TODO: Support password authentication
+  # password:
+  #   type: file  # file | ldap | salesforce
+  #
+  #   ldap:
+  #     # url:
+  #     # user-base-dn:
+  #     # user-bind-pattern:
+  #     # group-auth-pattern:
+  #     # cache-ttl:
+  #
+  #     ## Trino server can use dedicated LDAP service user for doing user group membership queries.
+  #     # bind-dn:
+  #     # bind-password:
+  #
+  #   file:
+  #     # password-file:
+  #     # refresh-period:
+  #     # auth-token-cache.max-size:
+
+  oauth2: {}
+    # issuer:
+    # auth-url:
+    # jwks-url:
+    # token-url:
+    # client-id:
+    # client-secret:
+    # principal-field:
+    # oidc.discovery: true
+
+systemAccessControl:
+  # Option: custom | allow-all | read-only | file
+  name: allow-all
+
+  file:
+    refreshPeriod:
+    rules:
+      catalogs: []
+      queries: []
+      impersonation: []
+    existingRulesPath:
+
+commons:
+  command: []
+  args: []
+
+  labels: {}
+  podLabels: {}
+  annotations: {}
+  podAnnotations: {}
+
+  resources: {}
+  securityContext: {}
+  podSecurityContext: {}
+
+  schedulerName: null
+  runtimeClassName: null
+  priorityClassName: null
+
+  affinity: {}
+  tolerations: []
+  nodeSelector: {}
+
+  extraVolumeMounts: []
+  extraVolumes: []
+
+coordinator: {}
+worker:
+  replicas: null
+
+cache:
+  enabled: false
+
+  persistence:
+    enabled: false
+    accessModes:
+    - ReadWriteOnce
+    storageClass: "-"
+    size: 10Gi
+
+faultTolerant:
+  policy: null # null | QUERY, TASK
+
+  exchangeManager:
+    type: null # null | s3, azure, gcs
+    baseDirectories: ""
+    compress: false
+
+    tunning: {}
+      # sink-buffer-pool-min-size:
+      # sink-buffers-per-partition:
+      # sink-max-file-size:
+      # source-concurrent-reader:
+
+    s3: {}
+      # region: my-region
+      # aws-access-key: access-key
+      # aws-secret-key: secret-key
+      # max-error-retries: 3
+      # path-style-access: true
+      # upload.part-size:
+    azure: {}
+      # connection-string: connection-string
+    gcs: {}
+      # json-key-file-path: /path/to/gcs_keyfile.json
+
+eventsListener:
+  enabled: false
+  logs:
+    created: true
+    completed: true
+    split: false
+  retriesOnFailed: 3
+  # Providing headers follows the pattern of key:value pairs separated by commas
+  headers: ""
+  endpoint: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+metrics:
+  enabled: false
+  port: 9090
+  podMonitor:
+    enabled: false
+
+service:
+  type: ClusterIP
+  httpPort: 8080
+  httpsPort: 8443
+  annotations: {}
+
+ingress:
+  enabled: false
+  ingressClassName:
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+  hosts:
+    - host: trino.local
+      paths: []
+  tls: []
+  #  - secretName: trino.local-tls
+  #    hosts:
+  #      - trino.local
+
+spill:
+  enabled: false
+  path: /opt/trino/spill
+  # accessModes:
+  #   - ReadWriteMany
+  # storageClassName: className
+  # size: 100

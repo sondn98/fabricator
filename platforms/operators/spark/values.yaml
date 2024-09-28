@@ -1,0 +1,48 @@
+spark-operator:
+  image:
+    registry: docker.io
+    repository: kubeflow/spark-operator
+    tag: "2.0.0-rc.0"
+
+  controller:
+    replicas: 1
+    workers: 5
+
+    logLevel: info
+
+    uiService:
+      enable: true
+
+    uiIngress:
+      # -- Specifies whether to create ingress for Spark web UI.
+      # `controller.uiService.enable` must be `true` to enable ingress.
+      enable: true
+      # -- Ingress URL format.
+      # Required if `controller.uiIngress.enable` is true.
+      urlFormat: "{{$appName}}.spark.minikube.local/{{$appNamespace}}/{{$appName}}"
+
+    batchScheduler:
+      enable: false
+
+    resources: {}
+
+  webhook:
+    enable: true
+    replicas: 1
+
+    logLevel: info
+
+    port: 9443
+    portName: webhook
+
+    timeoutSeconds: 10
+
+    resources: {}
+
+  spark:
+    jobNamespaces:
+    - spark
+
+  prometheus:
+    metrics:
+      enable: false

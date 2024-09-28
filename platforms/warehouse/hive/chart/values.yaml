@@ -1,0 +1,206 @@
+nameOverride: ""
+fullnameOverride: ""
+logLevel: INFO
+
+image:
+  repository: hub.teko.vn/dataops/hive
+  tag: 3.1.3
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  # - name: regcred
+
+hiveConfig:
+  path: /opt/hive/conf/
+  hive-site.xml: {}
+
+hadoopConfig:
+  path: /opt/hadoop/etc/hadoop/
+  core-site.xml: {}
+
+commons:
+  replicas: null
+  env: []
+
+  labels: {}
+  podLabels: {}
+  annotations: {}
+  podAnnotations: {}
+
+  resources: {}
+  securityContext: {}
+  podSecurityContext: {}
+
+  schedulerName: null
+  runtimeClassName: null
+  priorityClassName: null
+
+  affinity: {}
+  tolerations: []
+  nodeSelector: {}
+
+  service:
+    type: ClusterIP
+    port: null
+    annotations: {}
+
+metastore:
+  service:
+    port: 9083
+
+hiveserver2:
+  enabled: true
+  service:
+    port: 10000
+    portWebUI: 10002
+
+postgresql:
+  enabled: true
+  architecture: standalone
+
+  auth:
+    enablePostgresUser: false
+    username: hive-metastore
+    password: hive-metastore
+    database: hive-metastore
+
+  persistence:
+    enabled: true
+
+externalDatabase:
+  type:
+  url:
+  host:
+  port:
+  database:
+  username:
+  password:
+
+warehouse:
+  dir:
+
+filesystem:
+  ## Hadoop HDFS
+  hdfs: {}
+
+  ## Amazon S3
+  ## https://hadoop.apache.org/docs/current/hadoop-aws/tools/hadoop-aws/index.html
+  ## URL s3a://<bucket>/<path>
+  s3a:
+    enabled: false
+    impl: org.apache.hadoop.fs.s3a.S3AFileSystem
+    endpoint:
+    pathStyleAccess: true
+    credentialsProvider: org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider
+
+    accessKey:
+    secretKey:
+    sessionToken:
+
+    sseKey: null
+    sseAlg: null
+
+    # Per-bucket configuration
+    buckets: {}
+      # nightly:
+      #   accessKey: admin
+      #   secretKey: foobar
+
+  ## Google Cloud Storage
+  ## https://github.com/GoogleCloudDataproc/hadoop-connectors/blob/master/gcs/CONFIGURATION.md
+  ## URL gs://<bucket>/<path>
+  gs:
+    enabled: false
+
+    ## Authentication via ServiceAccount
+    serviceAccount:
+      enabled: true
+
+      # Require when method 1 or method 3 is being used
+      email:
+
+      ## Method 1: Using private key
+      privateKeyId:
+      privateKey:
+
+      ## Method 2: using a json keyfile
+      jsonKeyfile:
+
+      ## Method 3: using a P12 certificate
+      keyfile:
+
+    ## Authentication via Client Secret
+    client:
+      id:
+      secret:
+      file:
+
+  ## Microsoft Azure Storage Blob
+  ## https://hadoop.apache.org/docs/current/hadoop-azure/index.html
+  ## URL wasb[s]://<container>@<account>.blob.core.windows.net/<path>
+  wasb:
+    enabled: false
+    accounts: {}
+      # account: access-key
+
+  ## Microsoft Azure Data Lake
+  ## https://hadoop.apache.org/docs/current/hadoop-azure-datalake/index.html
+  ## URL adl://<account>.azuredatalakestore.net/<path>
+  adl:
+    enabled: false
+    # One of: RefreshToken, ClientCredential, Msi, DeviceCode
+    accessTokenProvider: RefreshToken
+
+    # When accessTokenProvider is RefreshToken
+    clientId:
+    refreshToken:
+
+    # When accessTokenProvider is ClientCredential. `clientId` included
+    refreshUrl:
+    credential:
+
+    # When accessTokenProvider is Msi (Managed Service Identity) and port != 50342
+    msiPort:
+
+    # When accessTokenProvider is DeviceCode
+    devicecodeClientappid:
+
+    accounts: {}
+      # foobar:
+      #   clientId: YOUR-CLIENT-ID
+      #   refreshtoken: YOUR-REFRESH-TOKEN
+
+  ## Microsoft Azure Blob Filesystem
+  ##   a.k.a Azure Data Lake Storage Gen2
+  ## https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-abfs-driver
+  abfs:
+    enabled: false
+
+  ## OpenStack Swift
+  ## https://hadoop.apache.org/docs/current/hadoop-openstack/index.html
+  ## URL swift://<container>.<hostname>/<path>
+  swift:
+    enabled: false
+    services: {}
+      # name:
+      #   authUrl:
+      #   tenant:
+      #   region:
+      #   username:
+      #   password:
+      #   apikey:
+
+  ## Alibaba Aliyun OSS
+  ## https://hadoop.apache.org/docs/current/hadoop-aliyun/tools/hadoop-aliyun/index.html
+  oss:
+    enabled: false
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name:
+
+metrics:
+  enabled: false
+  port: 9028
+  podMonitor:
+    enabled: false

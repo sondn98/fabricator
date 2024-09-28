@@ -1,0 +1,103 @@
+{{- $coordinator := mergeOverwrite (deepCopy .Values.commons) .Values.coordinator -}}
+{{- $httpServer := .Values.httpServer }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trino.fullname" . }}-coordinator
+  labels:
+    {{- include "trino.coordinator.labels" . | nindent 4 }}
+    {{- with $coordinator.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- toYaml $coordinator.annotations | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trino.coordinator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "trino.coordinator.selectorLabels" . | nindent 8 }}
+        {{- with $coordinator.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        {{- include "trino.checksum" . | nindent 8 }}
+        {{- with $coordinator.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+    {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      initContainers:
+      {{- if .Values.metrics.enabled }}
+        {{- include "trino.initContainers.jmxAgents" . | nindent 8 }}
+      {{- end }}
+      enableServiceLinks: false
+      containers:
+        - name: trino-coordinator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- with $coordinator.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with $coordinator.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+          ports:
+          {{- if $httpServer.http.enabled }}
+            - name: http
+              protocol: TCP
+              containerPort: {{ $httpServer.http.port }}
+          {{- end }}
+          {{- if $httpServer.https.enabled }}
+            - name: https
+              protocol: TCP
+              containerPort: {{ $httpServer.https.port }}
+          {{- end }}
+          {{- if .Values.metrics.enabled }}
+            - name: metrics
+              protocol: TCP
+              containerPort: {{ .Values.metrics.port }}
+          {{- end }}
+          volumeMounts:
+            {{- include "trino.coordinator.volumeMounts" . | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /v1/info
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /v1/info
+              port: http
+          resources:
+            {{- toYaml $coordinator.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml $coordinator.securityContext | nindent 12 }}
+      serviceAccountName: {{ include "trino.serviceAccountName" . }}
+      priorityClassName:  {{ $coordinator.priorityClassName }}
+      runtimeClassName:   {{ $coordinator.runtimeClassName }}
+      schedulerName:      {{ $coordinator.schedulerName }}
+      securityContext:
+        {{- toYaml $coordinator.podSecurityContext | nindent 8 }}
+      volumes:
+        {{- include "trino.coordinator.volumes" . | nindent 8 }}
+    {{- with $coordinator.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $coordinator.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with $coordinator.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

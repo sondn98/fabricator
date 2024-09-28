@@ -1,0 +1,40 @@
+mysql:
+  image:
+    registry: docker.io
+    repository: bitnami/mysql
+    tag: 8.4.2-debian-12-r4
+
+  architecture: standalone
+
+  auth:
+    createDatabase: true
+    database: mysql_db
+    username: admin
+    replicationUser: replicator
+    existingSecret: mysql-auth-secret
+
+  primary:
+    name: primary
+    resources: {}
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 5Gi
+
+    service:
+      type: ClusterIP
+      ports:
+        mysql: 3306
+
+    pdb:
+      create: true
+
+  serviceAccount:
+    create: true
+
+  rbac:
+    create: true
+
+  metrics:
+    enabled: false

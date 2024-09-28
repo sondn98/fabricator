@@ -1,0 +1,8 @@
+releases:
+- name: nginx-ingress-controller
+  namespace: kube-system
+  chart: bitnami/nginx-ingress-controller
+  version: 11.3.18
+  values:
+  - ./nginx-ingress-controller.yaml
+  - fullnameOverride: nginx-ingress-controller

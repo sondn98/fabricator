@@ -1,0 +1,10 @@
+kube-prometheus:
+  coreDns:
+    enabled: true
+    namespace: kube-system
+    service:
+      enabled: true
+      ports:
+        http: 9153
+      targetPorts:
+        http: 9153

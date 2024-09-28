@@ -1,0 +1,23 @@
+{{ if .Values.apps.grafana.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/monitoring/grafana
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grafana
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

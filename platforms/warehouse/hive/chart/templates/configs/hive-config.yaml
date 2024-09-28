@@ -1,0 +1,63 @@
+{{- $hiveSite := index .Values.hiveConfig "hive-site.xml" }}
+
+{{- $dbDriverMap := (include "hive.dbDriverMap" .) | fromYaml }}
+{{- if .Values.postgresql.enabled }}
+{{- $pg := .Values.postgresql }}
+
+{{- $pgUsername := include "postgresql.username" .Subcharts.postgresql }}
+{{- $pgPassword := $pg.auth.password }}
+{{- $pgHost := include "postgresql.primary.fullname" .Subcharts.postgresql }}
+{{- $pgPort := include "postgresql.service.port" .Subcharts.postgresql }}
+{{- $pgDatabase := include "postgresql.database" .Subcharts.postgresql }}
+{{- $pgURL := dict "type" "postgres" "host" $pgHost "port" $pgPort "database" $pgDatabase }}
+
+{{- $_ := set $hiveSite "hive.metastore.db.type" "postgres" }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionURL" (include "hive.dbConnectionURL" $pgURL) }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionDriverName" $dbDriverMap.postgres }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionUserName"   $pgUsername }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionPassword"   $pgPassword }}
+{{- else }}
+{{- $db := .Values.externalDatabase }}
+
+{{- $_ := set $hiveSite "hive.metastore.db.type" $db.type }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionURL" (include "hive.dbConnectionURL" $db) }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionDriverName" (index $dbDriverMap $db.type) }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionUserName"   $db.username }}
+{{- $_ := set $hiveSite "javax.jdo.option.ConnectionPassword"   $db.password }}
+{{- end }}
+
+{{- $metastore := mergeOverwrite (deepCopy .Values.commons) .Values.metastore -}}
+{{- $msHost := printf "%s-metastore" (include "hive.fullname" .) }}
+{{- $msPort := $metastore.service.port }}
+{{- $_ := set $hiveSite "hive.metastore.uris" (printf "thrift://%s:%s" $msHost (toString $msPort)) }}
+{{- $_ := set $hiveSite "hive.metastore.warehouse.dir" .Values.warehouse.dir }}
+
+{{- if .Values.metrics.enabled }}
+{{- $_ := set $hiveSite "hive.metastore.metrics.enabled" "true" }}
+{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hive.fullname" . }}-hive-config
+  labels:
+    {{- include "hive.labels" . | nindent 4 }}
+data:
+  hive-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+    {{- range $name, $value := $hiveSite }}
+      <property>
+        <name>{{ $name }}</name>
+        <value>{{ $value }}</value>
+      </property>
+    {{ end }}
+    </configuration>
+
+{{- if .Values.metrics.enabled }}
+  hive-env.sh: |
+    if [ "$SERVICE" = "metastore" ]; then
+      export HADOOP_CLIENT_OPTS="$HADOOP_CLIENT_OPTS -javaagent:/jmx-exporter/jmx_prometheus_javaagent.jar={{ .Values.metrics.port }}:/jmx-exporter/conf/hive-metastore-metrics.yaml"
+    fi
+{{- end }}

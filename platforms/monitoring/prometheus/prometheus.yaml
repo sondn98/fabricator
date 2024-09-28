@@ -1,0 +1,46 @@
+kube-prometheus:
+  clusterDomain: minikube.local
+
+  prometheus:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnami/prometheus
+      tag: 2.54.1-debian-12-r3
+
+    serviceAccount:
+      create: true
+
+    service:
+      type: ClusterIP
+      ports:
+        http: 9090
+
+    serviceMonitor:
+      enabled: true
+
+    ingress:
+      enabled: false
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+
+    enableAdminAPI: false
+    ## Enable access to Prometheus disabled features.
+    ## ref: https://prometheus.io/docs/prometheus/latest/disabled_features/
+    ##
+    enableFeatures: []
+    retention: 10d
+    persistence:
+      enabled: false
+
+    thanos:
+      create: false
+
+    externalLabels:
+      cluster: minikube.local
+
+  rbac:
+    create: true
+    pspEnabled: true

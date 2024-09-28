@@ -1,0 +1,39 @@
+apps:
+  airflow:
+    enabled: false
+  postgresql:
+    enabled: false
+    pgbouncerEnabled: false
+  mysql:
+    enabled: false
+  minio:
+    enabled: false
+  grafana:
+    enabled: false
+  prometheus:
+    enabled: false
+  elasticsearch:
+    enabled: false
+  fluent:
+    enabled: false
+  loki:
+    enabled: false
+  kafka:
+    enabled: false
+  keycloak:
+    enabled: false
+  vault:
+    enabled: false
+  redis:
+    enabled: false
+  clickhouse:
+    enabled: false
+  strimzi:
+    enabled: false
+  zookeeper:
+    enabled: false
+  spark:
+    enabled: true
+  metrics_server:
+    enabled: true
+

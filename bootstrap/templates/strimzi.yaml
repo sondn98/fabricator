@@ -1,0 +1,23 @@
+{{ if .Values.apps.strimzi.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: strimzi
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/operators/strimzi
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: strimzi
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

@@ -1,0 +1,24 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: demo.dvdrental
+  labels:
+    strimzi.io/cluster: debezium
+spec:
+  class: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    database.hostname: postgresql.postgresql.svc
+    database.port: 5432
+    database.user: postgres
+    database.password: SuperSecr3t
+    database.server.name: demo.dvdrental
+    database.dbname: dvdrental
+    plugin.name: pgoutput
+    schema.include.list: public
+    topic.prefix: demo.dvdrental
+    snapshot.mode: initial
+    slot.name: demo_dvdrental
+    publication.name: demo_dvdrental
+    skipped.operations: none
+    signal.data.collection: public.debezium_signal

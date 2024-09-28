@@ -1,0 +1,23 @@
+{{ if .Values.apps.mysql.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/databases/mysql
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mysql
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

@@ -1,0 +1,8 @@
+releases:
+- name: argo-cd
+  namespace: argocd
+  chart: bitnami/argo-cd
+  version: 6.6.10
+  values:
+  - ./argocd.yaml.gotmpl
+  - fullnameOverride: argo-cd

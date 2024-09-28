@@ -1,0 +1,8 @@
+releases:
+- name: sealed-secrets
+  namespace: sealed-secrets
+  chart: bitnami/sealed-secrets
+  version: 2.4.4
+  values:
+  - ./sealed-secrets.yaml
+  - fullnameOverride: sealed-secrets

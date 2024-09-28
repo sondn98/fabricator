@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-metrics
+  namespace: kafka
+  labels:
+    app.kubernetes.io/name: strimzi
+data:
+  kafka-connect-metrics.yaml: |
+    # Inspired by kafka-connect rules
+    # https://github.com/prometheus/jmx_exporter/blob/master/example_configs/kafka-connect.yml
+    # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    rules:
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=([^,]+), server=([^,]+), key=([^>]+)><>RowsScanned"
+      name: "debezium_$2_rowsscanned"
+      help: "Debezium snapshot rows scanned"
+      labels:
+        plugin: "$1"
+        server: "$3"
+        table: "$4"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=([^,]+), server=([^,]+), key=([^>]+)><>SourceEventPosition"
+      name: "debezium_$2_sourceeventposition"
+      help: "The coordinates of the last received event"
+      labels:
+        plugin: "$1"
+        server: "$3"
+        table: "$4"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=([^,]+), server=([^>]+)><>Queue(.+)Capacity"
+      name: "debezium_$2_queue_capacity_$4"
+      help: "Queue capacity"
+      labels:
+        plugin: "$1"
+        server: "$3"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=snapshot, server=([^>]+)><>Snapshot(Running|Completed|Aborted)"
+      name: "debezium_snapshot_status"
+      help: "Snapshot status"
+      labels:
+        plugin: "$1"
+        server: "$2"
+        status: "$3"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=streaming, server=([^>]+)><>TotalNumberOf(Create|Update|Delete)EventsSeen"
+      name: "debezium_streaming_events_captured_total"
+      help: "The total number of events that this connector has seen since the last start or metrics reset"
+      labels:
+        plugin: "$1"
+        server: "$2"
+        event_type: "$3"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=streaming, server=([^>]+)><>NumberOfEventsFiltered"
+      name: "debezium_streaming_events_ignored_total"
+      help: "The total number of events that this connector has ignored"
+      labels:
+        plugin: "$1"
+        server: "$2"
+        reason: "filtered"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=streaming, server=([^>]+)><>NumberOfSkippedEvents"
+      name: "debezium_streaming_events_ignored_total"
+      help: "The total number of events that this connector has ignored"
+      labels:
+        plugin: "$1"
+        server: "$2"
+        reason: "skipped"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=streaming, server=([^>]+)><>NumberOf(Committed|RolledBack|NotWellFormed)Transactions"
+      name: "debezium_streaming_mysql_transactions_total"
+      help: "Total of transactions in the mysql datasource"
+      labels:
+        plugin: "$1"
+        server: "$2"
+        transaction_type: "$3"
+    - pattern: "debezium.([^:]+)<type=connector-metrics, context=([^,]+), server=([^>]+)>([^:]+)"
+      name: "debezium_$2_$4"
+      help: "Debezium JMX metrics"
+      labels:
+        plugin: "$1"
+        server: "$3"

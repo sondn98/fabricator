@@ -1,0 +1,132 @@
+elasticsearch:
+
+  containerPorts:
+    restAPI: 9200
+    transport: 9300
+  ## @param plugins Comma, semi-colon or space separated list of plugins to install at initialization
+  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/elasticsearch#environment-variables
+  ##
+  plugins: ""
+
+  image:
+    registry: docker.io
+    repository: bitnami/elasticsearch
+    tag: 8.15.1-debian-12-r2
+
+  security:
+    enabled: false
+
+  service:
+    type: ClusterIP
+    ports:
+      restAPI: 9200
+      transport: 9300
+
+  ingress:
+    enabled: false
+
+  master:
+    masterOnly: true
+    replicaCount: 3
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+    heapSize: 512m
+
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
+
+  data:
+    replicaCount: 3
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "medium"
+    resources: {}
+
+    heapSize: 1024m
+
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
+
+  coordinating:
+    replicaCount: 3
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+    heapSize: 512m
+
+  ingest:
+    enabled: true
+    replicaCount: 2
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "small"
+    resources: {}
+
+    heapSize: 512m
+
+  metrics:
+    enabled: false
+
+  sysctlImage:
+    enabled: true
+    registry: docker.io
+    repository: bitnami/os-shell
+    tag: 12-debian-12-r30
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+
+  copyTlsCerts:
+    image:
+      registry: docker.io
+      repository: bitnami/os-shell
+      tag: 12-debian-12-r30
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+
+kibana:
+  enabled: true
+
+  image:
+    registry: docker.io
+    repository: bitnami/kibana
+    tag: 8.15.1-debian-12-r0
+
+  replicaCount: 1
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+  service:
+    ports:
+      http: 5601
+    type: ClusterIP
+
+  ingress:
+    enabled: true
+    pathType: ImplementationSpecific
+    hostname: kibana.minikube.local
+    path: /
+  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+  resourcesPreset: "small"
+  resources: {}
+
+  elasticsearch:
+    hosts:
+      - elasticsearch.elasticsearch.svc.cluster.local
+    port: "9200"
+    security:
+      auth:
+        enabled: true
+        existingSecret: "kibana-auth-secret"

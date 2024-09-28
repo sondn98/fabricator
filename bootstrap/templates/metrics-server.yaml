@@ -1,0 +1,20 @@
+{{ if .Values.apps.metrics_server.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/others/metrics-server
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+{{ end }}

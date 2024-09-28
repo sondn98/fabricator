@@ -1,0 +1,84 @@
+clusterDomain: minikube.local
+
+image:
+  registry: docker.io
+  repository: bitnami/nginx-ingress-controller
+  tag: 1.11.1-debian-12-r4
+
+containerPorts:
+  http: 8080
+  https: 8443
+  defaultServer: 8181
+  metrics: 10254
+  profiler: 10245
+  status: 10246
+  stream: 10247
+
+automountServiceAccountToken: true
+
+electionID: ingress-controller-leader
+allowSnippetAnnotations: false
+reportNodeInternalIp: false
+watchIngressWithoutClass: false
+
+ingressClassResource:
+  name: nginx
+  enabled: true
+  default: false
+  controllerClass: "k8s.io/ingress-nginx"
+
+publishService:
+  enabled: false
+
+scope:
+  enabled: false
+
+kind: Deployment
+replicaCount: 1
+
+minReadySeconds: 0
+resourcesPreset: "micro"
+
+config:
+  enable-vts-status: "true"
+  enable-access-log: "true"
+  error-log-level: info
+
+defaultBackend:
+  enabled: true
+  automountServiceAccountToken: true
+  networkPolicy:
+    enabled: false
+  image:
+    registry: docker.io
+    repository: bitnami/nginx
+    tag: 1.27.0-debian-12-r4
+
+  serverBlockConfig: |-
+    location /healthz {
+      return 200;
+    }
+
+    location / {
+      return 404;
+    }
+
+  replicaCount: 1
+
+service:
+  type: LoadBalancer
+  ports:
+    http: 80
+    https: 443
+  targetPorts:
+    http: http
+    https: https
+
+serviceAccount:
+  create: true
+
+rbac:
+  create: true
+
+metrics:
+  enabled: false

@@ -1,0 +1,158 @@
+kafka:
+  image:
+    registry: docker.io
+    repository: bitnami/kafka
+    tag: 3.8.0-debian-12-r5
+
+  heapOpts: -Xmx1024m -Xms1024m
+
+  listeners:
+    client:
+      containerPort: 9092
+      protocol: PLAINTEXT
+      name: CLIENT
+
+    controller:
+      name: CONTROLLER
+      containerPort: 9093
+      protocol: PLAINTEXT
+
+    interbroker:
+      containerPort: 9094
+      protocol: PLAINTEXT
+      name: INTERNAL
+
+    external:
+      containerPort: 9095
+      protocol: PLAINTEXT
+      name: EXTERNAL
+
+  sasl:
+    enabledMechanisms: PLAIN,SCRAM-SHA-256,SCRAM-SHA-512
+    interBrokerMechanism: PLAIN
+    controllerMechanism: PLAIN
+
+  controller:
+    replicaCount: 3
+    controllerOnly: false
+    minId: 0
+    zookeeperMigrationMode: false
+    heapOpts: -Xmx1024m -Xms1024m
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "small"
+    resources: {}
+
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
+      mountPath: /bitnami/kafka
+
+    logPersistence:
+      enabled: false
+
+  broker:
+    replicaCount: 0
+
+  networkPolicy:
+    enabled: false
+
+  service:
+    type: ClusterIP
+    ports:
+      client: 9092
+      controller: 9093
+      interbroker: 9094
+      external: 9095
+
+  externalAccess:
+    enabled: false
+
+  serviceAccount:
+    create: true
+
+  provisioning:
+    enabled: true
+    topics:
+      - name: develop
+        partitions: 3
+        replicationFactor: 1
+        ## https://kafka.apache.org/documentation/#topicconfigs
+        config:
+          max.message.bytes: 64000
+          flush.messages: 1
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+
+    waitForKafka: true
+    useHelmHooks: true
+
+  kraft:
+    enabled: true
+
+schema-registry:
+  image:
+    registry: docker.io
+    repository: bitnami/schema-registry
+    tag: 7.7.0-debian-12-r2
+
+  listeners: http://0.0.0.0:8081
+  avroCompatibilityLevel: backward
+
+  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+  resourcesPreset: "none"
+  resources: {}
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8081
+
+  serviceAccount:
+    create: true
+
+  kafka:
+    enabled: false
+
+  externalKafka:
+    brokers:
+      - PLAINTEXT://kafka.kafka.svc:9092
+
+    listener:
+      protocol: PLAINTEXT
+
+akhq:
+  enabled: true
+  image:
+    repository: tchiotludo/akhq
+    tag: "0.25.1"
+
+  revisionHistoryLimit: 10
+
+  configuration:
+    akhq:
+      connections:
+        kafka:
+          properties:
+            bootstrap.servers: "kafka.kafka.svc:9092"
+          schema-registry:
+            url: "http://schema-registry.kafka.svc:8081"
+            type: "confluent"
+
+  ingress:
+    enabled: true
+    paths:
+      - /
+    pathType: "ImplementationSpecific"
+    hosts:
+      - akhq.minikube.local
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  resources: {}

@@ -1,0 +1,57 @@
+kube-prometheus:
+  blackboxExporter:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnami/blackbox-exporter
+      tag: 0.25.0-debian-12-r16
+
+    configuration: |
+      "modules":
+        "http_2xx":
+          "http":
+            "preferred_ip_protocol": "ip4"
+          "prober": "http"
+        "http_post_2xx":
+          "http":
+            "method": "POST"
+            "preferred_ip_protocol": "ip4"
+          "prober": "http"
+        "irc_banner":
+          "prober": "tcp"
+          "tcp":
+            "preferred_ip_protocol": "ip4"
+            "query_response":
+            - "send": "NICK prober"
+            - "send": "USER prober prober prober :prober"
+            - "expect": "PING :([^ ]+)"
+              "send": "PONG ${1}"
+            - "expect": "^:[^ ]+ 001"
+        "pop3s_banner":
+          "prober": "tcp"
+          "tcp":
+            "preferred_ip_protocol": "ip4"
+            "query_response":
+            - "expect": "^+OK"
+            "tls": true
+            "tls_config":
+              "insecure_skip_verify": false
+        "ssh_banner":
+          "prober": "tcp"
+          "tcp":
+            "preferred_ip_protocol": "ip4"
+            "query_response":
+            - "expect": "^SSH-2.0-"
+        "tcp_connect":
+          "prober": "tcp"
+          "tcp":
+            "preferred_ip_protocol": "ip4"
+
+    containerPorts:
+      http: 19115
+
+    serviceAccount:
+      create: true
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}

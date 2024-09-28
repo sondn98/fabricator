@@ -1,0 +1,17 @@
+repositories:
+  - name: bitnami
+    url:  https://charts.bitnami.com/bitnami
+
+helmDefaults:
+  wait: true
+  force: true
+  verify: true
+  createNamespace: true
+  timeout: 600
+
+helmfiles:
+  - path: argo-cd/helmfile.yaml
+  - path: nginx-ingress-controller/helmfile.yaml
+  - path: sealed-secrets/helmfile.yaml
+  - path: addons/cert-manager/helmfile.yaml
+# - path: addons/metallb/helmfile.yaml

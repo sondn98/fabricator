@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for minio deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: minio
+version: 1.0.0
+dependencies:
+  - name: minio
+    version: 14.7.7
+    repository: oci://registry-1.docker.io/bitnamicharts

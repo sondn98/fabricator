@@ -1,0 +1,70 @@
+keycloak:
+  image:
+    registry: docker.io
+    repository: bitnami/keycloak
+    tag: 25.0.5-debian-12-r0
+
+  auth:
+    adminUser: keycloak
+    existingSecret: "keycloak-auth-secret"
+    passwordSecretKey: "keycloak-password"
+
+  tls:
+    enabled: false
+
+  proxy: "edge"
+  httpRelativePath: "/"
+
+  adminRealm: "master"
+  production: false
+
+  replicaCount: 1
+
+  containerPorts:
+    http: 8080
+    https: 8443
+
+  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+  resourcesPreset: "none"
+  resources: {}
+
+  service:
+    type: ClusterIP
+    http:
+      enabled: true
+    ports:
+      http: 80
+      https: 443
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    pathType: ImplementationSpecific
+    hostname: keycloak.minikube.local
+    path: "{{ .Values.httpRelativePath }}"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  adminIngress:
+    enabled: false
+
+  serviceAccount:
+    create: true
+  rbac:
+    create: false
+
+  keycloakConfigCli:
+    enabled: false
+
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    host: "postgresql.postgresql.svc.cluster.local"
+    port: 5432
+    user: keycloak
+    database: keycloak
+    existingSecret: keycloak-pg-secret
+    existingSecretPasswordKey: keycloak-pg-password

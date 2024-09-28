@@ -1,0 +1,68 @@
+fluent-operator:
+  containerRuntime: docker
+  Kubernetes: true
+
+  operator:
+    initcontainer:
+      repository: "docker"
+      tag: "20.10"
+
+      resources:
+        limits:
+          cpu: 100m
+          memory: 64Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+    container:
+      repository: "kubesphere/fluent-operator"
+      tag: "v3.1.0"
+
+    resources: {}
+
+  fluentbit:
+    enable: true
+    crdsEnable: true
+    image:
+      repository: "ghcr.io/fluent/fluent-operator/fluent-bit"
+      tag: "3.1.7"
+    resources: {}
+
+    namespaceFluentBitCfgSelector: {}
+
+    input:
+      tail:
+        enable: true
+        refreshIntervalSeconds: 10
+        memBufLimit: 100MB
+        bufferMaxSize: ""
+        path: "/var/log/containers/*.log"
+        skipLongLines: true
+        readFromHead: false
+        storageType: memory
+        pauseOnChunksOverlimit: "off"
+
+      systemd:
+        enable: true
+        systemdFilter:
+          enable: true
+          filters: []
+        path: "/var/log/journal"
+        includeKubelet: true
+        stripUnderscores: "off"
+        storageType: memory
+        pauseOnChunksOverlimit: "off"
+
+    filter:
+      kubernetes:
+        enable: true
+        labels: false
+        annotations: false
+      containerd:
+        enable: true
+      systemd:
+        enable: true
+
+  fluentd:
+    crdsEnable: true
+    enable: false

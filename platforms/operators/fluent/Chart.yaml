@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for fluent operator deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: fluent-operator
+version: 1.0.0
+dependencies:
+  - name: fluent-operator
+    version: 3.1.0
+    # repository: https://github.com/fluent/fluent-operator/releases/download/v3.1.0/fluent-operator.tgz

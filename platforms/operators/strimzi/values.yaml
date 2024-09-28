@@ -1,0 +1,17 @@
+strimzi-kafka-operator:
+  replicas: 1
+
+  watchNamespaces:
+    - strimzi
+  watchAnyNamespace: false
+
+  image:
+    registry: "quay.io"
+    repository: "strimzi"
+    name: "operator"
+    tag: "0.43.0"
+
+  leaderElection:
+    enable: true
+
+  resources: {}

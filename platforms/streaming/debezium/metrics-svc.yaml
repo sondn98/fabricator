@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: debezium
+    app.kubernetes.io/managed-by: strimzi-cluster-operator
+    app.kubernetes.io/name: kafka-connect
+    app.kubernetes.io/part-of: strimzi-debezium
+    strimzi.io/cluster: debezium
+    strimzi.io/kind: KafkaConnect
+    strimzi.io/name: debezium-connect-api
+  name: debezium-connect-metrics
+  namespace: kafka
+spec:
+  ports:
+  - name: jmx
+    port: 9404
+    protocol: TCP
+    targetPort: 9404
+  selector:
+    strimzi.io/cluster: debezium
+    strimzi.io/kind: KafkaConnect
+    strimzi.io/name: debezium-connect
+  type: ClusterIP

@@ -1,0 +1,40 @@
+version: '3'
+
+silent: true
+
+dotenv:
+  - .env
+
+vars:
+  MACHINE_MOUNTPATH: '{{ .MACHINE_MOUNTPATH | default "/tmp/minikube" }}'
+  CLUSTER_MOUNTPATH: '{{ .CLUSTER_MOUNTPATH | default "/data" }}'
+  CLUSTER_MEMORY: '{{ .CLUSTER_MEMORY | default "4096" }}'
+  CLUSTER_CPUS: '{{ .CLUSTER_CPUS | default "2" }}'
+
+tasks:
+
+  minikube-up:
+    cmds:
+    - minikube start --driver=docker
+                     --memory {{ .CLUSTER_MEMORY }}
+                     --cpus {{ .CLUSTER_CPUS }}
+                     --nodes 1
+                     --mount
+                     --mount-string="{{ .MACHINE_MOUNTPATH }}:{{ .CLUSTER_MOUNTPATH }}"
+    - kubectl ctx minikube
+    - task: core-services
+
+  core-services:
+    dir: core
+    cmds:
+      - helmfile repos
+      - helmfile apply
+      - kubectl apply -k ./
+
+  minikube-down:
+    cmds:
+    - minikube stop --all
+
+  minikube-delete:
+    cmds:
+    - minikube delete

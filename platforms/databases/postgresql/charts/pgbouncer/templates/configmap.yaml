@@ -1,0 +1,13 @@
+{{- if .Values.configuration }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "pgbouncer.fullname" . }}-config
+  labels:
+    {{- include "pgbouncer.labels" . | nindent 4 }}
+data:
+  pgbouncer.ini: |-
+    {{- range $key, $value := .Values.configuration }}
+    {{ $key }} = {{ $value }}
+    {{- end }}
+{{- end }}

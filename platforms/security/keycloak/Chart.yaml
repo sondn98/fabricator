@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for keycloak deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: keycloak
+version: 1.0.0
+dependencies:
+  - name: keycloak
+    version: 22.2.4
+    repository: oci://registry-1.docker.io/bitnamicharts

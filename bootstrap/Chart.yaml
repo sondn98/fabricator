@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for bootstraping argo-cd applications
+keywords:
+- Continuous delivery
+- Continuous deployment
+- Devops
+- Kubernetes
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: bootstrap
+version: 1.0.0

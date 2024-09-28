@@ -1,0 +1,23 @@
+{{ if .Values.apps.zookeeper.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zookeeper
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/others/zookeeper
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: zookeeper
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

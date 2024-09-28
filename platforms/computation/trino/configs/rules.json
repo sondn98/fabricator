@@ -1,0 +1,39 @@
+{
+  "impersonation":
+    [
+      {
+        "original_user": "service-account-superset",
+        "new_user": ".*",
+        "allow": true
+      }
+    ],
+    "catalogs": [
+      {
+        "group": "admin",
+        "catalog": ".*",
+        "allow": "all"
+      }
+    ],
+    "schemas": [
+      {
+        "group": "admin",
+        "catalog": ".*",
+        "schema": ".*",
+        "owner": true
+      }
+    ],"tables": [
+      {
+        "group": "admin",
+        "catalog": ".*",
+        "schema": ".*",
+        "table": ".*",
+        "privileges": ["SELECT", "INSERT", "DELETE", "OWNERSHIP", "GRANT_SELECT"]
+      }
+    ],
+    "system_information": [
+      {
+        "user": ".*",
+        "allow": ["read"]
+      }
+    ]
+}

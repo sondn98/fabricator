@@ -1,0 +1,54 @@
+{{- $httpServer := .Values.httpServer }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trino.fullname" . }}
+  labels:
+    {{- include "trino.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  {{- if $httpServer.http.enabled }}
+    - port: {{ .Values.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- end }}
+  {{- if $httpServer.https.enabled }}
+    - port: {{ .Values.service.httpsPort }}
+      targetPort: https
+      protocol: TCP
+      name: https
+  {{- end }}
+  selector:
+    {{- include "trino.coordinator.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "trino.fullname" . }}-discovery
+  labels:
+    {{- include "trino.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  publishNotReadyAddresses: true
+  ports:
+  {{- if $httpServer.http.enabled }}
+    - port: {{ .Values.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- end }}
+  {{- if $httpServer.https.enabled }}
+    - port: {{ .Values.service.httpsPort }}
+      targetPort: https
+      protocol: TCP
+      name: https
+  {{- end }}
+  selector:
+    {{- include "trino.coordinator.selectorLabels" . | nindent 4 }}

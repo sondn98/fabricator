@@ -1,0 +1,44 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: kafka
+spec:
+  kafka:
+    version: 3.4.0
+    replicas: 3
+    listeners:
+    - name: plain
+      port: 9092
+      type: internal
+      tls: false
+    - name: tls
+      port: 9093
+      type: internal
+      tls: true
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 2
+      message.max.bytes: 33554432 # 32Mi
+      compression.type: snappy
+      num.partitions: 1
+      default.replication.factor: 1
+
+      log.retention.hours: 1080 # 45d
+      num.replica.fetchers: 2
+      replica.fetch.max.bytes: 33554432 # 32Mi
+      replica.fetch.response.max.bytes: 33554432 # 32Mi
+      replica.socket.receive.buffer.bytes: 1048576 # 1Mi
+      num.recovery.threads.per.data.dir: 2 # = nCore
+    # TODO: Kafka storage configuration need to be changed to fit the production environment
+    storage:
+      type: persistent-claim
+      size: 5Gi
+      deleteClaim: false
+      class: standard
+    # TODO: Kafka resource configurations need to be changed to fit the production environment
+    resources: {}
+    logging:
+      type: inline
+      loggers:
+        kafka.root.logger.level: WARN

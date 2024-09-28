@@ -1,0 +1,100 @@
+airflow:
+  auth:
+    username: airflow
+    existingSecret: airflow-auth-secret
+
+  executor: CeleryExecutor
+  loadExamples: true
+
+  dags:
+    image:
+      registry: docker.io
+      repository: bitnami/os-shell
+      tag: 12-debian-12-r27
+
+  web:
+    image:
+      registry: docker.io
+      repository: bitnami/airflow
+      tag: 2.10.0-debian-12-r1
+      debug: false
+    containerPorts:
+      http: 8080
+    resourcesPreset: "none"
+    replicaCount: 1
+    baseUrl: "airflow.minikube.local:80"
+
+  scheduler:
+    image:
+      registry: docker.io
+      repository: bitnami/airflow-scheduler
+      tag: 2.10.0-debian-12-r0
+      debug: false
+    replicaCount: 1
+    resourcesPreset: "none"
+
+  worker:
+    image:
+      registry: docker.io
+      repository: bitnami/airflow-worker
+      tag: 2.10.0-debian-12-r0
+      debug: false
+    containerPorts:
+      http: 8793
+    replicaCount: 1
+    resourcesPreset: "none"
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPU: 80
+      targetMemory: 80
+
+  git:
+    image:
+      registry: docker.io
+      repository: bitnami/git
+      tag: 2.46.0-debian-12-r0
+    dags:
+      enabled: false
+      repositories: []
+    sync:
+      interval: 60
+      resources: {}
+      resourcesPreset: "none"
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8080
+
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    host: postgresql.postgresql.svc.cluster.local
+    port: 5432
+    user: airflow
+    database: airflow
+    existingSecret: airflow-pg-secret
+    existingSecretPasswordKey: airflow-pg-password
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    pathType: ImplementationSpecific
+    hostname: airflow.minikube.local
+    path: /
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  redis:
+    enabled: true
+    auth:
+      enabled: true
+      existingSecret: "airflow-redis-secret"
+    architecture: standalone
+    master:
+      resourcesPreset: "none"

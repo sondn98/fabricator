@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for prometheus operator deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: kube-prometheus
+version: 1.0.0
+dependencies:
+  - name: kube-prometheus
+    version: 9.5.14
+    repository: oci://registry-1.docker.io/bitnamicharts

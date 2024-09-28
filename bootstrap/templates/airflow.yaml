@@ -1,0 +1,23 @@
+{{ if .Values.apps.airflow.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/computation/airflow
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airflow
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

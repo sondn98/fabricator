@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pgbouncer.fullname" . }}
+  labels:
+    {{- include "pgbouncer.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "pgbouncer.selectorLabels" . | nindent 6 }}
+  {{- if .Values.server.updateStrategy }}
+  strategy: {{- toYaml .Values.server.updateStrategy | nindent 4 }}
+  {{- end }}
+  replicas: {{ .Values.server.replicas }}
+  template:
+    metadata:
+      labels:
+        {{- include "pgbouncer.labels" . | nindent 8 }}
+      annotations:
+        checksum/ini: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/users: {{ include (print $.Template.BasePath "/secret-userlist.yaml") . | sha256sum }}
+        {{- if .Values.server.annotations }}
+        {{- toYaml .Values.server.annotations | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.server.image.pullSecrets }}
+      imagePullSecrets:
+        - name: {{ .Values.server.image.pullSecrets }}
+      {{- end }}
+      {{- if .Values.server.affinity }}
+      affinity: {{- toYaml .Values.server.affinity | nindent 8 }}
+      {{- else }}
+      affinity:
+        {{- if eq .Values.server.antiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  {{- include "pgbouncer.selectorLabels" . | nindent 18 }}
+        {{- else if eq .Values.server.antiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    {{- include "pgbouncer.selectorLabels" . | nindent 20 }}
+        {{- end }}
+        {{- if .Values.server.nodeAffinity }}
+        nodeAffinity:
+          {{- toYaml .Values.server.nodeAffinity | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.server.nodeSelector }}
+      nodeSelector:
+      {{- toYaml .Values.server.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.server.tolerations }}
+      tolerations:
+        {{- toYaml .Values.server.tolerations | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: pgbouncer
+          image: "{{ .Values.server.image.registry }}/{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+          ports:
+            - name: pgbouncer
+              containerPort: {{ .Values.server.containerPorts.pgbouncer }}
+          env:
+            - name: PGBOUNCER_PORT
+              value: {{ .Values.server.containerPorts.pgbouncer | quote }}
+            - name: PGBOUNCER_BIND_ADDRESS
+              value: 0.0.0.0
+            - name: POSTGRESQL_HOST
+              value: {{ .Values.postgresql.host | quote }}
+            - name: POSTGRESQL_PORT
+              value: {{ .Values.postgresql.port | quote }}
+            - name: PGBOUNCER_DATABASE
+              value: {{ .Values.postgresql.database | quote }}
+            - name: PGBOUNCER_POOL_MODE
+              value: {{ .Values.poolMode | quote }}
+            - name: PGBOUNCER_MAX_CLIENT_CONN
+              value: {{ .Values.connections.maxClientConn | quote }}
+            - name: PGBOUNCER_MAX_DB_CONNECTIONS
+              value: {{ .Values.connections.maxDbConn | quote }}
+            - name: PGBOUNCER_DEFAULT_POOL_SIZE
+              value: {{ .Values.connections.defaultPoolSize | quote }}
+            - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
+              value: {{ .Values.ignoreStartupParams | quote }}
+            {{- if or .Values.authUsername .Values.existingAuthSecret }}
+            - name: POSTGRESQL_USERNAME
+              {{- if .Values.existingAuthSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingAuthSecret }}
+                  key: authUsername
+              {{- else }}
+              value: {{ .Values.authUsername }}
+              {{- end }}
+            {{- end }}
+            {{- if or .Values.authUsername .Values.existingAuthSecret }}
+            - name: POSTGRESQL_PASSWORD
+              {{- if .Values.existingAuthSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingAuthSecret }}
+                  key: authPassword
+              {{- else }}
+              value: {{ .Values.authPassword }}
+              {{- end }}
+            {{- end }}
+            {{- if or .Values.authUsername .Values.existingAuthSecret }}
+            - name: PGBOUNCER_AUTH_USER
+              {{- if .Values.existingAuthSecret }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingAuthSecret }}
+                  key: authUsername
+              {{- else }}
+              value: {{ .Values.authUsername }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.extraEnvVars }}
+            {{- toYaml .Values.extraEnvVars | nindent 12 }}
+            {{- end }}
+          {{- if or .Values.extraEnvVarsCM .Values.extraEnvVarsSecret }}
+          envFrom:
+          {{- if .Values.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ .Values.extraEnvVarsCM }}
+          {{- end }}
+          {{- if .Values.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ .Values.extraEnvVarsSecret }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.server.livenessProbe.enabled }}
+          livenessProbe: {{- omit .Values.server.livenessProbe "enabled" | toYaml | nindent 12 }}
+            tcpSocket:
+              port: {{ .Values.server.containerPorts.pgbouncer }}
+          {{- end }}
+          {{- if .Values.server.readinessProbe.enabled }}
+          readinessProbe: {{- omit .Values.server.readinessProbe "enabled" | toYaml | nindent 12 }}
+            tcpSocket:
+              port: {{ .Values.server.containerPorts.pgbouncer }}
+          {{- end }}
+          {{- if .Values.server.startupProbe.enabled }}
+          startupProbe: {{- omit .Values.server.startupProbe "enabled" | toYaml | nindent 12 }}
+            tcpSocket:
+              port: {{ .Values.server.containerPorts.pgbouncer }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+          {{- if or .Values.existingUserlistSecret .Values.userlist .Values.configuration }}
+          volumeMounts:
+            {{- if or .Values.existingUserlistSecret .Values.userlist }}
+            - name: userlist
+              mountPath: /etc/pgbouncer.d
+              readOnly: true
+            {{- end }}
+            {{- if .Values.configuration }}
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer
+              readOnly: true
+            {{- end }}
+          {{- end }}
+      {{- if or .Values.existingUserlistSecret .Values.userlist .Values.configuration }}
+      volumes:
+        {{- if or .Values.existingUserlistSecret .Values.userlist }}
+        - name: userlist
+          secret:
+            secretName: {{ template "pgbouncer.userlistSecretName" . }}
+            items:
+              - key: userlist.txt
+                path: userlist.txt
+        {{- end }}
+        {{- if .Values.configuration }}
+        - name: pgbouncer-config
+          configMap:
+            name: {{ template "pgbouncer.fullname" . }}-config
+            items:
+              - key: pgbouncer.ini
+                path: pgbouncer.ini
+        {{- end }}
+      {{- end }}

@@ -1,0 +1,113 @@
+postgresql:
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: 16.4.0-debian-12-r2
+
+  auth:
+    enablePostgresUser: true
+    enablePostgresUser: true
+    database: postgres
+    username: admin
+    replicationUsername: repl
+    existingSecret: postgresql-auth-secret
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
+      replicationPasswordKey: replication-password
+
+  architecture: standalone
+
+  replication:
+    synchronousCommit: "off"
+    numSynchronousReplicas: 0
+
+  containerPorts:
+    postgresql: 5432
+
+  audit:
+    logHostname: false
+    logConnections: false
+    logDisconnections: false
+    pgAuditLog: ""
+    pgAuditLogCatalog: "off"
+    clientMinMessages: error
+    logLinePrefix: ""
+    logTimezone: ""
+
+  primary:
+    extendedConfiguration: |-
+      wal_level=logical
+
+    extraEnvVarsSecret: postgresql-initdb-credential
+    initdb:
+      scriptsSecret: postgresql-initdb-secret
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+    ##
+    resourcesPreset: "none"
+
+    service:
+      type: ClusterIP
+      ports:
+        postgresql: 5432
+
+    persistence:
+      enabled: true
+      volumeName: "data"
+      mountPath: /bitnami/postgresql
+      accessModes:
+        - ReadWriteOnce
+      size: 5Gi
+
+  readReplicas:
+    name: read
+    replicaCount: 1
+    resourcesPreset: "none"
+    service:
+      type: ClusterIP
+      ports:
+        postgresql: 5432
+
+    persistence:
+      enabled: true
+      mountPath: /bitnami/postgresql
+      accessModes:
+        - ReadWriteOnce
+      size: 5Gi
+
+  backup:
+    enabled: false
+
+pgbouncer:
+  enabled: <Injected in runtime>
+  server:
+    replicas: 1
+    image:
+      registry: docker.io
+      repository: bitnami/pgbouncer
+      tag: 1.23.1
+    resources: {}
+
+  poolMode: session
+  connections:
+    maxDbConn: 0
+    maxClientConn: 100
+    defaultPoolSize: 20
+    minPoolSize: 0
+    reservePoolSize: 0
+    reservePoolTimeout: 5
+
+  ignoreStartupParams: extra_float_digits
+
+  existingAuthSecret: "pgbouncer-auth-secret"
+
+  postgresql:
+    host: "postgresql.postgresql.svc"
+    port: 5432
+    database: "*"
+
+  service:
+    type: ClusterIP
+    ports:
+      pgbouncer: 6432

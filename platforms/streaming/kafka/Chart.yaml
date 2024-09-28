@@ -1,0 +1,19 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for kafka deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: kafka
+version: 1.0.0
+dependencies:
+  - name: kafka
+    version: 30.1.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+  - name: schema-registry
+    version: 21.0.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+  - name: akhq
+    version: 0.25.1
+    repository: https://akhq.io
+    condition: akhq.enabled

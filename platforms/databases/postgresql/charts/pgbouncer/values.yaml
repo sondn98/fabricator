@@ -1,0 +1,246 @@
+## @param nameOverride String to partially override common.names.fullname template (will maintain the release name)
+##
+nameOverride: ""
+## @param fullnameOverride String to fully override common.names.fullname template
+##
+fullnameOverride: ""
+
+## Pgbouncer server parameters
+##
+server:
+  ## @param server.replicas Number of Pgbouncer server
+  ##
+  replicas: 1
+  ## @param web.updateStrategy.type Airflow web deployment strategy type
+  ## @param web.updateStrategy.rollingUpdate Airflow web deployment rolling update configuration parameters
+  ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  ##
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: {}
+  ## Pgbouncer image
+  ## ref: https://hub.docker.com/r/bitnami/pgbouncer/tags
+  ## @param server.image.registry Pgbouncer image registry
+  ## @param server.image.repository Pgbouncer image repository
+  ## @param server.image.tag Pgbouncer image tag (immutable tags are recommended)
+  ## @param server.image.digest Pgbouncer image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+  ## @param server.image.pullPolicy Pgbouncer image pull policy
+  ## @param server.image.pullSecrets Pgbouncer image pull secrets
+  ## @param server.image.debug Enable image debug mode
+  ##
+  image:
+    registry: docker.io
+    repository: bitnami/pgbouncer
+    tag: 1.20.0
+    digest: ""
+    ## Specify a imagePullPolicy
+    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+    ##
+    pullPolicy: IfNotPresent
+    ## Optionally specify an array of imagePullSecrets.
+    ## Secrets must be manually created in the namespace.
+    ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    ## e.g:
+    ## pullSecrets:
+    ##   - myRegistryKeySecretName
+    ##
+    pullSecrets: ""
+    ## Set to true if you would like to see extra information on logs
+    ##
+    debug: false
+  ## @param server.containerPorts.http Pgbouncer container port
+  ##
+  containerPorts:
+    pgbouncer: 6432
+  ## @params server.annotations Pgbouncer server annotations
+  annotations: {}
+  ## @param server.affinity Affinity for Airflow scheduler pods assignment (evaluated as a template)
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  ## Note: `server.antiAffinity` will be ignored when it's set
+  ##
+  affinity: {}
+  ## @param server.antiAffinity Pod anti-affinity preset. Ignored if `server.affinity` is set. Allowed values: `soft` or `hard`.
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  ##
+  antiAffinity: soft
+  ## Node affinity preset
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+  ##
+  nodeAffinity: {}
+  ## @param server.nodeSelector Node labels for Pgbouncer server pods assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+  ## @param worker.tolerations Tolerations for Pgbouncer server pods assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: []
+  ## Pgbouncer server resource requests and limits
+  ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+  ## @param server.resources.limits The resources limits for the Pgbouncer server containers
+  ## @param server.resources.requests The requested resources for the Pgbouncer server containers
+  ##
+  resources: {}
+  ## Configure extra options for Pgbouncer server containers' liveness, readiness and startup probes
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+  ## @param server.livenessProbe.enabled Enable livenessProbe on Pgbouncer server containers
+  ## @param server.livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+  ## @param server.livenessProbe.periodSeconds Period seconds for livenessProbe
+  ## @param server.livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+  ## @param server.livenessProbe.failureThreshold Failure threshold for livenessProbe
+  ## @param server.livenessProbe.successThreshold Success threshold for livenessProbe
+  ##
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 180
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  ## @param server.readinessProbe.enabled Enable readinessProbe on Pgbouncer server containers
+  ## @param server.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+  ## @param server.readinessProbe.periodSeconds Period seconds for readinessProbe
+  ## @param server.readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+  ## @param server.readinessProbe.failureThreshold Failure threshold for readinessProbe
+  ## @param server.readinessProbe.successThreshold Success threshold for readinessProbe
+  ##
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  ## @param server.startupProbe.enabled Enable startupProbe on Pgbouncer server containers
+  ## @param server.startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+  ## @param server.startupProbe.periodSeconds Period seconds for startupProbe
+  ## @param server.startupProbe.timeoutSeconds Timeout seconds for startupProbe
+  ## @param server.startupProbe.failureThreshold Failure threshold for startupProbe
+  ## @param server.startupProbe.successThreshold Success threshold for startupProbe
+  ##
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 15
+    successThreshold: 1
+
+## @param poolMode Pgbouncer pool mode
+poolMode: session
+## Connections Pgbouncer connections limit
+## @param connections.maxDbConn Do not allow more than this many server connections per database (regardless of user)
+## @param connections.maxClientConn Maximum number of client connections allowed
+## @param connections.defaultPoolSize How many server connections to allow per user/database pair
+## @param connections.minPoolSize Add more server connections to pool if below this number
+## @param connections.reservePoolSize How many additional connections to allow to a pool
+## @param connections.reservePoolTimeout If a client has not been serviced in this time, use additional connections from the reserve pool
+connections:
+  maxDbConn: 0
+  maxClientConn: 100
+  defaultPoolSize: 20
+  minPoolSize: 0
+  reservePoolSize: 0
+  reservePoolTimeout: 5
+## @param ignoreStartupParams By default, PgBouncer allows only parameters it can keep track of in startup packets: client_encoding, datestyle, timezone and standard_conforming_strings.
+## All others parameters will raise an error. To allow others parameters, they can be specified here, so that PgBouncer knows that they are handled by the admin and it can ignore them
+ignoreStartupParams: extra_float_digits
+
+## @param configuration Configurations for pgbouncer which would be taken as the pgbouncer.ini file content
+configuration: {}
+
+## @param userlist List of users to connect to database which would be taken as userlist.txt file content
+## NOTE: This config will be ignored if the existingUserlistSecret specified
+## E.g:
+## userlist:
+##   user1: password1
+##   user2: password2
+##   ...
+userlist: {}
+
+## @param existingUserlistSecret The secret contains the list of users to connect to database which would be taken as userlist.txt file content
+## The secret must contain key `userlist.txt`. If specified, the userlist config will be ignored
+existingUserlistSecret: ""
+
+## @param authUsername Username for pgbouncer to query users/password to authenticate connections
+## Once specified, `userlist` and `existingUserlistSecret` configs will be ignored
+authUsername: ""
+## @param authPassword Password for pgbouncer to query users/password to authenticate connections
+## Once specified, `userlist` and `existingUserlistSecret` configs will be ignored
+authPassword: ""
+## @param existingAuthSecret Secret contains credentials to authenticate connections
+## Once specified, `userlist` and `existingUserlistSecret`, `authUsername`, and `authPassword` configs will be ignored
+## The secret must contain key `authUsername` and `authPassword`
+existingAuthSecret: ""
+
+## @param metrics.extraEnvVars Array with extra environment variables to add Pgbouncer server pods
+##
+extraEnvVars: []
+## @param metrics.extraEnvVarsCM ConfigMap containing extra environment variables for Pgbouncer server pods
+##
+extraEnvVarsCM: ""
+## @param metrics.extraEnvVarsSecret Secret containing extra environment variables (in case of sensitive data) for Pgbouncer server pods
+##
+extraEnvVarsSecret: ""
+
+postgresql:
+  host: ""
+  port: 5432
+  database: "*"
+
+## Pgbouncer server Pod Disruption Budget
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+## @param pdb.enabled Deploy a pdb object for the Pgbouncer server pods
+## @param pdb.minAvailable Maximum number/percentage of unavailable Pgbouncer server replicas
+## @param pdb.maxUnavailable Maximum number/percentage of unavailable Pgbouncer server replicas
+##
+pdb:
+  enabled: false
+  # PodDisruptionBudget spec.minAvailable
+  minAvailable: 0
+  maxUnavailable: ""
+
+## Pgbouncer service parameters
+##
+service:
+  enabled: true
+  ## @param service.type Pgbouncer service type
+  ##
+  type: ClusterIP
+  ## @param service.ports.postgres Pgbouncer service port
+  ##
+  ports:
+    pgbouncer: 6432
+  ## Node ports to expose
+  ## @param service.nodePorts.http Node port for Pgbouncer
+  ## NOTE: choose port between <30000-32767>
+  ##
+  nodePorts:
+    pgbouncer: ""
+  ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin
+  ## Values: ClientIP or None
+  ## ref: https://kubernetes.io/docs/user-guide/services/
+  ##
+  sessionAffinity: None
+  ## @param service.sessionAffinityConfig Additional settings for the sessionAffinity
+  ## sessionAffinityConfig:
+  ##   clientIP:
+  ##     timeoutSeconds: 300
+  ##
+  sessionAffinityConfig: {}
+  ## @param service.clusterIP Pgbouncer service Cluster IP
+  ## e.g.: clusterIP: None
+  ##
+  clusterIP: ""
+  ## @param service.loadBalancerIP Pgbouncer service Load Balancer IP
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
+  ##
+  loadBalancerIP: ""
+  ## @param service.externalTrafficPolicy Pgbouncer service external traffic policy
+  ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  externalTrafficPolicy: Cluster
+  ## @param server.annotations Add extra annotations to the Pgbouncer server pods
+  ##
+  annotations: {}

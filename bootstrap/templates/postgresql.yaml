@@ -1,0 +1,26 @@
+{{ if .Values.apps.postgresql.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sondn98/fabricator.git
+    targetRevision: master
+    path: platforms/databases/postgresql
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+      - name: "pgbouncer.enabled"
+        value: "{{ .Values.apps.postgresql.pgbouncerEnabled }}"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: postgresql
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

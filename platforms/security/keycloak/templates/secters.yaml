@@ -1,0 +1,23 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: keycloak-pg-secret
+  annotations:
+    sealedsecrets.bitnami.com/cluster-wide: "true"
+spec:
+  encryptedData:
+    keycloak-pg-password: AgCs4v0RP7K1jIWRiiT88v8/qUUyjilQS5eg/bLQGUzU3JL0Nlh3rmNRofXaIagFncbCTRc2kV2HFAHw5z+WyeewTi05aCHIbpxEtblrP5a7mQPj96r2RKCROHXlhjyHCNm2+/AF/ruhTglOcfB3k0ra/5qNyle0scFY2+7HjHXlaTOhg2yXawfeU/c1YXJI81yJcJHkiUPOPdX6S83ShsGOsP7gW6yOt61As5scais3a2cdzg3EeI4NfwmHhqKV2qFzP2Gdqi4wNbfDRzIvT3vRG6RXiXoJFTxmFA4jCo8QdoczJU10nudyLTH5fc0yr/xfHH3fo04uopsfBHO3mk1ASj1cIe4sd/w4pDIJMPRkc3Wt2uVKOEwyR75BpWS/x0yXbLWTUWoFDRVOdz+MorfAYF0k66OCIKhop405xRVHwBeQnADc//HaWP3ohmq9N0PBhFaQTCLPMvoyCFtUQd9iHE2xufKjNJrXxwFv/h9OIDGYI9quYfs45SEDoMTGZOd7C5jYAOovITZhY5yGxzH6NRJb03/PxB84/nEXYuNvYvqrBVww7Bz+u3eR+a9YgWpd+AA55wFAic4j/zwHwzD39fL6/Of8NkfTcitxxSYQeDX9Npz0iCCf82SKyWyv0gfLq/Ob92FbNM5gByOOpgIZdP5hxyTHGtJNBfg5dQJ+POq6G1ksndHSbNmew2HcRqTDBZbEGmVFAVACiQ==
+  template:
+    type: Opaque
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: keycloak-auth-secret
+  annotations:
+    sealedsecrets.bitnami.com/cluster-wide: "true"
+spec:
+  encryptedData:
+    keycloak-password: AgBL2z5SqbA17+3NzBMHvGwM+aJ2kxuGC+S2lqm2apvH8ekOmlqX25eJckF0fVF807ou79fOkXrab/81eKpW7+zYfU/3SsN5HkAtS5CtkHJaLQ/kfkLKgVfuFZOp9yOYsu2Lqc8shLJWgE1OWhAPiTK9+/B/TRMsaqrABZSiV2HW4e4pkwzHt9qUKRPsWGu4LKscqgkMpiwXCBz4Et20v+T8IUauTHK+2/5BfhN7lq+JOi7FAzrdHWXjyDLOFb/7Ynbi36GxZFj2qCQwxBfR+aGB+dP3i5aJjilQx71aec2xfCwN1zm7/QCllSiBJJdYVULZ2FLY8IEgCktS4D6Nk8nhFdCaqs8wpw7I+qDrFnUfU4Ujtj54J9CQNvca+5lNFcE7EKfB5goe3jYvZk5IAGvHVrZgLYDXPLHds4n8VNjtEK2RZQ9r0yXSRueNLNxKVHSPzk4fDgj1o+ftTi8WLSfdaP0wlL4Qb5XVAZlnK689kWi4FixbhBYgIhyOX8Oa9Xoln4zouNn0Xoj6h2LxYzOXK5XoCz6HH88B+ZWVAnGdKO4plX9BO3YKCd6KMVss9b+VdUu003IRPDAWDlAS5zzzkmYjPj2NGfAJ+8BaE8L/TsQm3WnxYtgv7ZqR2ajxojQ4mLUmsoyZ+ynnj4BActGmKjHvfxhxRolzZaV3lZZvwscD6OhIKWlqDxi2qrQVfVt3V4dfuxdHJzhp0Q==
+  template:
+    type: Opaque

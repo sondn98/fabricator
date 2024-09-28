@@ -1,0 +1,50 @@
+minio:
+  image:
+    registry: docker.io
+    repository: bitnami/minio
+    tag: 2024.9.9-debian-12-r0
+
+  clientImage:
+    registry: docker.io
+    repository: bitnami/minio-client
+    tag: 2024.9.9-debian-12-r0
+
+  mode: standalone
+
+  auth:
+    forcePassword: true
+    existingSecret: minio-auth-secret
+
+  defaultBuckets: develop
+
+  containerPorts:
+    api: 9000
+    console: 9001
+
+  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+  resourcesPreset: "none"
+  resources: {}
+
+  service:
+    type: ClusterIP
+    ports:
+      api: 9000
+      console: 9001
+
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    hostname: minio.minikube.local
+    path: /
+    pathType: ImplementationSpecific
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  persistence:
+    enabled: true
+    mountPath: /data
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi

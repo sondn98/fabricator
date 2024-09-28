@@ -1,0 +1,57 @@
+kube-prometheus:
+  exporters:
+    node-exporter:
+      enabled: true
+    kube-state-metrics:
+      enabled: true
+
+  node-exporter:
+    service:
+      labels:
+        jobLabel: node-exporter
+    serviceMonitor:
+      enabled: true
+      jobLabel: jobLabel
+    extraArgs:
+      collector.filesystem.mount-points-exclude: "^/(dev|proc|sys|var/lib/docker/.+)($|/)"
+      collector.filesystem.fs-types-exclude: "^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$"
+
+  kube-state-metrics:
+    serviceMonitor:
+      enabled: true
+      honorLabels: true
+
+  kubelet:
+    enabled: true
+    namespace: kube-system
+
+  kubeApiServer:
+    enabled: true
+
+  kubeControllerManager:
+    enabled: true
+    service:
+      enabled: true
+      ports:
+        http: 10252
+      targetPorts:
+        http: 10252
+
+  kubeScheduler:
+    enabled: true
+    service:
+      enabled: true
+      ports:
+        http: 10251
+      targetPorts:
+        http: 10251
+
+  kubeProxy:
+    enabled: true
+    namespace: kube-system
+    service:
+      enabled: true
+      ports:
+        http: 10249
+      targetPorts:
+        http: 10249

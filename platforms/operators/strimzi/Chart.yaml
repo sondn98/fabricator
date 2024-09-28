@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for strimzi operator deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: strimzi-operator
+version: 1.0.0
+dependencies:
+  - name: strimzi-kafka-operator
+    version: 0.43.0
+    repository: oci://quay.io/strimzi-helm
