@@ -95,6 +95,7 @@ kafka:
     enabled: true
 
 schema-registry:
+  enabled: true
   image:
     registry: docker.io
     repository: bitnami/schema-registry

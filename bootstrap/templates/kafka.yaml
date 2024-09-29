@@ -8,12 +8,17 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/sondn98/fabricator.git
-    targetRevision: master
+    repoURL: "{{ .Values.global.repoURL }}"
+    targetRevision: "{{ .Values.global.targetRevision }}"
     path: platforms/streaming/kafka
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+      - name: "schema-registry.enabled"
+        value: "{{ .Values.apps.kafka.enabled_schema_registry }}"
+      - name: "akhq.enabled"
+        value: "{{ .Values.apps.kafka.enabled_akhq }}"
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka

@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/sondn98/fabricator.git
-    targetRevision: master
+    repoURL: "{{ .Values.global.repoURL }}"
+    targetRevision: "{{ .Values.global.targetRevision }}"
     path: platforms/databases/elasticsearch
     helm:
       valueFiles:

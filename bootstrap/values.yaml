@@ -1,39 +1,45 @@
+global:
+  repoURL: https://github.com/sondn98/fabricator.git
+  targetRevision: master
+
 apps:
   airflow:
     enabled: false
-  postgresql:
-    enabled: false
-    pgbouncerEnabled: false
-  mysql:
-    enabled: false
-  minio:
-    enabled: false
-  grafana:
-    enabled: false
-  prometheus:
+  clickhouse:
     enabled: false
   elasticsearch:
     enabled: false
-  fluent:
+  grafana:
     enabled: false
-  loki:
+  fluent:
     enabled: false
   kafka:
     enabled: false
+    enabled_schema_registry: true
+    enabled_akhq: true
   keycloak:
     enabled: false
-  vault:
+  loki:
+    enabled: false
+  metrics_server:
+    enabled: false
+  minio:
+    enabled: false
+  mysql:
+    enabled: false
+  postgresql:
+    enabled: false
+    enabled_pgbouncer: false
+  prometheus:
     enabled: false
   redis:
     enabled: false
-  clickhouse:
+  spark:
     enabled: false
   strimzi:
+    enabled: true
+  vault:
     enabled: false
   zookeeper:
-    enabled: false
-  spark:
-    enabled: true
-  metrics_server:
     enabled: false
 
