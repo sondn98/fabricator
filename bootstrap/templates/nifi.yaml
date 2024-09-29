@@ -1,0 +1,23 @@
+{{ if .Values.apps.nifi.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nifi
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: "{{ .Values.global.repoURL }}"
+    targetRevision: "{{ .Values.global.targetRevision }}"
+    path: platforms/computation/nifi
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nifi
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

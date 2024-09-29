@@ -1,0 +1,43 @@
+image:
+  registry: docker.io
+  repository: apache/nifi
+  tag: "1.27.0"
+
+replicaCount: 3
+
+containerPorts:
+  cluster: 6007
+  siteToSite: 10000
+  metrics: 9092
+
+resources: {}
+
+service:
+  type: ClusterIP
+  ports:
+    cluster: 6007
+    siteToSite: 10000
+    metrics: 9092
+
+serviceAccount:
+  create: true
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 8Gi
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  pathType: ImplementationSpecific
+  hostname: nifi.minikube.local
+  path: /
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+metrics:
+  enabled: false

@@ -27,6 +27,8 @@ apps:
     enabled: false
   mysql:
     enabled: false
+  nifi:
+    enabled: true
   postgresql:
     enabled: false
     enabled_pgbouncer: false
@@ -37,7 +39,7 @@ apps:
   spark:
     enabled: false
   strimzi:
-    enabled: true
+    enabled: false
     enabled_schema_registry: true
     enabled_akhq: true
   vault:
