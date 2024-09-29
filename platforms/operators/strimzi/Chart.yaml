@@ -10,3 +10,11 @@ dependencies:
   - name: strimzi-kafka-operator
     version: 0.43.0
     repository: oci://quay.io/strimzi-helm
+  - name: schema-registry
+    version: 21.0.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: schema-registry.enabled
+  - name: akhq
+    version: 0.25.1
+    repository: https://akhq.io
+    condition: akhq.enabled

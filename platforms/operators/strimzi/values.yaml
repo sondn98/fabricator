@@ -15,3 +15,67 @@ strimzi-kafka-operator:
     enable: true
 
   resources: {}
+
+schema-registry:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/schema-registry
+    tag: 7.7.0-debian-12-r2
+
+  listeners: http://0.0.0.0:8081
+  avroCompatibilityLevel: backward
+
+  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+  resourcesPreset: "none"
+  resources: {}
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8081
+
+  serviceAccount:
+    create: true
+
+  kafka:
+    enabled: false
+
+  externalKafka:
+    brokers:
+      - PLAINTEXT://kafka-kafka-bootstrap.strimzi.svc:9092
+
+    listener:
+      protocol: PLAINTEXT
+
+akhq:
+  enabled: true
+  image:
+    repository: tchiotludo/akhq
+    tag: "0.25.1"
+
+  revisionHistoryLimit: 10
+
+  configuration:
+    akhq:
+      connections:
+        kafka:
+          properties:
+            bootstrap.servers: "kafka-kafka-bootstrap.strimzi.svc:9092"
+          schema-registry:
+            url: "http://schema-registry.strimzi.svc:8081"
+            type: "confluent"
+
+  ingress:
+    enabled: true
+    paths:
+      - /
+    pathType: "ImplementationSpecific"
+    hosts:
+      - akhq-strimzi.minikube.local
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  resources: {}

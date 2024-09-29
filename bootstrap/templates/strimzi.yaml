@@ -14,6 +14,11 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+      - name: "schema-registry.enabled"
+        value: "{{ .Values.apps.strimzi.enabled_schema_registry }}"
+      - name: "akhq.enabled"
+        value: "{{ .Values.apps.strimzi.enabled_akhq }}"
   destination:
     server: https://kubernetes.default.svc
     namespace: strimzi

@@ -38,6 +38,8 @@ apps:
     enabled: false
   strimzi:
     enabled: true
+    enabled_schema_registry: true
+    enabled_akhq: true
   vault:
     enabled: false
   zookeeper:
