@@ -42,3 +42,7 @@ spec:
       type: inline
       loggers:
         kafka.root.logger.level: WARN
+  zookeeper:
+    replicas: 3
+    storage:
+      type: ephemeral
