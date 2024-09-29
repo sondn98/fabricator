@@ -2,9 +2,12 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: kafka
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
 spec:
   kafka:
-    version: 3.4.0
+    version: 3.8.0
     replicas: 3
     listeners:
     - name: plain
@@ -30,7 +33,14 @@ spec:
       replica.fetch.response.max.bytes: 33554432 # 32Mi
       replica.socket.receive.buffer.bytes: 1048576 # 1Mi
       num.recovery.threads.per.data.dir: 2 # = nCore
-    # TODO: Kafka storage configuration need to be changed to fit the production environment
+
+      processRoles: "broker,controller"
+      nodeId: 1
+      controllerQuorumVoters: "1@kafka-broker-0.kafka-kafka-brokers.strimzi.svc.cluster.local:9093,2@kafka-broker-1.kafka-kafka-brokers.strimzi.svc.cluster.local:9093,3@kafka-broker-2.kafka-kafka-brokers.strimzi.svc.cluster.local:9093"
+      interBrokerProtocol: PLAINTEXT
+      controller.listener.names: CONTROLLER
+      listeners: "PLAINTEXT://:9092,CONTROLLER://:9093"
+
     storage:
       type: persistent-claim
       size: 5Gi
@@ -42,7 +52,3 @@ spec:
       type: inline
       loggers:
         kafka.root.logger.level: WARN
-  zookeeper:
-    replicas: 3
-    storage:
-      type: ephemeral
