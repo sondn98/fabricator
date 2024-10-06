@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: 1.27.0
+description: NiFi automates cybersecurity, observability, event streams, and generative AI data pipelines and distribution for thousands of companies worldwide across every industry
+home: https://github.com/sondn98/fabricator
+keywords:
+- nifi
+maintainers:
+- name: Do Ngoc Son
+  url: https://github.com/sondn98/fabricator
+name: nifi
+sources:
+- https://github.com/sondn98/fabricator/tree/master/platforms/computation/nifi/charts/nifi
+version: 0.1.0
+dependencies:
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 2.x.x
