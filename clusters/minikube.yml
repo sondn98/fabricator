@@ -1,0 +1,33 @@
+version: '3'
+
+silent: true
+
+vars:
+  MACHINE_MOUNTPATH: '{{ .MINIKUBE_MACHINE_MOUNTPATH | default "/tmp/minikube" }}'
+  CLUSTER_MOUNTPATH: '{{ .MINIKUBE_CLUSTER_MOUNTPATH | default "/data" }}'
+  CLUSTER_MEMORY: '{{ .MINIKUBE_CLUSTER_MEMORY | default "4096" }}'
+  CLUSTER_CPUS: '{{ .MINIKUBE_CLUSTER_CPUS | default "2" }}'
+
+tasks:
+
+  up:
+    cmds:
+    - minikube start --driver=docker
+                     --memory {{ .CLUSTER_MEMORY }}
+                     --cpus {{ .CLUSTER_CPUS }}
+                     --nodes 1
+                     --mount
+                     --mount-string="{{ .MACHINE_MOUNTPATH }}:{{ .CLUSTER_MOUNTPATH }}"
+    - kubectl ctx minikube
+
+  down:
+    cmds:
+    - minikube stop --all
+
+  status:
+    cmds:
+      - minikube status
+
+  delete:
+    cmds:
+    - minikube delete

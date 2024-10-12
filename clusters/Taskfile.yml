@@ -1,0 +1,29 @@
+version: '3'
+
+silent: true
+
+var:
+  K8S_ENGINE: '{{ .K8S_ENGINE | default "minikube" }}'
+
+includes:
+  k3s:
+    taskfile: k3s.yml
+  minikube:
+    taskfile: minikube.yml
+
+tasks:
+  up:
+    cmds:
+      - task: '{{ .K8S_ENGINE }}:up'
+
+  down:
+    cmds:
+      - task: '{{ .K8S_ENGINE }}:down'
+
+  status:
+    cmds:
+      - task: '{{ .K8S_ENGINE }}:status'
+
+  delete:
+    cmds:
+      - task: '{{ .K8S_ENGINE }}:delete'
