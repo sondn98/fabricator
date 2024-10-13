@@ -1,1 +1,89 @@
-installCRDs: true
+global:
+  rbac:
+    create: true
+    aggregateClusterRoles: true
+
+  logLevel: 2
+
+  leaderElection:
+    # Override the namespace used for the leader election lease.
+    namespace: "kube-system"
+    # leaseDuration: 60s
+    # renewDeadline: 40s
+    # retryPeriod: 15s
+
+crds:
+  enabled: true
+  keep: false
+
+replicaCount: 1
+
+# A comma-separated list of feature gates that should be enabled on the controller pod.
+featureGates: ""
+
+maxConcurrentChallenges: 60
+
+image:
+  repository: quay.io/jetstack/cert-manager-controller
+  tag: v1.16.1
+
+  # Setting a digest will override any tag.
+  # +docs:property
+  # digest: sha256:0e072dddd1f7f8fc8909a2ca6f65e76c5f0d2fcfb8be47935ae3457e8bbceb20
+
+  # Kubernetes imagePullPolicy on Deployment.
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+
+enableCertificateOwnerRef: false
+
+approveSignerNames:
+- issuers.cert-manager.io/*
+- clusterissuers.cert-manager.io/*
+
+prometheus:
+  enabled: false
+
+webhook:
+  replicaCount: 1
+  timeoutSeconds: 30
+
+  resources: {}
+
+  image:
+    repository: quay.io/jetstack/cert-manager-webhook
+    tag: v1.16.1
+
+  serviceAccount:
+    create: true
+
+cainjector:
+  enabled: true
+
+  replicaCount: 1
+  resources: {}
+
+  image:
+    repository: quay.io/jetstack/cert-manager-cainjector
+    tag: v1.16.1
+
+  serviceAccount:
+    create: true
+
+acmesolver:
+  image:
+    repository: quay.io/jetstack/cert-manager-acmesolver
+    tag: v1.16.1
+
+startupapicheck:
+  enabled: true
+  resources: {}
+
+  image:
+    repository: quay.io/jetstack/cert-manager-startupapicheck
+    tag: v1.16.1
+
+  serviceAccount:
+    create: true

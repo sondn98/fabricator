@@ -13,6 +13,10 @@ nifi:
 
   resources: {}
 
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+
   service:
     type: ClusterIP
     ports:
@@ -39,6 +43,15 @@ nifi:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  tls:
+    certManager:
+      exists: true
+      issuerName: "ca-issuer"
+      clusterIssuer: true
+      existingKeystoreSecretName: "nifi-tls-keystore-secret"
+      existingKeystoreSecretKey: "password"
+      certDuration: 2160h
 
   metrics:
     enabled: false

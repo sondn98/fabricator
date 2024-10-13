@@ -6,5 +6,5 @@ resources:
 - argo-cd/repos.yaml
 - sealed-secrets/master-secret.yaml
 # - ./addons/metallb/address-pool.yaml
-# - ./addons/cert-manager/ca-demo.yaml
-# - ./addons/cert-manager/issuer-ca.yaml
+- cert-manager/ca-demo.yaml
+- cert-manager/issuer-ca.yaml

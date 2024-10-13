@@ -112,22 +112,28 @@ spec:
             {{- end }}
           {{- end }}
           ports:
-            - containerPort: {{ .Values.containerPorts.clusterPort }}
+            - containerPort: {{ .Values.containerPorts.cluster }}
               name: cluster
               protocol: TCP
             - containerPort: {{ .Values.containerPorts.siteToSite }}
-              name: siteToSite
+              name: site-to-site
               protocol: TCP
           {{- if not .Values.diagnosticMode.enabled }}
           {{- if .Values.customLivenessProbe }}
           livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customLivenessProbe "context" $) | nindent 12 }}
           {{- else if .Values.livenessProbe.enabled }}
           livenessProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.livenessProbe "enabled" "probeCommandTimeout") "context" $) | nindent 12 }}
+            httpGet:
+              path: /
+              port: {{ .Values.containerPorts.cluster }}
           {{- end }}
           {{- if .Values.customReadinessProbe }}
           readinessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customReadinessProbe "context" $) | nindent 12 }}
           {{- else if .Values.readinessProbe.enabled }}
           readinessProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.readinessProbe "enabled" "probeCommandTimeout") "context" $) | nindent 12 }}
+            httpGet:
+              path: /
+              port: {{ .Values.containerPorts.cluster }}
           {{- end }}
           {{- if .Values.customStartupProbe }}
           startupProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customStartupProbe "context" $) | nindent 12 }}
@@ -141,6 +147,47 @@ spec:
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
           {{- end }}
           volumeMounts:
+            - name: "bootstrap-conf"
+              mountPath: /opt/nifi/nifi-current/conf/bootstrap.conf
+              subPath: "bootstrap.conf"
+            - name: "nifi-properties"
+              mountPath: /opt/nifi/nifi-current/conf/nifi.properties
+              subPath: "nifi.properties"
+            - name: "authorizers-xml"
+              mountPath: /opt/nifi/nifi-current/conf/authorizers.xml
+              subPath: "authorizers.xml"
+            - name: "bootstrap-notification-services-xml"
+              mountPath: /opt/nifi/nifi-current/conf/bootstrap-notification-services.xml
+              subPath: "bootstrap-notification-services.xml"
+            - name: "login-identity-providers-xml"
+              mountPath: /opt/nifi/nifi-current/conf/login-identity-providers.xml
+              subPath: "login-identity-providers.xml"
+            - name: "state-management-xml"
+              mountPath: /opt/nifi/nifi-current/conf/state-management.xml
+              subPath: "state-management.xml"
+            - name: "zookeeper-properties"
+              mountPath: /opt/nifi/nifi-current/conf/zookeeper.properties
+              subPath: "zookeeper.properties"
+            - name: "flow-content"
+              mountPath: /opt/nifi/data/flow.xml
+              subPath: "flow.xml"
+            {{- if .Values.persistence.enabled }}
+            - mountPath: /opt/nifi/nifi-current/logs
+              name: {{ template "common.names.fullname" . }}-logs
+              subPath: logs
+            - mountPath: /opt/nifi/data
+              name: {{ template "common.names.fullname" . }}-data
+              subPath: data
+            - mountPath: /opt/nifi/flowfile_repository
+              name: {{ template "common.names.fullname" . }}-flowfile-repository
+              subPath: flowfile-repository
+            - mountPath: /opt/nifi/content_repository
+              name: {{ template "common.names.fullname" . }}-content-repository
+              subPath: content-repository
+            - mountPath: /opt/nifi/provenance_repository
+              name: {{ template "common.names.fullname" . }}-provenance-repository
+              subPath: provenance-repository
+            {{- end }}
             {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" ( dict "value" .Values.extraVolumeMounts "context" $ ) | nindent 12 }}
             {{- end }}
@@ -148,16 +195,75 @@ spec:
         {{- include "common.tplvalues.render" ( dict "value" .Values.sidecars "context" $ ) | nindent 8 }}
         {{- end }}
       volumes:
+        - name: "bootstrap-conf"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "bootstrap.conf"
+                path: "bootstrap.conf"
+        - name: "nifi-properties"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "nifi.properties"
+                path: "nifi.properties"
+        - name: "authorizers-xml"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "authorizers.xml"
+                path: "authorizers.xml"
+        - name: "bootstrap-notification-services-xml"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "bootstrap-notification-services.xml"
+                path: "bootstrap-notification-services.xml"
+        - name: "login-identity-providers-xml"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "login-identity-providers.xml"
+                path: "login-identity-providers.xml"
+        - name: "state-management-xml"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "state-management.xml"
+                path: "state-management.xml"
+        - name: "zookeeper-properties"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "zookeeper.properties"
+                path: "zookeeper.properties"
+        - name: "flow-content"
+          configMap:
+            name: {{ template "common.names.fullname" . }}-config
+            items:
+              - key: "flow.xml"
+                path: "flow.xml"
+        {{- if not .Values.persistence.enabled }}
+        - name: {{ template "common.names.fullname" . }}-logs
+          emptyDir: {}
+        - name: {{ template "common.names.fullname" . }}-data
+          emptyDir: {}
+        - name: {{ template "common.names.fullname" . }}-flowfile-repository
+          emptyDir: {}
+        - name: {{ template "common.names.fullname" . }}-content-repository
+          emptyDir: {}
+        - name: {{ template "common.names.fullname" . }}-provenance-repository
+          emptyDir: {}
+        {{- end }}
         {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
         {{- end }}
-  {{- if and .Values.persistence.enabled (not (and .Values.persistence.existingClaim .Values.persistence.dataLogDir.existingClaim) ) }}
+  {{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
   volumeClaimTemplates:
-    {{- if not .Values.persistence.existingClaim }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: data
+        name: {{ template "common.names.fullname" . }}-logs
         {{- if .Values.persistence.annotations }}
         annotations: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.annotations "context" $) | nindent 10 }}
         {{- end }}
@@ -176,12 +282,10 @@ spec:
         {{- if .Values.persistence.selector }}
         selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
         {{- end }}
-    {{- end }}
-    {{- if and (not .Values.persistence.dataLogDir.existingClaim) .Values.dataLogDir }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: data-log
+        name: {{ template "common.names.fullname" . }}-data
         {{- if .Values.persistence.annotations }}
         annotations: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.annotations "context" $) | nindent 10 }}
         {{- end }}
@@ -195,10 +299,75 @@ spec:
         {{- end }}
         resources:
           requests:
-            storage: {{ .Values.persistence.dataLogDir.size | quote }}
+            storage: {{ .Values.persistence.size | quote }}
         {{- include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) | nindent 8 }}
-        {{- if .Values.persistence.dataLogDir.selector }}
-        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.dataLogDir.selector "context" $) | nindent 10 }}
+        {{- if .Values.persistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
         {{- end }}
-    {{- end }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: {{ template "common.names.fullname" . }}-flowfile-repository
+        {{- if .Values.persistence.annotations }}
+        annotations: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.annotations "context" $) | nindent 10 }}
+        {{- end }}
+        {{- if .Values.persistence.labels }}
+        labels: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.labels "context" $) | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+        {{- include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) | nindent 8 }}
+        {{- if .Values.persistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
+        {{- end }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: {{ template "common.names.fullname" . }}-content-repository
+        {{- if .Values.persistence.annotations }}
+        annotations: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.annotations "context" $) | nindent 10 }}
+        {{- end }}
+        {{- if .Values.persistence.labels }}
+        labels: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.labels "context" $) | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+        {{- include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) | nindent 8 }}
+        {{- if .Values.persistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
+        {{- end }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: {{ template "common.names.fullname" . }}-provenance-repository
+        {{- if .Values.persistence.annotations }}
+        annotations: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.annotations "context" $) | nindent 10 }}
+        {{- end }}
+        {{- if .Values.persistence.labels }}
+        labels: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.labels "context" $) | nindent 10 }}
+        {{- end }}
+      spec:
+        accessModes:
+        {{- range .Values.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+        {{- include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) | nindent 8 }}
+        {{- if .Values.persistence.selector }}
+        selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.selector "context" $) | nindent 10 }}
+        {{- end }}
   {{- end }}

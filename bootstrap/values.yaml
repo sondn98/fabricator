@@ -14,7 +14,7 @@ apps:
   fluent:
     enabled: false
   kafka:
-    enabled: false
+    enabled: true
     enabled_schema_registry: true
     enabled_akhq: true
   keycloak:

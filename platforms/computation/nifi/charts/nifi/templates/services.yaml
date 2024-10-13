@@ -31,24 +31,19 @@ spec:
   {{- end }}
   ports:
     {{- if not .Values.service.disableBaseClientPort }}
-    - name: tcp-client
-      port: {{ .Values.service.ports.client }}
-      targetPort: client
+    - name: cluster
+      port: {{ .Values.service.ports.cluster }}
+      targetPort: cluster
       {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.client)) }}
       nodePort: {{ .Values.service.nodePorts.client }}
       {{- else if eq .Values.service.type "ClusterIP" }}
       nodePort: null
       {{- end }}
     {{- end }}
-    {{- if .Values.tls.client.enabled }}
-    - name: tcp-client-tls
-      port: {{ .Values.service.ports.tls }}
-      targetPort: client-tls
-      {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) (not (empty .Values.service.nodePorts.tls)) }}
-      nodePort: {{ .Values.service.nodePorts.tls }}
-      {{- else if eq .Values.service.type "ClusterIP" }}
-      nodePort: null
-      {{- end }}
+    {{- if .Values.metrics.enabled }}
+    - name: metrics
+      port: {{ .Values.service.ports.metrics }}
+      targetPort: metrics
     {{- end }}
     {{- if .Values.service.extraPorts }}
     {{- include "common.tplvalues.render" (dict "value" .Values.service.extraPorts "context" $) | nindent 4 }}

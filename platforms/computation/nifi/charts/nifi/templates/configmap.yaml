@@ -1,15 +1,13 @@
-{{- if (include "zookeeper.createConfigmap" .) }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "common.names.fullname" . }}
-  namespace: {{ template "zookeeper.namespace" . }}
+  name: {{ template "common.names.fullname" . }}-config
+  namespace: {{ template "nifi.namespace" . }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/component: nifi
   {{- if .Values.commonAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 data:
-  zoo.cfg: |-
-    {{- include "common.tplvalues.render" ( dict "value" .Values.configuration "context" $ ) | nindent 4 }}
-{{- end }}
+{{ (tpl (.Files.Glob "config/*").AsConfig . ) | indent 2 }}
