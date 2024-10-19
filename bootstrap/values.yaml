@@ -14,11 +14,13 @@ apps:
   fluent:
     enabled: false
   kafka:
-    enabled: true
+    enabled: false
     enabled_schema_registry: true
     enabled_akhq: true
   keycloak:
     enabled: false
+  localstack:
+    enabled: true
   loki:
     enabled: false
   metrics_server:
@@ -27,8 +29,9 @@ apps:
     enabled: false
   mysql:
     enabled: false
+  ## Nifi is still experimental
   nifi:
-    enabled: true
+    enabled: false
   postgresql:
     enabled: false
     enabled_pgbouncer: false

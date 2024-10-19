@@ -1,0 +1,45 @@
+localstack:
+  replicaCount: 1
+
+  image:
+    repository: localstack/localstack
+    tag: "3.8.1"
+
+  serviceAccount:
+    create: true
+
+  role:
+    create: true
+
+  startServices: ""
+
+  service:
+    type: ClusterIP
+    edgeService:
+      name: edge
+      targetPort: 4566
+      nodePort: 31566
+    externalServicePorts:
+      start: 4510
+      end: 4560
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    hosts:
+      - host: localstack.minikube.local
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+
+  resources: {}

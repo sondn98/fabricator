@@ -1,0 +1,23 @@
+{{ if .Values.apps.localstack.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: localstack
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: "{{ .Values.global.repoURL }}"
+    targetRevision: "{{ .Values.global.targetRevision }}"
+    path: platforms/others/localstack
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: localstack
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}
