@@ -11,6 +11,8 @@ apps:
     enabled: false
   grafana:
     enabled: false
+  jupyterhub:
+    enabled: true
   fluent:
     enabled: false
   kafka:
@@ -20,7 +22,7 @@ apps:
   keycloak:
     enabled: false
   localstack:
-    enabled: true
+    enabled: false
   loki:
     enabled: false
   metrics_server:
@@ -33,7 +35,7 @@ apps:
   nifi:
     enabled: false
   postgresql:
-    enabled: false
+    enabled: true
     enabled_pgbouncer: false
   prometheus:
     enabled: false
