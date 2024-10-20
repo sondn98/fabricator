@@ -1,8 +1,0 @@
-postgresql:
-  enabled: false
-
-externalDatabase:
-  type: mysql
-  url:  jdbc:mysql://external-mysql:3306/hive-metastore
-  username: root
-  password: foobar

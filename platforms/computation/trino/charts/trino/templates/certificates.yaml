@@ -1,0 +1,46 @@
+{{- if .Values.tls.certManager.exists }}
+{{ range untilStep 0 (int .Values.replicaCount) 1 }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "common.names.fullname" $ }}-{{ . }}
+  namespace: {{ template "nifi.namespace" $ }}
+spec:
+  duration: {{ $.Values.tls.certManager.certDuration }}
+  commonName: {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "nifi.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
+  subject:
+    organizationalUnits:
+    - Nifi
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+    rotationPolicy: Always
+  secretName: {{ include "common.names.fullname" $ }}-{{ . }}-tls
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        key: {{ $.Values.tls.certManager.existingKeystoreSecretKey }}
+        name: {{ $.Values.tls.certManager.existingKeystoreSecretName }}
+  usages:
+    - digital signature
+    - content commitment
+    - key encipherment
+    - data encipherment
+    - key agreement
+    - server auth
+    - client auth
+  dnsNames:
+    - {{ template "common.names.fullname" $ }}.{{ template "nifi.namespace" $ }}.svc
+    - {{ template "common.names.fullname" $ }}.{{ template "nifi.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
+    - {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "nifi.namespace" $ }}.svc
+    - {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "nifi.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
+    {{ toYaml $.Values.tls.certManager.additionalDnsNames | indent 4 }}
+  issuerRef:
+    name: {{ $.Values.tls.certManager.issuerName }}
+    kind: {{ ternary "ClusterIssuer" "Issuer" $.Values.tls.certManager.clusterIssuer }}
+    group: cert-manager.io
+---
+{{ end }}
+{{- end }}

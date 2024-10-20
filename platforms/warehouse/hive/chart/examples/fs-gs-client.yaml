@@ -1,9 +1,0 @@
-filesystem:
-  gs:
-    enabled: true
-    serviceAccount:
-      enabled: false
-    client:
-      id:     foobar.apps.googleusercontent.com
-      secret: this-is-a-secret
-      file:   /path/to/file

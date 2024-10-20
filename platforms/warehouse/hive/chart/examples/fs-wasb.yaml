@@ -1,6 +1,0 @@
-filesystem:
-  wasb:
-    enabled: true
-    accounts:
-      your-account: YOUR-ACCESS-KEY
-      second-account: REAL-KEY

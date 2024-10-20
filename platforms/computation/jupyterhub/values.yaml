@@ -1,0 +1,125 @@
+jupyterhub:
+  hub:
+    image:
+      registry: docker.io
+      repository: bitnami/jupyterhub
+      tag: 4.1.6-debian-12-r3
+
+    baseUrl: /
+    adminUser: admin
+    password: SuperSecr3t
+    containerPorts:
+      http: 8081
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+    ##
+    resourcesPreset: "none"
+    resources: {}
+
+    serviceAccount:
+      create: true
+
+    rbac:
+      create: true
+
+    service:
+      type: ClusterIP
+      ports:
+        http: 8081
+
+  proxy:
+    image:
+      registry: docker.io
+      repository: bitnami/configurable-http-proxy
+      tag: 4.6.2-debian-12-r8
+
+    containerPort:
+      api: 8001
+      metrics: 8002
+      http: 8000
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+    ##
+    resourcesPreset: "none"
+    resources: {}
+
+    serviceAccount:
+      create: true
+
+    service:
+      api:
+        type: ClusterIP
+        ports:
+          http: 8001
+
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      pathType: ImplementationSpecific
+      hostname: jupyterhub.minikube.local
+      path: /
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+  imagePuller:
+    enabled: true
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+    ##
+    resourcesPreset: "none"
+    resources: {}
+
+    serviceAccount:
+      create: true
+
+  singleuser:
+    image:
+      registry: docker.io
+      repository: bitnami/jupyter-base-notebook
+      tag: 4.1.6-debian-12-r5
+
+    notebookDir: /opt/bitnami/jupyterhub-singleuser
+    allowPrivilegeEscalation: false
+
+    containerPorts:
+      http: 8888
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
+    ##
+    resourcesPreset: "none"
+    resources: {}
+
+    serviceAccount:
+      create: true
+
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 10Gi
+
+    profileList:
+      - display_name: "SonDN"
+        description: "My profile"
+        default: true
+
+  auxiliaryImage:
+    registry: docker.io
+    repository: bitnami/os-shell
+    tag: 12-debian-12-r30
+
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    host: postgresql.postgresql.svc.cluster.local
+    port: 5432
+    user: jupyterhub
+    database: jupyterhub
+    existingSecret: jupyterhub-pg-secret
+    existingSecretPasswordKey: jupyterhub-pg-password

@@ -1,0 +1,23 @@
+{{ if .Values.apps.trino.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trino
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: "{{ .Values.global.repoURL }}"
+    targetRevision: "{{ .Values.global.targetRevision }}"
+    path: platforms/computation/trino
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: trino
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

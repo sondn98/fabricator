@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for Jupyter Hub deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: jupyterhub
+version: 1.0.0
+dependencies:
+  - name: jupyterhub
+    version: 8.0.0
+    repository: oci://registry-1.docker.io/bitnamicharts
