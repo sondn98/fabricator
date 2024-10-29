@@ -3,11 +3,28 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ template "common.names.fullname" . }}-config
-  namespace: {{ template "nifi.namespace" . }}
+  namespace: {{ template "trino.namespace" . }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: nifi
+    app.kubernetes.io/component: trino
   {{- if .Values.commonAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 data:
-{{ (tpl (.Files.Glob "config/*").AsConfig . ) | indent 2 }}
+  {{- if .Values.faultTolerant.enabled -}}
+  exchange-manager.properties: |
+    {{- $exchangeConfig := .Values.faultTolerant.exchangeManager.config -}}
+    {{- $_ := set $exchangeConfig "exchange-manager.name" .Values.faultTolerant.exchangeManager.name -}}
+    {{- range $key, $value := $exchangeConfig }}
+    {{ $key }}={{ $value }}
+    {{- end }}
+  {{- end -}}
+  node.properties: |
+    {{- range $key, $value := .Values.node }}
+    {{ $key }}={{ $value }}
+    {{- end }}
+  jvm.config: |
+    {{ .Values.jvm | nindent 4 }}
+  log.properties: |
+    {{- range $key, $value := .Values.log }}
+    {{ $key }}={{ $value }}
+    {{- end }}

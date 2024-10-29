@@ -1,7 +1,7 @@
 {{/*
-Return Nifi Namespace to use
+Return Trino Namespace to use
 */}}
-{{- define "nifi.namespace" -}}
+{{- define "trino.namespace" -}}
 {{- if .Values.namespaceOverride -}}
     {{- .Values.namespaceOverride -}}
 {{- else -}}
@@ -10,29 +10,16 @@ Return Nifi Namespace to use
 {{- end -}}
 
 {{/*
-Return the proper Nifi image name
+Return the proper Trino image name
 */}}
-{{- define "nifi.image" -}}
+{{- define "trino.image" -}}
 {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
-{{- end -}}
-
-{{/*
-Form the Nifi Registry URL and port.
-If nifi-registry is installed as part of this chart, use k8s service discovery, else use user-provided name and port
-*/}}
-{{- define "nifi.registry.url" }}
-{{- $port := .Values.registry.port | toString }}
-{{- if .Values.registry.enabled -}}
-{{- printf "http://%s-registry:%s" .Release.Name $port }}
-{{- else -}}
-{{- printf "http://%s:%s" .Values.registry.url $port }}
-{{- end -}}
 {{- end -}}
 
 {{/*
  Create the name of the service account to use
  */}}
-{{- define "nifi.serviceAccountName" -}}
+{{- define "trino.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
     {{ default (include "common.names.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
@@ -41,25 +28,33 @@ If nifi-registry is installed as part of this chart, use k8s service discovery, 
 {{- end -}}
 
 {{/*
-Create a default fully qualified zookeeper name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+Return Trino common configuration to use
 */}}
-{{- define "nifi.zookeeper.fullname" -}}
-{{- if .Values.zookeeper.fullnameOverride -}}
-{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- $name := default "zookeeper" .Values.zookeeper.nameOverride -}}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- define "trino.config" -}}
+{{- $config := .Values.config }}
+{{- if .Values.tls.client.enabled }}
+  {{- $_ := set $config "http-server.http.enabled" "false" }}
+  {{- $_ := set $config "http-server.https.enabled" "true" }}
+  {{- $_ := set $config "http-server.https.port" .Values.service.port.https }}
+  {{- $_ := set $config "http-server.https.keystore.path" .Values.tls.client.keystorePath }}
+  {{- $_ := set $config "http-server.https.keystore.key" .Values.tls.client.keystorePassword }}
+  {{- $_ := set $config "http-server.https.truststore.path .Values.tls.client.truststorePath }}
+  {{- $_ := set $config "http-server.https.truststore.key" .Values.tls.client.truststorePassword  }}
+{{- else }}
+  {{- $_ := set $config "http-server.http.enabled" "true" }}
+  {{- $_ := set $config "http-server.http.port" .Values.service.port.http }}
+{{- end }}
+{{- if .Values.faultTolerant.enabled }}
+  {{- $_ := set $config "retry-policy" .Values.faultTolerant.policy }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Returns the zookeeper.connect setting value
+Return Trino exchange manager configuration
 */}}
-{{- define "kafka.zookeeperConnect" -}}
-{{- if .Values.zookeeper.enabled -}}
-{{- printf "%s:%s%s" (include "nifi.zookeeper.fullname" .) (ternary "3181" "2181" .Values.tls.zookeeper.enabled) (tpl .Values.zookeeperChrootPath .) -}}
-{{- else -}}
-{{- printf "%s%s" (join "," .Values.externalZookeeper.servers) (tpl .Values.zookeeperChrootPath .) -}}
+{{- define "trino.exchangeManager" -}}
+{{- $exchangeConfig := dict -}}
+{{- if .Values.faultTolerant.enabled }}
+  {{- $_ := set $exchangeConfig "exchange-manager.name" .Values.faultTolerant.exchangeManager.name }}
 {{- end -}}
 {{- end -}}

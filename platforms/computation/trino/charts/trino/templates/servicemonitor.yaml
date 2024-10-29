@@ -42,5 +42,5 @@ spec:
       {{- end }}
   namespaceSelector:
     matchNames:
-      - {{ template "nifi.namespace" . }}
+      - {{ template "trino.namespace" . }}
 {{- end }}

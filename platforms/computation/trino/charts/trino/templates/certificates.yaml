@@ -4,13 +4,13 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "common.names.fullname" $ }}-{{ . }}
-  namespace: {{ template "nifi.namespace" $ }}
+  namespace: {{ template "trino.namespace" $ }}
 spec:
   duration: {{ $.Values.tls.certManager.certDuration }}
-  commonName: {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "nifi.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
+  commonName: {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "trino.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
   subject:
     organizationalUnits:
-    - Nifi
+    - Trino
   privateKey:
     algorithm: RSA
     encoding: PKCS1
@@ -32,10 +32,10 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - {{ template "common.names.fullname" $ }}.{{ template "nifi.namespace" $ }}.svc
-    - {{ template "common.names.fullname" $ }}.{{ template "nifi.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
-    - {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "nifi.namespace" $ }}.svc
-    - {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "nifi.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
+    - {{ template "common.names.fullname" $ }}.{{ template "trino.namespace" $ }}.svc
+    - {{ template "common.names.fullname" $ }}.{{ template "trino.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
+    - {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "trino.namespace" $ }}.svc
+    - {{ template "common.names.fullname" $ }}-{{ . }}.{{ template "common.names.fullname" $ }}-headless.{{ template "trino.namespace" $ }}.svc.{{ $.Values.clusterDomain }}
     {{ toYaml $.Values.tls.certManager.additionalDnsNames | indent 4 }}
   issuerRef:
     name: {{ $.Values.tls.certManager.issuerName }}
