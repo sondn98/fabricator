@@ -1,1 +1,63 @@
-trino: {}
+trino:
+  image:
+    registry: docker.io
+    repository: trinodb/trino
+    tag: "463"
+
+  containerPorts:
+    cluster: 6007
+    siteToSite: 10000
+    metrics: 9092
+
+  coordinator:
+    replicaCount: 1
+
+  worker:
+    replicaCount: 3
+
+  jvm: |
+    -server
+    -Xmx16G
+    -XX:InitialRAMPercentage=80
+    -XX:MaxRAMPercentage=80
+    -XX:G1HeapRegionSize=32M
+    -XX:+ExplicitGCInvokesConcurrent
+    -XX:+ExitOnOutOfMemoryError
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:-OmitStackTraceInFastThrow
+    -XX:ReservedCodeCacheSize=512M
+    -XX:PerMethodRecompilationCutoff=10000
+    -XX:PerBytecodeRecompilationCutoff=10000
+    -Djdk.attach.allowAttachSelf=true
+    -Djdk.nio.maxCachedBufferSize=2000000
+    -Dfile.encoding=UTF-8
+    # Allow loading dynamic agent used by JOL
+    -XX:+EnableDynamicAgentLoading
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 8080
+      https: 8443
+      metrics: 9092
+
+  serviceAccount:
+    create: true
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    pathType: ImplementationSpecific
+    hostname: trino.minikube.local
+    path: /
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      

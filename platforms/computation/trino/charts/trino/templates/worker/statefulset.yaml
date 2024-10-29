@@ -2,21 +2,21 @@ apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
 kind: StatefulSet
 metadata:
   name: {{ template "common.names.fullname" . }}
-  namespace: {{ template "nifi.namespace" . }}
+  namespace: {{ template "trino.namespace" . }}
   labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
-    app.kubernetes.io/component: nifi
-    role: nifi
+    app.kubernetes.io/component: trino-worker
+    role: trino
   {{- if .Values.commonAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.replicaCount }}
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  replicas: {{ .Values.worker.replicaCount }}
+  revisionHistoryLimit: {{ .Values.worker.revisionHistoryLimit }}
   podManagementPolicy: {{ .Values.podManagementPolicy }}
   {{- $podLabels := include "common.tplvalues.merge" ( dict "values" ( list .Values.podLabels .Values.commonLabels ) "context" . ) }}
   selector:
     matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" $podLabels "context" $ ) | nindent 6 }}
-      app.kubernetes.io/component: nifi
+      app.kubernetes.io/component: trino-worker
   serviceName: {{ printf "%s-%s" (include "common.names.fullname" .) (default "headless" .Values.service.headless.servicenameOverride) | trunc 63 | trimSuffix "-" }}
   {{- if .Values.updateStrategy }}
   updateStrategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
@@ -28,10 +28,10 @@ spec:
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
         {{- end }}
       labels: {{- include "common.labels.standard" ( dict "customLabels" $podLabels "context" $ ) | nindent 8 }}
-        app.kubernetes.io/component: nifi
+        app.kubernetes.io/component: trino
     spec:
       enableServiceLinks: {{ .Values.enableServiceLinks }}
-      serviceAccountName: {{ template "nifi.serviceAccountName" . }}
+      serviceAccountName: {{ template "trino.serviceAccountName" . }}
       {{- if .Values.image.pullSecret }}
       imagePullSecrets:
         - name: {{ .Values.image.pullSecret}}
@@ -44,8 +44,8 @@ spec:
       affinity: {{- include "common.tplvalues.render" (dict "value" .Values.affinity "context" $) | nindent 8 }}
       {{- else }}
       affinity:
-        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAffinityPreset "component" "nifi" "customLabels" $podLabels "context" $) | nindent 10 }}
-        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAntiAffinityPreset "component" "nifi" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAffinityPreset "component" "worker" "customLabels" $podLabels "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAntiAffinityPreset "component" "worker" "customLabels" $podLabels "context" $) | nindent 10 }}
         nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.nodeAffinityPreset.type "key" .Values.nodeAffinityPreset.key "values" .Values.nodeAffinityPreset.values) | nindent 10 }}
       {{- end }}
       {{- if .Values.nodeSelector }}
@@ -72,29 +72,29 @@ spec:
       {{- if .Values.dnsConfig }}
       dnsConfig: {{- include "common.tplvalues.render" (dict "value" .Values.dnsConfig "context" $) | nindent 8 }}
       {{- end }}
+      {{- if .Values.initContainers }}
       initContainers:
-        {{- if .Values.initContainers }}
         {{- include "common.tplvalues.render" (dict "value" .Values.initContainers "context" $) | trim | nindent 8 }}
-        {{- end }}
+      {{- end }}
       containers:
-        - name: nifi
-          image: {{ template "nifi.image" . }}
+        - name: trino
+          image: {{ template "trino.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.containerSecurityContext "context" $) | nindent 12 }}
           {{- end }}
-          {{- if .Values.diagnosticMode.enabled }}
-          command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
-          {{- else if .Values.command }}
-          command: {{- include "common.tplvalues.render" (dict "value" .Values.command "context" $) | nindent 12 }}
+          {{- if .Values.worker.diagnosticMode.enabled }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.worker.diagnosticMode.command "context" $) | nindent 12 }}
+          {{- else if .Values.worker.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.worker.command "context" $) | nindent 12 }}
           {{- end }}
-          {{- if .Values.diagnosticMode.enabled }}
-          args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
-          {{- else if .Values.args }}
-          args: {{- include "common.tplvalues.render" (dict "value" .Values.args "context" $) | nindent 12 }}
+          {{- if .Values.worker.diagnosticMode.enabled }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.worker.diagnosticMode.args "context" $) | nindent 12 }}
+          {{- else if .Values.worker.args }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.worker.args "context" $) | nindent 12 }}
           {{- end }}
-          {{- if .Values.resources }}
-          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.worker.resources }}
+          resources: {{- toYaml .Values.worker.resources | nindent 12 }}
           {{- end }}
           env:
             {{- if .Values.extraEnvVars }}
@@ -112,11 +112,14 @@ spec:
             {{- end }}
           {{- end }}
           ports:
-            - containerPort: {{ .Values.containerPorts.cluster }}
-              name: cluster
+            - containerPort: {{ .Values.containerPorts.http }}
+              name: http
               protocol: TCP
-            - containerPort: {{ .Values.containerPorts.siteToSite }}
-              name: site-to-site
+            - containerPort: {{ .Values.containerPorts.https }}
+              name: https
+              protocol: TCP
+            - containerPort: {{ .Values.containerPorts.metrics }}
+              name: metrics
               protocol: TCP
           {{- if not .Values.diagnosticMode.enabled }}
           {{- if .Values.customLivenessProbe }}
@@ -147,47 +150,6 @@ spec:
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - name: "bootstrap-conf"
-              mountPath: /opt/nifi/nifi-current/conf/bootstrap.conf
-              subPath: "bootstrap.conf"
-            - name: "nifi-properties"
-              mountPath: /opt/nifi/nifi-current/conf/nifi.properties
-              subPath: "nifi.properties"
-            - name: "authorizers-xml"
-              mountPath: /opt/nifi/nifi-current/conf/authorizers.xml
-              subPath: "authorizers.xml"
-            - name: "bootstrap-notification-services-xml"
-              mountPath: /opt/nifi/nifi-current/conf/bootstrap-notification-services.xml
-              subPath: "bootstrap-notification-services.xml"
-            - name: "login-identity-providers-xml"
-              mountPath: /opt/nifi/nifi-current/conf/login-identity-providers.xml
-              subPath: "login-identity-providers.xml"
-            - name: "state-management-xml"
-              mountPath: /opt/nifi/nifi-current/conf/state-management.xml
-              subPath: "state-management.xml"
-            - name: "zookeeper-properties"
-              mountPath: /opt/nifi/nifi-current/conf/zookeeper.properties
-              subPath: "zookeeper.properties"
-            - name: "flow-content"
-              mountPath: /opt/nifi/data/flow.xml
-              subPath: "flow.xml"
-            {{- if .Values.persistence.enabled }}
-            - mountPath: /opt/nifi/nifi-current/logs
-              name: {{ template "common.names.fullname" . }}-logs
-              subPath: logs
-            - mountPath: /opt/nifi/data
-              name: {{ template "common.names.fullname" . }}-data
-              subPath: data
-            - mountPath: /opt/nifi/flowfile_repository
-              name: {{ template "common.names.fullname" . }}-flowfile-repository
-              subPath: flowfile-repository
-            - mountPath: /opt/nifi/content_repository
-              name: {{ template "common.names.fullname" . }}-content-repository
-              subPath: content-repository
-            - mountPath: /opt/nifi/provenance_repository
-              name: {{ template "common.names.fullname" . }}-provenance-repository
-              subPath: provenance-repository
-            {{- end }}
             {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" ( dict "value" .Values.extraVolumeMounts "context" $ ) | nindent 12 }}
             {{- end }}
@@ -195,66 +157,6 @@ spec:
         {{- include "common.tplvalues.render" ( dict "value" .Values.sidecars "context" $ ) | nindent 8 }}
         {{- end }}
       volumes:
-        - name: "bootstrap-conf"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "bootstrap.conf"
-                path: "bootstrap.conf"
-        - name: "nifi-properties"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "nifi.properties"
-                path: "nifi.properties"
-        - name: "authorizers-xml"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "authorizers.xml"
-                path: "authorizers.xml"
-        - name: "bootstrap-notification-services-xml"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "bootstrap-notification-services.xml"
-                path: "bootstrap-notification-services.xml"
-        - name: "login-identity-providers-xml"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "login-identity-providers.xml"
-                path: "login-identity-providers.xml"
-        - name: "state-management-xml"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "state-management.xml"
-                path: "state-management.xml"
-        - name: "zookeeper-properties"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "zookeeper.properties"
-                path: "zookeeper.properties"
-        - name: "flow-content"
-          configMap:
-            name: {{ template "common.names.fullname" . }}-config
-            items:
-              - key: "flow.xml"
-                path: "flow.xml"
-        {{- if not .Values.persistence.enabled }}
-        - name: {{ template "common.names.fullname" . }}-logs
-          emptyDir: {}
-        - name: {{ template "common.names.fullname" . }}-data
-          emptyDir: {}
-        - name: {{ template "common.names.fullname" . }}-flowfile-repository
-          emptyDir: {}
-        - name: {{ template "common.names.fullname" . }}-content-repository
-          emptyDir: {}
-        - name: {{ template "common.names.fullname" . }}-provenance-repository
-          emptyDir: {}
-        {{- end }}
         {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
         {{- end }}

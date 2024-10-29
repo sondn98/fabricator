@@ -1,10 +1,10 @@
 ## @param kubeVersion Override Kubernetes version
 ##
 kubeVersion: ""
-## @param nameOverride String to partially override nifi.name template (will maintain the release name)
+## @param nameOverride String to partially override trino.name template (will maintain the release name)
 ##
 nameOverride: ""
-## @param fullnameOverride String to fully override nifi.fullname template
+## @param fullnameOverride String to fully override trino.fullname template
 ##
 fullnameOverride: ""
 ## @param clusterDomain Kubernetes Cluster Domain
@@ -16,38 +16,24 @@ commonLabels: {}
 ## @param commonAnnotations Add annotations to all the deployed resources
 ##
 commonAnnotations: {}
-## @param namespaceOverride Override namespace for Nifi resources
-## Useful when including Nifi as a chart dependency, so it can be released into a different namespace than the parent
+## @param namespaceOverride Override namespace for Trino resources
+## Useful when including Trino as a chart dependency, so it can be released into a different namespace than the parent
 ##
 namespaceOverride: ""
-## Enable diagnostic mode in the statefulset
-##
-diagnosticMode:
-  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
-  ##
-  enabled: false
-  ## @param diagnosticMode.command Command to override all containers in the statefulset
-  ##
-  command:
-    - sleep
-  ## @param diagnosticMode.args Args to override all containers in the statefulset
-  ##
-  args:
-    - infinity
-## Nifi image version
-## ref: https://hub.docker.com/r/apache/nifi
-## @param image.registry Nifi image registry
-## @param image.repository Nifi image repository
-## @skip image.tag Nifi image tag (immutable tags are recommended)
-## @param image.digest Nifi image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
-## @param image.pullPolicy Nifi image pull policy
+## Trino image version
+## ref: https://hub.docker.com/r/trinodb/trino
+## @param image.registry Trino image registry
+## @param image.repository Trino image repository
+## @skip image.tag Trino image tag (immutable tags are recommended)
+## @param image.digest Trino image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy Trino image pull policy
 ## @param image.pullSecrets Specify docker-registry secret names as an string
 ## @param image.debug Specify if debug values should be set
 ##
 image:
   registry: docker.io
-  repository: apache/nifi
-  tag: "1.27.0"
+  repository: trinodb/trino
+  tag: "463"
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -64,46 +50,149 @@ image:
   ## Set to true if you would like to see extra information on logs
   ##
   debug: false
-## @param logLevel Log level for the Nifi server. ERROR by default
+## @param logLevel Log level for the Trino server. ERROR by default
 ## Have in mind if you set it to INFO or WARN the ReadinessProve will produce a lot of logs
 ##
 logLevel: ERROR
-## @param extraEnvVars Array with extra environment variables to add to Nifi nodes
+## @param extraEnvVars Array with extra environment variables to add to Trino nodes
 ## e.g:
 ## extraEnvVars:
 ##   - name: FOO
 ##     value: "bar"
 ##
 extraEnvVars: []
-## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars for Nifi nodes
+## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars for Trino nodes
 ##
 extraEnvVarsCM: ""
-## @param extraEnvVarsSecret Name of existing Secret containing extra env vars for Nifi nodes
+## @param extraEnvVarsSecret Name of existing Secret containing extra env vars for Trino nodes
 ##
 extraEnvVarsSecret: ""
-## @param command Override default container command (useful when using custom images)
-##
-command: []
-## @param args Override default container args (useful when using custom images)
-##
-args: []
-## @param replicaCount Number of Nifi nodes
-##
-replicaCount: 1
-## @param revisionHistoryLimit The number of old history to retain to allow rollback
-##
-revisionHistoryLimit: 10
-## @param containerPorts.cluster Nifi client container port
-## @param containerPorts.siteToSite Nifi TLS container port
-## @param containerPorts.metrics Nifi Prometheus Exporter container port
+## @param containerPorts.cluster Trino client container port
+## @param containerPorts.siteToSite Trino TLS container port
+## @param containerPorts.metrics Trino Prometheus Exporter container port
 ##
 containerPorts:
-  cluster: 6007
-  siteToSite: 10000
+  http: 8080
+  https: 8443
   metrics: 9092
-## Configure extra options for Nifi containers' liveness, readiness and startup probes
+## Config Trino coordinator
+coordinator:
+  ## @param coordinator.command Override default container command (useful when using custom images)
+  ##
+  command: []
+  ## @param coordinator.args Override default container args (useful when using custom images)
+  ##
+  args: []
+  ## @param coordinator.replicaCount Number of Trino nodes
+  ##
+  replicaCount: 1
+  ## @param coordinator.revisionHistoryLimit The number of old history to retain to allow rollback
+  ##
+  revisionHistoryLimit: 10
+  ## @param coordinator.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 2
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 3
+  ##     memory: 1024Mi
+  ##
+  resources: {}
+  ## @param coordinator.config Trino coordinator configurations
+  config: {}
+## Config Trino worker
+worker:
+  ## Enable diagnostic mode in the Trino worker statefulset
+  ##
+  diagnosticMode:
+    ## @param diagnosticMode.worker.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+    ##
+    enabled: false
+    ## @param diagnosticMode.worker.command Command to override all containers in the statefulset
+    ##
+    command:
+      - sleep
+    ## @param diagnosticMode.worker.args Args to override all containers in the statefulset
+    ##
+    args:
+      - infinity
+  ## @param worker.command Override default container command (useful when using custom images)
+  ##
+  command: []
+  ## @param worker.args Override default container args (useful when using custom images)
+  ##
+  args: []
+  ## @param worker.replicaCount Number of Trino nodes
+  ##
+  replicaCount: 1
+  ## @param worker.revisionHistoryLimit The number of old history to retain to allow rollback
+  ##
+  revisionHistoryLimit: 10
+  ## @param worker.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 2
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 3
+  ##     memory: 1024Mi
+  ##
+  resources: {}
+  ## @param worker.config Trino worker configurations
+  config: {}
+## @param node Trino node configuration.
+## ref: https://trino.io/docs/current/installation/deployment.html#node-properties
+node: {}
+## @param jvm Trino jvm configuration
+## ref: https://trino.io/docs/current/installation/deployment.html#jvm-config
+jvm: |
+  -server
+  -Xmx16G
+  -XX:InitialRAMPercentage=80
+  -XX:MaxRAMPercentage=80
+  -XX:G1HeapRegionSize=32M
+  -XX:+ExplicitGCInvokesConcurrent
+  -XX:+ExitOnOutOfMemoryError
+  -XX:+HeapDumpOnOutOfMemoryError
+  -XX:-OmitStackTraceInFastThrow
+  -XX:ReservedCodeCacheSize=512M
+  -XX:PerMethodRecompilationCutoff=10000
+  -XX:PerBytecodeRecompilationCutoff=10000
+  -Djdk.attach.allowAttachSelf=true
+  -Djdk.nio.maxCachedBufferSize=2000000
+  -Dfile.encoding=UTF-8
+  # Allow loading dynamic agent used by JOL
+  -XX:+EnableDynamicAgentLoading
+## @param log Trino log configuration.
+## ref: https://trino.io/docs/current/installation/deployment.html#log-levels
+log: {}
+## @param config Common configuration for Trino servers. These configs will be applied in both workers and coordinators servers
+config: {}
+## Config Trno fault tolerant
+faultTolerant:
+  ## @param faultTolerant.policy Enabled trino fault tolerant
+  enabled: false
+  ## @param faultTolerant.policy Fault tolerant policy. Allow values: QUERY, TASK
+  policy: "QUERY"
+  ## Config Trino exchange manager
+  ## @param faultTolerant.exchangeManager.name Exchange manager name. Allow values: filesystem, hdfs
+  ## @param faultTolerant.exchangeManager.config Exchange manager config. Ref: https://trino.io/docs/current/admin/fault-tolerant-execution.html#exchange-manager
+  exchangeManager:
+    name: "filesystem"
+    config: {}
+## Configure Trino connectors. A connector configuration is presented as a dict
+## connector:
+##   connector_name:
+##     properties-1: value-1
+##     properties-2: value-2
+##     ...
+connectors: {}
+## Configure extra options for Trino containers' liveness, readiness and startup probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
-## @param livenessProbe.enabled Enable livenessProbe on Nifi containers
+## @param livenessProbe.enabled Enable livenessProbe on Trino containers
 ## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
 ## @param livenessProbe.periodSeconds Period seconds for livenessProbe
 ## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
@@ -119,7 +208,7 @@ livenessProbe:
   failureThreshold: 6
   successThreshold: 1
   probeCommandTimeout: 3
-## @param readinessProbe.enabled Enable readinessProbe on Nifi containers
+## @param readinessProbe.enabled Enable readinessProbe on Trino containers
 ## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
 ## @param readinessProbe.periodSeconds Period seconds for readinessProbe
 ## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
@@ -135,7 +224,7 @@ readinessProbe:
   failureThreshold: 6
   successThreshold: 1
   probeCommandTimeout: 2
-## @param startupProbe.enabled Enable startupProbe on Nifi containers
+## @param startupProbe.enabled Enable startupProbe on Trino containers
 ## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
 ## @param startupProbe.periodSeconds Period seconds for startupProbe
 ## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
@@ -158,27 +247,16 @@ customReadinessProbe: {}
 ## @param customStartupProbe Custom startupProbe that overrides the default one
 ##
 customStartupProbe: {}
-## @param lifecycleHooks for the Nifi container(s) to automate configuration before or after startup
+## @param lifecycleHooks for the Trino container(s) to automate configuration before or after startup
 ##
 lifecycleHooks: {}
-## @param resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
-## Example:
-## resources:
-##   requests:
-##     cpu: 2
-##     memory: 512Mi
-##   limits:
-##     cpu: 3
-##     memory: 1024Mi
-##
-resources: {}
 ## Configure Pods Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enabled Nifi pods' Security Context
+## @param podSecurityContext.enabled Enabled Trino pods' Security Context
 ## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
 ## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
 ## @param podSecurityContext.supplementalGroups Set filesystem extra groups
-## @param podSecurityContext.fsGroup Set Nifi pod's Security Context fsGroup
+## @param podSecurityContext.fsGroup Set Trino pod's Security Context fsGroup
 ##
 podSecurityContext:
   enabled: true
@@ -215,15 +293,15 @@ containerSecurityContext:
 ## @param automountServiceAccountToken Mount Service Account token in pod
 ##
 automountServiceAccountToken: false
-## @param hostAliases Nifi pods host aliases
+## @param hostAliases Trino pods host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
 hostAliases: []
-## @param podLabels Extra labels for Nifi pods
+## @param podLabels Extra labels for Trino pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 podLabels: {}
-## @param podAnnotations Annotations for Nifi pods
+## @param podAnnotations Annotations for Trino pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 podAnnotations: {}
@@ -275,7 +353,7 @@ topologySpreadConstraints: []
 ## ref: https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#pod-management-policy
 ##
 podManagementPolicy: Parallel
-## @param priorityClassName Name of the existing priority class to be used by Nifi pods, priority class needs to be created beforehand
+## @param priorityClassName Name of the existing priority class to be used by Trino pods, priority class needs to be created beforehand
 ## Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 ##
 priorityClassName: ""
@@ -283,40 +361,40 @@ priorityClassName: ""
 ## https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
 schedulerName: ""
-## @param updateStrategy.type Nifi statefulset strategy type
-## @param updateStrategy.rollingUpdate Nifi statefulset rolling update configuration parameters
+## @param updateStrategy.type Trino statefulset strategy type
+## @param updateStrategy.rollingUpdate Trino statefulset rolling update configuration parameters
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 ##
 updateStrategy:
   type: RollingUpdate
   rollingUpdate: {}
-## @param extraVolumes Optionally specify extra list of additional volumes for the Nifi pod(s)
+## @param extraVolumes Optionally specify extra list of additional volumes for the Trino pod(s)
 ## Example Use Case: mount certificates to enable TLS
 ## e.g:
 ## extraVolumes:
-## - name: nifi-keystore
+## - name: trino-keystore
 ##   secret:
 ##     defaultMode: 288
-##     secretName: nifi-keystore
-## - name: nifi-truststore
+##     secretName: trino-keystore
+## - name: trino-truststore
 ##   secret:
 ##     defaultMode: 288
-##     secretName: nifi-truststore
+##     secretName: trino-truststore
 ##
 extraVolumes: []
-## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for the Nifi container(s)
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for the Trino container(s)
 ## Example Use Case: mount certificates to enable TLS
 ## e.g:
 ## extraVolumeMounts:
-## - name: nifi-keystore
+## - name: trino-keystore
 ##   mountPath: /certs/keystore
 ##   readOnly: true
-## - name: nifi-truststore
+## - name: trino-truststore
 ##   mountPath: /certs/truststore
 ##   readOnly: true
 ##
 extraVolumeMounts: []
-## @param sidecars Add additional sidecar containers to the Nifi pod(s)
+## @param sidecars Add additional sidecar containers to the Trino pod(s)
 ## e.g:
 ## sidecars:
 ##   - name: your-image-name
@@ -327,7 +405,7 @@ extraVolumeMounts: []
 ##         containerPort: 1234
 ##
 sidecars: []
-## @param initContainers Add additional init containers to the Nifi pod(s)
+## @param initContainers Add additional init containers to the Trino pod(s)
 ## Example:
 ## initContainers:
 ##   - name: your-image-name
@@ -338,17 +416,17 @@ sidecars: []
 ##         containerPort: 1234
 ##
 initContainers: []
-## Nifi Pod Disruption Budget configuration
+## Trino Pod Disruption Budget configuration
 ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
 ##
 pdb:
-  ## @param pdb.create Enable/disable a Pod Disruption Budget creation for Nifi pods
+  ## @param pdb.create Enable/disable a Pod Disruption Budget creation for Trino pods
   ##
   create: true
-  ## @param pdb.minAvailable Minimum number/percentage of Nifi pods that should remain scheduled
+  ## @param pdb.minAvailable Minimum number/percentage of Trino pods that should remain scheduled
   ##
   minAvailable: ""
-  ## @param pdb.maxUnavailable Maximum number/percentage of Nifi pods that may be made unavailable. Defaults to `1` if both `pdb.minAvailable` and `pdb.maxUnavailable` are empty.
+  ## @param pdb.maxUnavailable Maximum number/percentage of Trino pods that may be made unavailable. Defaults to `1` if both `pdb.minAvailable` and `pdb.maxUnavailable` are empty.
   ##
   maxUnavailable: ""
 ## @section Traffic Exposure parameters
@@ -356,13 +434,13 @@ service:
   ## @param service.type Kubernetes Service type
   ##
   type: ClusterIP
-  ## @param service.ports.client Nifi cluster port
-  ## @param service.ports.tls Nifi site-to-site port
-  ## @param service.ports.follower Nifi metrics port
+  ## @param service.ports.http Trino http port. Ignored if tls enabled
+  ## @param service.ports.https Trino https port. Ignored if tls disabled
+  ## @param service.ports.follower Trino metrics port
   ##
   ports:
-    cluster: 6007
-    siteToSite: 10000
+    http: 8080
+    https: 8443
     metrics: 9092
   ## Node ports to expose
   ## NOTE: choose port between <30000-32767>
@@ -386,49 +464,49 @@ service:
   ##     timeoutSeconds: 300
   ##
   sessionAffinityConfig: {}
-  ## @param service.clusterIP Nifi service Cluster IP
+  ## @param service.clusterIP Trino service Cluster IP
   ## e.g.:
   ## clusterIP: None
   ##
   clusterIP: ""
-  ## @param service.loadBalancerIP Nifi service Load Balancer IP
+  ## @param service.loadBalancerIP Trino service Load Balancer IP
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
   ##
   loadBalancerIP: ""
-  ## @param service.loadBalancerSourceRanges Nifi service Load Balancer sources
+  ## @param service.loadBalancerSourceRanges Trino service Load Balancer sources
   ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
   ## e.g:
   ## loadBalancerSourceRanges:
   ##   - 10.10.10.0/24
   ##
   loadBalancerSourceRanges: []
-  ## @param service.externalTrafficPolicy Nifi service external traffic policy
+  ## @param service.externalTrafficPolicy Trino service external traffic policy
   ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
   ##
   externalTrafficPolicy: Cluster
-  ## @param service.annotations Additional custom annotations for Nifi service
+  ## @param service.annotations Additional custom annotations for Trino service
   ##
   annotations: {}
-  ## @param service.extraPorts Extra ports to expose in the Nifi service (normally used with the `sidecar` value)
+  ## @param service.extraPorts Extra ports to expose in the Trino service (normally used with the `sidecar` value)
   ##
   extraPorts: []
   ## @param service.headless.annotations Annotations for the Headless Service
-  ## @param service.headless.publishNotReadyAddresses If the Nifi headless service should publish DNS records for not ready pods
+  ## @param service.headless.publishNotReadyAddresses If the Trino headless service should publish DNS records for not ready pods
   ## @param service.headless.servicenameOverride String to partially override headless service name
   ##
   headless:
     publishNotReadyAddresses: true
     annotations: {}
     servicenameOverride: ""
-## Service account for Nifi to use.
+## Service account for Trino to use.
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
 serviceAccount:
-  ## @param serviceAccount.create Enable creation of ServiceAccount for Nifi pod
+  ## @param serviceAccount.create Enable creation of ServiceAccount for Trino pod
   ##
   create: true
   ## @param serviceAccount.name The name of the ServiceAccount to use.
-  ## If not set and create is true, a name is generated using the nifi.fullname template
+  ## If not set and create is true, a name is generated using the trino.fullname template
   ##
   name: ""
   ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
@@ -442,14 +520,14 @@ serviceAccount:
 ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
 ##
 persistence:
-  ## @param persistence.enabled Enable persistence on Nifi replicas using a `PersistentVolumeClaim`. If false, use emptyDir
+  ## @param persistence.enabled Enable persistence on Trino replicas using a `PersistentVolumeClaim`. If false, use emptyDir
   ##
   enabled: true
-  ## @param persistence.existingClaim Name of an existing `PersistentVolumeClaim` for Nifi replicas
+  ## @param persistence.existingClaim Name of an existing `PersistentVolumeClaim` for Trino replicas
   ## NOTE: When it's set the rest of persistence parameters are ignored
   ##
   existingClaim: ""
-  ## @param persistence.storageClass Nifi persistent volume storage Class
+  ## @param persistence.storageClass Trino persistent volume storage Class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is
@@ -457,14 +535,14 @@ persistence:
   ##   GKE, AWS & OpenStack)
   ##
   storageClass: ""
-  ## @param persistence.annotations Nifi persistent volume claim annotations
+  ## @param persistence.annotations Trino persistent volume claim annotations
   ##
   annotations: {}
-  ## @param persistence.accessModes Nifi persistent volume access Modes
+  ## @param persistence.accessModes Trino persistent volume access Modes
   ##
   accessModes:
     - ReadWriteOnce
-  ## @param persistence.size Nifi persistent volume size
+  ## @param persistence.size Trino persistent volume size
   ##
   size: 8Gi
   ## @param persistence.selector Selector to match an existing Persistent Volume
@@ -476,15 +554,15 @@ persistence:
   ## Persistence for a dedicated data log directory
   ##
   dataLogDir:
-    ## @param persistence.dataLogDir.size PVC Storage Request for Nifi's dedicated data log directory
+    ## @param persistence.dataLogDir.size PVC Storage Request for Trino's dedicated data log directory
     ##
     size: 8Gi
-    ## @param persistence.dataLogDir.existingClaim Provide an existing `PersistentVolumeClaim` for Nifi's data log directory
+    ## @param persistence.dataLogDir.existingClaim Provide an existing `PersistentVolumeClaim` for Trino's data log directory
     ## If defined, PVC must be created manually before volume will be bound
     ## The value is evaluated as a template
     ##
     existingClaim: ""
-    ## @param persistence.dataLogDir.selector Selector to match an existing Persistent Volume for Nifi's data log PVC
+    ## @param persistence.dataLogDir.selector Selector to match an existing Persistent Volume for Trino's data log PVC
     ## If set, the PVC can't have a PV dynamically provisioned for it
     ## E.g.
     ## selector:
@@ -542,11 +620,11 @@ volumePermissions:
     enabled: true
     seLinuxOptions: {}
     runAsUser: 0
-## Nifi ingress parameters
+## Trino ingress parameters
 ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ##
 ingress:
-  ## @param ingress.enabled Enable ingress record generation for Nifi
+  ## @param ingress.enabled Enable ingress record generation for Trino
   ##
   enabled: false
   ## @param ingress.ingressClassName IngressClass that will be be used to implement the Ingress (Kubernetes 1.18+)
@@ -562,7 +640,7 @@ ingress:
   apiVersion: ""
   ## @param ingress.hostname Default host for the ingress record
   ##
-  hostname: nifi.local
+  hostname: trino.local
   ## @param ingress.path Default path for the ingress record
   ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers
   ##
@@ -608,8 +686,8 @@ ingress:
   ## e.g:
   ## extraTls:
   ## - hosts:
-  ##     - nifi.local
-  ##   secretName: nifi.local-tls
+  ##     - trino.local
+  ##   secretName: trino.local-tls
   ##
   extraTls: []
   ## @param ingress.secrets Custom TLS certificates as secrets
@@ -648,19 +726,19 @@ ingress:
   extraRules: []
 
 ## @section Metrics parameters
-## Nifi Prometheus Exporter configuration
+## Trino Prometheus Exporter configuration
 ##
 metrics:
-  ## @param metrics.enabled Enable Prometheus to access Nifi metrics endpoint
+  ## @param metrics.enabled Enable Prometheus to access Trino metrics endpoint
   ##
   enabled: false
   ## Service configuration
   ##
   service:
-    ## @param metrics.service.type Nifi Prometheus Exporter service type
+    ## @param metrics.service.type Trino Prometheus Exporter service type
     ##
     type: ClusterIP
-    ## @param metrics.service.port Nifi Prometheus Exporter service port
+    ## @param metrics.service.port Trino Prometheus Exporter service port
     ##
     port: 9141
     ## @param metrics.service.annotations [object] Annotations for Prometheus to auto-discover the metrics endpoint
@@ -718,16 +796,16 @@ metrics:
     ##
     additionalLabels: {}
     ## @param metrics.prometheusRule.rules PrometheusRule definitions
-    ##  - alert: NifiSyncedFollowers
+    ##  - alert: TrinoSyncedFollowers
     ##    annotations:
-    ##      message: The number of synced followers for the leader node in Nifi deployment my-release is less than 2. This usually means that some of the Nifi nodes aren't communicating properly. If it doesn't resolve itself you can try killing the pods (one by one).
+    ##      message: The number of synced followers for the leader node in Trino deployment my-release is less than 2. This usually means that some of the Trino nodes aren't communicating properly. If it doesn't resolve itself you can try killing the pods (one by one).
     ##    expr: max(synced_followers{service="my-release-metrics"}) < 2
     ##    for: 5m
     ##    labels:
     ##      severity: critical
-    ##  - alert: NifiOutstandingRequests
+    ##  - alert: TrinoOutstandingRequests
     ##    annotations:
-    ##      message: The number of outstanding requests for Nifi pod {{ $labels.pod }} is greater than 10. This can indicate a performance issue with the Pod or cluster a whole.
+    ##      message: The number of outstanding requests for Trino pod {{ $labels.pod }} is greater than 10. This can indicate a performance issue with the Pod or cluster a whole.
     ##    expr: outstanding_requests{service="my-release-metrics"} > 10
     ##    for: 5m
     ##    labels:
@@ -741,7 +819,7 @@ tls:
     ## @param tls.certManager.exists Whether a cert-manager instance and an issuer are ready to issue a tls certificate
     ##
     exists: true
-    ## @param tls.certManager.issuerName Name of an issuer which issue tls certificates for Nifi servers
+    ## @param tls.certManager.issuerName Name of an issuer which issue tls certificates for Trino servers
     ##
     issuerName: ""
     ## @param tls.certManager.clusterIssuer Check if the issuer is cluster-wide or not
@@ -753,18 +831,11 @@ tls:
     ## @param tls.certManager.existingKeystoreSecretKey The secret key from the tls.certManager.existingSecret containing the Keystore.
     ##
     existingKeystoreSecretKey: ""
-    # Cert-manager takes care of rotating the node certificates, so default their lifetime to 90 days.
-    # But when the CA expires you may need to 'helm delete' the cluster, delete all the node certificates and secrets,
-    # and then 'helm install' the NiFi cluster again.  If a site-to-site trusted CA or a NiFi Registry CA certificate expires,
-    # you'll need to restart all pods to pick up the new version of the CA certificate.  So default the CA lifetime to 10 years
-    # to avoid that happening very often.
-    # ref: https://github.com/cert-manager/cert-manager/issues/2478#issuecomment-1095545529
-    certDuration: 2160h
   client:
     ## @param tls.client.enabled Enable TLS for client connections
     ##
     enabled: true
-    ## @param tls.client.existingSecret Name of the existing secret containing the TLS certificates for Nifi client communications
+    ## @param tls.client.existingSecret Name of the existing secret containing the TLS certificates for Trino client communications
     ##
     existingSecret: ""
     ## @param tls.client.existingSecretKeystoreKey The secret key from the tls.client.existingSecret containing the Keystore.
@@ -775,78 +846,13 @@ tls:
     existingSecretTruststoreKey: ""
     ## @param tls.client.keystorePath Location of the KeyStore file used for Client connections
     ##
-    keystorePath: /opt/nifi/config/certs/client/nifi.keystore.jks
+    keystorePath: /opt/trino/config/certs/client/trino.keystore.jks
     ## @param tls.client.truststorePath Location of the TrustStore file used for Client connections
     ##
-    truststorePath: /opt/nifi/config/certs/client/nifi.truststore.jks
-    ## @param tls.client.passwordsSecretName Existing secret containing Keystore and truststore passwords
-    ##
-    passwordsSecretName: ""
-    ## @param tls.client.passwordsSecretKeystoreKey The secret key from the tls.client.passwordsSecretName containing the password for the Keystore.
-    ##
-    passwordsSecretKeystoreKey: ""
-    ## @param tls.client.passwordsSecretTruststoreKey The secret key from the tls.client.passwordsSecretName containing the password for the Truststore.
-    ##
-    passwordsSecretTruststoreKey: ""
+    truststorePath: /opt/trino/config/certs/client/trino.truststore.jks
     ## @param tls.client.keystorePassword Password to access KeyStore if needed
     ##
     keystorePassword: ""
     ## @param tls.client.truststorePassword Password to access TrustStore if needed
     ##
     truststorePassword: ""
-## ZooKeeper chart configuration
-## https://github.com/bitnami/charts/blob/main/bitnami/zookeeper/values.yaml
-##
-zookeeper:
-  ## @param zookeeper.enabled Switch to enable or disable the ZooKeeper helm chart. Must be false if you use KRaft mode.
-  ##
-  enabled: false
-  ## @param zookeeper.replicaCount Number of ZooKeeper nodes
-  ##
-  replicaCount: 1
-  ## ZooKeeper authentication
-  ##
-  auth:
-    client:
-      ## @param zookeeper.auth.client.enabled Enable ZooKeeper auth
-      ##
-      enabled: false
-      ## @param zookeeper.auth.client.clientUser User that will use ZooKeeper client (zkCli.sh) to authenticate. Must exist in the serverUsers comma-separated list.
-      ##
-      clientUser: ""
-      ## @param zookeeper.auth.client.clientPassword Password that will use ZooKeeper client (zkCli.sh) to authenticate. Must exist in the serverPasswords comma-separated list.
-      ##
-      clientPassword: ""
-      ## @param zookeeper.auth.client.serverUsers Comma, semicolon or whitespace separated list of user to be created. Specify them as a string, for example: "user1,user2,admin"
-      ##
-      serverUsers: ""
-      ## @param zookeeper.auth.client.serverPasswords Comma, semicolon or whitespace separated list of passwords to assign to users when created. Specify them as a string, for example: "pass4user1, pass4user2, pass4admin"
-      ##
-      serverPasswords: ""
-  ## ZooKeeper Persistence parameters
-  ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
-  ## @param zookeeper.persistence.enabled Enable persistence on ZooKeeper using PVC(s)
-  ## @param zookeeper.persistence.storageClass Persistent Volume storage class
-  ## @param zookeeper.persistence.accessModes Persistent Volume access modes
-  ## @param zookeeper.persistence.size Persistent Volume size
-  ##
-  persistence:
-    enabled: true
-    storageClass: ""
-    accessModes:
-      - ReadWriteOnce
-    size: 8Gi
-## Nifi registry config
-registry:
-  ## @param registry.enabled Enable the Nifi registry
-  enabled: false
-  ## @param registry.url.enabled Nifi registry url
-  url: ""
-  ## @param registry.enabled.port Nifi registry port
-  port: 80
-## External Zookeeper Configuration
-##
-externalZookeeper:
-  ## @param externalZookeeper.servers List of external zookeeper servers to use
-  ##
-  servers: []
