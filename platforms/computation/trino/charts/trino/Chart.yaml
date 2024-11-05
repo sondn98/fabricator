@@ -1,0 +1,17 @@
+apiVersion: v2
+appVersion: 462
+description: Fast distributed SQL query engine for big data analytics that helps you explore your data universe
+home: https://github.com/sondn98/fabricator
+keywords:
+- trino
+maintainers:
+- name: Do Ngoc Son
+  url: https://github.com/sondn98/fabricator
+name: trino
+sources:
+- https://github.com/sondn98/fabricator/tree/master/platforms/computation/trino/charts/trino
+version: 0.1.0
+dependencies:
+- name: common
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 2.x.x

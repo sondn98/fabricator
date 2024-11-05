@@ -47,6 +47,9 @@ apps:
     enabled: false
     enabled_schema_registry: true
     enabled_akhq: true
+  ## Trino is still experimental
+  trino:
+    enabled: false
   vault:
     enabled: false
   zookeeper:

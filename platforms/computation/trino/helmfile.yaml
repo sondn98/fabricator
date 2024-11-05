@@ -1,8 +1,0 @@
-releases:
-- name: trino
-  namespace: trino
-  chart: ./chart
-  version: 1.0.0
-  values:
-  - ./trino.yaml.gotmpl
-  - fullnameOverride: trino
