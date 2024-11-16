@@ -7,9 +7,9 @@ var:
 
 includes:
   k3s:
-    taskfile: k3s.yml
+    taskfile: k3s
   minikube:
-    taskfile: minikube.yml
+    taskfile: minikube
 
 tasks:
   up:

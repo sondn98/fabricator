@@ -16,4 +16,5 @@ helmfiles:
   - path: nginx-ingress-controller/helmfile.yaml
   - path: sealed-secrets/helmfile.yaml
   - path: cert-manager/helmfile.yaml
-# - path: addons/metallb/helmfile.yaml
+  - path: cilium/helmfile.yaml
+  - path: metallb/helmfile.yaml

@@ -1,0 +1,115 @@
+Vagrant.configure("2") do |config|
+
+  master = { name: "homelab-1", ip: "192.168.56.10" }
+
+  workers = [
+    { name: "homelab-2", ip: "192.168.56.11" },
+    { name: "homelab-3", ip: "192.168.56.12" }
+  ]
+
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_check_update = false
+
+  def common_setup(ref)
+    ref.vm.provision "shell", privileged: false, inline: <<-SHELL
+      sudo apt update
+      sudo apt install net-tools -y
+    SHELL
+  end
+
+  def setup_master(ref, ip)
+    ref.vm.provision "shell", privileged: false, inline: <<-SHELL
+      curl -sfL "https://get.k3s.io" | INSTALL_K3S_EXEC="server \
+        --flannel-backend none \
+        --disable=traefik \
+        --disable-network-policy \
+        --node-ip=#{ip}
+        --bind-address=0.0.0.0" K3S_TOKEN="SuperSecr3t" sh -s -
+      sudo chown vagrant:vagrant /etc/rancher/k3s/k3s.yaml
+      kubectl taint node --all node.kubernetes.io/not-ready:NoSchedule-
+
+      export USER_BINARY="/usr/local/bin"
+      export ARCH="amd64"
+      export OS="linux"
+
+      ## Install Helm
+      export HELM_VERSION="v3.9.1"
+      export HELM_DOWNLOAD_LINK="https://get.helm.sh/helm-${HELM_VERSION}-${OS}-${ARCH}.tar.gz"
+      wget $HELM_DOWNLOAD_LINK -O /tmp/helm.tar.gz \
+      && mkdir -p /tmp/helm \
+      && tar -xvzf /tmp/helm.tar.gz -C /tmp/helm \
+      && sudo mv /tmp/helm/linux-$ARCH/helm $USER_BINARY \
+      && rm -rf /tmp/helm.tar.gz /tmp/helm
+      helm plugin install https://github.com/databus23/helm-diff
+
+      ## Install Helmfile
+      export HELMFILE_VERSION=v0.144.0
+      export HELMFILE_DOWNLOAD_LINK="https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_${OS}_${ARCH}"
+      sudo wget $HELMFILE_DOWNLOAD_LINK -O $USER_BINARY/helmfile
+      sudo chmod 755 $USER_BINARY/helmfile
+
+      ## Install Kustomize
+      export KUSTOMIZE_VERSION="v4.5.7"
+      export KUSTOMIZE_DOWNLOAD_LINK="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_${OS}_${ARCH}.tar.gz"
+      wget $KUSTOMIZE_DOWNLOAD_LINK -O /tmp/kustomize.tar.gz \
+      && tar -zxvf /tmp/kustomize.tar.gz -C /tmp
+      sudo install -m 0755 /tmp/kustomize $USER_BINARY/kustomize \
+      && rm -rf /tmp/kustomize*
+      sudo chown vagrant:vagrant $USER_BINARY/kustomize
+
+      ## Install Cilium
+      mkdir -p /home/vagrant/.kube \
+      && sudo cp /etc/rancher/k3s/k3s.yaml /home/vagrant/.kube/config \
+      && sudo chown -R vagrant:vagrant /home/vagrant/.kube
+      helm repo add bitnami https://charts.bitnami.com/bitnami
+      cd /home/vagrant/core/cilium
+      helmfile apply
+
+      sudo cat /var/lib/rancher/k3s/server/token > /home/vagrant/.token/master
+    SHELL
+  end
+
+  def setup_worker(ref, master_ip, node_ip)
+    ref.vm.provision "shell", privileged: false, inline: <<-SHELL
+      MASTER_TOKEN="$(cat /home/vagrant/.token/master)"
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent \
+        --node-ip=#{node_ip} \
+        --bind-address=0.0.0.0" K3S_URL="https://#{master_ip}:6443" K3S_TOKEN="$MASTER_TOKEN" sh -s -
+    SHELL
+  end
+
+  ## Define Master node
+  config.vm.define master[:name] do |master_node|
+    master_node.vm.box = "ubuntu/jammy64"
+    master_node.vm.hostname = master[:name]
+    master_node.vm.network "private_network", ip: master[:ip]
+    master_node.vm.provider "virtualbox" do |vb|
+      vb.name = master[:name]
+      vb.gui = false
+      vb.memory = "2048"
+      vb.cpus = 1
+    end
+    master_node.vm.synced_folder "../../core/", "/home/vagrant/core/"
+    master_node.vm.synced_folder "./.vagrant/tmp", "/home/vagrant/.token", create: true
+    common_setup(master_node)
+    setup_master(master_node, master[:ip])
+  end
+
+  # Define Worker nodes
+  workers.each do |worker_node|
+    config.vm.define worker_node[:name] do |worker|
+      worker.vm.box = "ubuntu/jammy64"
+      worker.vm.hostname = worker_node[:name]
+      worker.vm.network "private_network", ip: worker_node[:ip]
+      worker.vm.provider "virtualbox" do |vb|
+        vb.name = worker_node[:name]
+        vb.gui = false
+        vb.memory = "4096"
+        vb.cpus = 1
+      end
+      worker.vm.synced_folder "./.vagrant/tmp/", "/home/vagrant/.token"
+      common_setup(worker)
+      setup_worker(worker, master[:ip], worker_node[:ip])
+    end
+  end
+end

@@ -12,17 +12,17 @@ tasks:
 
   up:
     cmds:
-    - minikube start --driver=docker
-                     --memory {{ .CLUSTER_MEMORY }}
-                     --cpus {{ .CLUSTER_CPUS }}
-                     --nodes 1
-                     --mount
-                     --mount-string="{{ .MACHINE_MOUNTPATH }}:{{ .CLUSTER_MOUNTPATH }}"
-    - kubectl ctx minikube
+      - minikube start --driver=docker
+                      --memory {{ .CLUSTER_MEMORY }}
+                      --cpus {{ .CLUSTER_CPUS }}
+                      --nodes 1
+                      --mount
+                      --mount-string="{{ .MACHINE_MOUNTPATH }}:{{ .CLUSTER_MOUNTPATH }}"
+      - kubectl ctx minikube
 
   down:
     cmds:
-    - minikube stop --all
+      - minikube stop --all
 
   status:
     cmds:
@@ -30,4 +30,4 @@ tasks:
 
   delete:
     cmds:
-    - minikube delete
+      - minikube delete
