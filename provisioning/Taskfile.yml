@@ -1,0 +1,8 @@
+version: '3'
+
+silent: true
+
+tasks:
+  provision:
+    cmds:
+      - ansible-playbook -i inventories/{{ .INVENTORIES | vm }} playbook.yml

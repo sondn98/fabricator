@@ -31,3 +31,9 @@ tasks:
   delete:
     cmds:
       - minikube delete
+
+  core-services:
+    dir: ../../core/
+    cmds:
+      - helmfile repos
+      - helmfile apply

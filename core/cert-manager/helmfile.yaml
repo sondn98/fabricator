@@ -1,8 +1,8 @@
 releases:
-- name: cert-manager
-  namespace: cert-manager
-  chart: jetstack/cert-manager
-  version: v1.16.1
-  values:
-  - ./cert-manager.yaml
-  - fullnameOverride: cert-manager
+  - name: cert-manager
+    namespace: cert-manager
+    chart: jetstack/cert-manager
+    version: v1.16.1
+    values:
+      - ./cert-manager.yaml.gotmpl
+      - fullnameOverride: cert-manager

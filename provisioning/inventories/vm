@@ -1,0 +1,12 @@
+[local]
+localhost ansible_host=127.0.0.1
+
+[master]
+192.168.56.10
+
+[worker]
+192.168.56.[11:12]
+
+[homelab:children]
+master
+worker

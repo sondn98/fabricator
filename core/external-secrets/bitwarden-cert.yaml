@@ -1,0 +1,23 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bitwarden-sdk-server
+  namespace: external-secrets
+spec:
+  duration: 2160h # 90d
+  renewBefore: 360h  # 15d
+  isCA: false
+  usages:
+  - server auth
+  - client auth
+  commonName: bitwarden-sdk-server.fabricator.com
+  dnsNames:
+  - bitwarden-sdk-server.external-secrets.svc.cluster.local
+  - bitwarden-sdk-server.fabricator.com
+  issuerRef:
+    group: cert-manager.io
+    kind:  ClusterIssuer
+    name:  ca-issuer
+  secretName: bitwarden-tls-certs
+  

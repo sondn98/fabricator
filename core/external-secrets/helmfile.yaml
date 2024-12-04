@@ -1,0 +1,9 @@
+releases:
+  - name: external-secrets
+    namespace: external-secrets
+    chart: external-secrets/external-secrets
+    version: 0.12.1
+    values:
+      - ./external-secrets.yaml
+      - fullnameOverride: external-secrets
+
