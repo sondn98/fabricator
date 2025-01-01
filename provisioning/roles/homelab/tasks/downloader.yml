@@ -1,0 +1,39 @@
+---
+- name: Download package
+  ansible.builtin.get_url:
+    url: "{{ url }}"
+    dest: "{{ dest }}"
+    mode: "{{ mode | default('0600') }}"
+
+- name: Create folder for decompression
+  ansible.builtin.file:
+    path: "{{ decompressed_path_prefix | default('/tmp') }}/{{ bin_name }}"
+    state: directory
+  when: need_decompress | default(false)
+
+- name: Decompress package
+  ansible.builtin.unarchive:
+    src: "{{ dest }}"
+    dest: "{{ decompressed_path_prefix | default('/tmp') }}/{{ bin_name }}"
+    remote_src: yes
+  when: need_decompress | default(false)
+
+- name: Copy from decompressed to user binary
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ decompressed_path_prefix | default('/tmp') }}/{{ bin_name }}/{{ tmp_bin_relpath }}"
+    dest: "{{ user_binary_folder | default('/usr/local/bin') }}/{{ bin_name}}"
+    mode: o+x
+    remote_src: true
+  when: need_decompress | default(false)
+
+- name: Copy to user binary
+  become: yes
+  ansible.builtin.copy:
+    src: "{{ decompressed_path_prefix | default('/tmp') }}/{{ tmp_bin_relpath }}"
+    dest: "{{ user_binary_folder | default('/usr/local/bin') }}/{{ bin_name}}"
+    mode: o+x
+    remote_src: true
+  when: not need_decompress | default(true)
+
+

@@ -3,6 +3,8 @@ repositories:
     url:  https://charts.bitnami.com/bitnami
   - name: jetstack
     url: https://charts.jetstack.io
+  - name: external-secrets
+    url: https://charts.external-secrets.io
 
 helmDefaults:
   wait: true
@@ -12,9 +14,10 @@ helmDefaults:
   timeout: 600
 
 helmfiles:
-  - path: argo-cd/helmfile.yaml
-  - path: nginx-ingress-controller/helmfile.yaml
   - path: sealed-secrets/helmfile.yaml
+  - path: external-secrets/helmfile.yaml
   - path: cert-manager/helmfile.yaml
   - path: cilium/helmfile.yaml
-  - path: metallb/helmfile.yaml
+  # - path: metallb/helmfile.yaml
+  - path: nginx-ingress-controller/helmfile.yaml
+  - path: argo-cd/helmfile.yaml

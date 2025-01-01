@@ -2,28 +2,20 @@ version: '3'
 
 silent: true
 
-vars:
-  K3S_CLUSTER_NAME: '{{ .K3S_CLUSTER_NAME | default "k3s-local" }}'
-
 tasks:
 
   up:
     cmds:
-      - |
-        if [ "$(k3d cluster list -o json)" == "[]" ]; then
-          k3d cluster create {{ .K3S_CLUSTER_NAME }} --kubeconfig-switch-context
-        fi
-      - k3d cluster start {{ .K3S_CLUSTER_NAME }} --timeout 60s --wait
-      - kubectl ctx k3d-{{ .K3S_CLUSTER_NAME }}
+      - vagrant up
 
   down:
     cmds:
-      - k3d cluster stop {{ .K3S_CLUSTER_NAME }}
+      - vagrant halt
 
   status:
     cmds:
-      - k3d cluster list
+      - vagrant status
 
   delete:
     cmds:
-      - k3d cluster stop {{ .K3S_CLUSTER_NAME }}
+      - vagrant destroy -f

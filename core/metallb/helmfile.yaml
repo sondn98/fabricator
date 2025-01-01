@@ -1,8 +1,8 @@
 releases:
-- name: metallb
-  namespace: kube-system
-  chart: bitnami/metallb
-  version: 6.3.10
-  values:
-  - ./metallb.yaml.gotmpl
-  - fullnameOverride: metallb
+  - name: metallb
+    namespace: kube-system
+    chart: bitnami/metallb
+    version: 6.3.10
+    values:
+      - ./metallb.yaml.gotmpl
+      - fullnameOverride: metallb

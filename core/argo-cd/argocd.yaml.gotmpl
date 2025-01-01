@@ -1,3 +1,9 @@
+extraDeploy:
+  - |
+    {{ tpl (readFile "secrets.yaml") . | nindent 4 | trim }}
+  - |
+    {{ tpl (readFile "repos.yaml") . | nindent 4 | trim }}
+
 image:
   registry: docker.io
   repository: bitnami/argo-cd

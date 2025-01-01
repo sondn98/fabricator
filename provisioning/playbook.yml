@@ -1,0 +1,6 @@
+---
+- hosts: homelab
+  remote_user: vagrant
+  become: yes
+  roles:
+    - homelab
