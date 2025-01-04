@@ -3,7 +3,6 @@ version: '3'
 env:
   PRIVATE_KEY: tls.key
   PUBLIC_KEY: tls.crt
-  SECRET_NAME: sealed-secrets-key
 
 tasks:
 
@@ -13,27 +12,27 @@ tasks:
       - sh: "[ -z $(ls -A .) ]"
         msg: "The secrets folder is not empty"
     cmds:
-    - openssl req -x509 -days 365 -nodes -newkey rsa:4096 -keyout "$PRIVATE_KEY" -out "$PUBLIC_KEY" -subj "/CN=sealed-secrets/O=sealed-secrets"
+      - openssl req -x509 -days 365 -nodes -newkey rsa:4096 -keyout "$PRIVATE_KEY" -out "$PUBLIC_KEY" -subj "/CN=sealed-secrets/O=sealed-secrets"
 
   deploy:
     cmds:
-    - |
-      if [[ -z $(kubectl get ns | grep "sealed-secrets") ]]; then
-        echo "Creating namespace sealed-secrets"
-        kubectl create namespace sealed-secrets
-      fi
-    - |
-      if [[ -z $(kubectl get secret -n sealed-secrets | grep "sealed-secrets-key") ]]; then
-        echo "Creating master secret for sealed-secrets"
-        kubectl apply -f master-secret.yaml -n sealed-secrets
-      fi
-    - helmfile repos
-    - helmfile apply
+      - |
+        if [[ -z $(kubectl get ns | grep "sealed-secrets") ]]; then
+          echo "Creating namespace sealed-secrets"
+          kubectl create namespace sealed-secrets
+        fi
+      - |
+        if [[ -z $(kubectl get secret -n sealed-secrets | grep "sealed-secrets-key") ]]; then
+          echo "Creating master secret for sealed-secrets"
+          kubectl apply -f master-secret.yaml -n sealed-secrets
+        fi
+      - helmfile repos
+      - helmfile apply
 
   encrypt-file:
     cmds:
-    - kubeseal --raw --scope cluster-wide --from-file={{ .CLI_ARGS }} --cert=secrets/$PUBLIC_KEY
+      - kubeseal --raw --scope cluster-wide --from-file={{ .CLI_ARGS }} --cert=secrets/$PUBLIC_KEY
 
   encrypt-string:
     cmds:
-    - echo -n {{ .CLI_ARGS }} | kubeseal --raw --scope cluster-wide --from-file=/dev/stdin --cert=secrets/$PUBLIC_KEY
+      - echo -n {{ .CLI_ARGS }} | kubeseal --raw --scope cluster-wide --from-file=/dev/stdin --cert=secrets/$PUBLIC_KEY

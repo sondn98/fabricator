@@ -307,6 +307,8 @@ docker/other/strapi/app
 # Misc
 **/drafts/
 **/*.jar
+**/tls.crt
+**/tls.key
 .images
 **/.DS_Store
 **/.env

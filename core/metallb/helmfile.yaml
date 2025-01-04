@@ -6,3 +6,7 @@ releases:
     values:
       - ./metallb.yaml.gotmpl
       - fullnameOverride: metallb
+    hooks:
+      - events: ["postsync"]
+        command: "kubectl"
+        args: ["apply", "-f", "address-pool.yaml"]

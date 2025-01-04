@@ -150,7 +150,7 @@ akhq:
       - /
     pathType: "ImplementationSpecific"
     hosts:
-      - akhq.minikube.local
+      - akhq.fabricator.vn
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"

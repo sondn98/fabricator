@@ -31,7 +31,7 @@ localstack:
       nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     hosts:
-      - host: localstack.minikube.local
+      - host: localstack.fabricator.vn
         paths:
           - path: /
             pathType: ImplementationSpecific

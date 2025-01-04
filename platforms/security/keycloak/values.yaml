@@ -40,7 +40,7 @@ keycloak:
     enabled: true
     ingressClassName: nginx
     pathType: ImplementationSpecific
-    hostname: keycloak.minikube.local
+    hostname: keycloak.fabricator.vn
     path: "{{ .Values.httpRelativePath }}"
     annotations:
       kubernetes.io/ingress.class: nginx

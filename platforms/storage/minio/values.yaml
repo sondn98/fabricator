@@ -34,7 +34,7 @@ minio:
   ingress:
     enabled: true
     ingressClassName: "nginx"
-    hostname: minio.minikube.local
+    hostname: minio.fabricator.vn
     path: /
     pathType: ImplementationSpecific
     annotations:

@@ -116,7 +116,7 @@ kibana:
   ingress:
     enabled: true
     pathType: ImplementationSpecific
-    hostname: kibana.minikube.local
+    hostname: kibana.fabricator.vn
     path: /
   ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
   resourcesPreset: "small"

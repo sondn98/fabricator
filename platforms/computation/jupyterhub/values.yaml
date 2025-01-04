@@ -58,7 +58,7 @@ jupyterhub:
       enabled: true
       ingressClassName: "nginx"
       pathType: ImplementationSpecific
-      hostname: jupyterhub.minikube.local
+      hostname: jupyterhub.fabricator.vn
       path: /
       annotations:
         kubernetes.io/ingress.class: nginx

@@ -6,3 +6,7 @@ releases:
     values:
       - ./cert-manager.yaml.gotmpl
       - fullnameOverride: cert-manager
+    hooks:
+      - events: ["postsync"]
+        command: "kubectl"
+        args: ["apply", "-f", "issuer-ca.yaml"]
