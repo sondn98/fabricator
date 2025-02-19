@@ -27,3 +27,9 @@ tasks:
   lab-delete:
     cmds:
       - task: cluster:delete
+
+  core:
+    dir: core
+    cmds:
+      - helmfile apply
+

@@ -22,7 +22,7 @@ airflow:
       http: 8080
     resourcesPreset: "none"
     replicaCount: 1
-    baseUrl: "airflow.minikube.local:80"
+    baseUrl: "airflow.fabricator.vn:80"
 
   scheduler:
     image:
@@ -83,7 +83,7 @@ airflow:
     enabled: true
     ingressClassName: nginx
     pathType: ImplementationSpecific
-    hostname: airflow.minikube.local
+    hostname: airflow.fabricator.vn
     path: /
     annotations:
       kubernetes.io/ingress.class: nginx

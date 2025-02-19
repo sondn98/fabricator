@@ -19,7 +19,7 @@ spark-operator:
       enable: true
       # -- Ingress URL format.
       # Required if `controller.uiIngress.enable` is true.
-      urlFormat: "{{$appName}}.spark.minikube.local/{{$appNamespace}}/{{$appName}}"
+      urlFormat: "{{$appName}}.spark.fabricator.vn/{{$appNamespace}}/{{$appName}}"
 
     batchScheduler:
       enable: false

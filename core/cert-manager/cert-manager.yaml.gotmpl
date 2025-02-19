@@ -89,5 +89,5 @@ startupapicheck:
     create: true
 
 extraObjects:
-  - |
+  - | 
     {{ tpl (readFile "secrets.yaml") . | nindent 4 | trim }}

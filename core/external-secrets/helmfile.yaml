@@ -4,6 +4,15 @@ releases:
     chart: external-secrets/external-secrets
     version: 0.12.1
     values:
-      - ./external-secrets.yaml
+      - ./external-secrets.yaml.gotmpl
       - fullnameOverride: external-secrets
-
+    hooks:
+      - events: ["postsync"]
+        command: "sh"
+        args:
+          - -c
+          - |
+            echo "Waiting for external-secrets-webhook to be ready ..."
+            kubectl wait --for=condition=Available deployment/external-secrets-webhook --timeout=120s
+            echo "Attempt to deploy cluster secret stores ..."
+            kubectl apply -f secret-store.yaml

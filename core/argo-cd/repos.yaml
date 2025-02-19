@@ -1,20 +1,28 @@
-apiVersion: bitnami.com/v1alpha1
-kind: SealedSecret
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
 metadata:
   name: fabricator-creds
   namespace: argocd
-  annotations:
-    sealedsecrets.bitnami.com/cluster-wide: "true"
 spec:
-  encryptedData:
-    type: AgClx9q7hUPWd/FCWghz1VTTfUQxQq1YNpTR52C8PHoIYOwfaWJ9ScEg+dpqtQWY5xE4MJ6Ptfr5gEd7PW23nvJqZcEgumc/PFsc3TgWIBfiFmnOBwVipaFePFKWeDIb5spcOK1izHNmHvNDCOuhLUFdARB0YoR7NGRj28czBEw8Vnkjv2fSULrb2g8Guhy3IWy39bj4947UgZZGxSXB2+NT7Gxu/JaYrYAJDFP60Xl40mWCK5C0yXfNIHQzKFUYUGAqmAC4ZnovkrF1zabU8+teF2y51shiAzD+WScBsiinbZWDTxLEx9BYDSzo925VkmtjWiNwaNk4tJKYKxGmr4u7gOJEyiDktP+03W9rjcLY3+vaiuB/cS0Ydge0jUX7a33WwbFU/jbcujXHnkK5R4OYlOSDpChMoea4q8073PrgS+ySfJU5prLTaeFO+L58hItuVQkdYyRt02M4o3vZ+xpr6FiKIxGgJitqu8I1c8llvec7tzBL0ShlLHzGmvK91muo2ZhnODcDty0PFyMJ97weMqgX/xR5XDWL4R/R7LikaQ7U7+hqJvl8opHChyd8YqgKuZCjrVCs8uvohPUliwApqd5THycnEYTwzDsu0LppvJZM4wF1/2Xa/GYEQxbdI6ttGqxXw73GLq4MCy2INJYzngenb8RkBsmLQ85y+ReMyy2IurQg7Hh5+yefsagmBPuCYQI=
-    url: AgBVoAeBsXphTx+arT2r3JqUkGc8Em4oNwgYoHrqeniJgqG12LTzyB728Y+5pWRhmypcMVeZot9pRt/JucWB1mhwMeBk4DIq6GJb7Y142vTO3FtYFD4USv2GntaBDR6MYegL4wdvZW8x2TZxlA9s3+bIlsrUN1scAkeAdmE2c3+mzGckcGPIH/cqmPvH+AYLPvsI4EIJFCvQv5+PK0VVFqZ9FxLZ9kvJZDBWU/pPVtwHIgw298BObYNtmnJhHPtLKM63xyTxg1edx45c6NhlXJ7UxBr7BkBo+PoHpN7wkNU49S5Ui86bkxhPGiU4HSZgFoZlX9d2zNqQVXM915M/jj1cRRYgNjqFVWtNsQyPlhaCXG/rbhgWINfTzMhp72v4MqZpJhAtgDfNtNhNr/Tjqd3bfk+TVMb+mDU72czt9Kub86DmhtfRc/pl7FGYjwBWvoSMiNBouNXrbRmtYt9q54xYVdsZtaxVJAiM986Vx5MnGBSa8PEUMLgjTjiGPJtiBIuxVBiS9b/ERHlzv0WvOzLFRepd0JNZQYPk8iZX5J2l1tyZszugxPvQFIrrcKOMLjJ6X3fWQxeTEqU9BgXEcQ77jLDNki4BW3JLM5cM45aw+U53Jv9TmYULoJh9qZO/l6kg189Cv5vLFlojMCdr/yuopv4TkE4e2gZESYbC0Rtu3BbxofIsHE//ER+I7qmM5JwKsQUu3R95P9EH05phU5Ye2SQEhJXidn3mgwJQmAWGLqpGe2xCX/Chhg==
-    username: AgCdMiGJKnjhZH6lHTv7NPKbOBItqKOJP3C98JeOpZSp/8j/qYCiKIMwsMowv2Mg+wp14Cx5MIQZe6F0VWZt66f8EXx5Dcr6hcdgRrMtF1mmet6ESLmmDQlFX5+HZHc6h2TXJtGMTLnBlPbmTBHCA8GbwITEzPkzwu2O8jYbMTKQ/ZQLaGv56EytSpBwYVpdU9SMRRBeL0qbmDFrrmYLvvFxAgVwuAaoHLYLOBRCDuXeA0IeEOFVV55uGS6ce/yY42F4DEokRPsWjaqalm6q24bz7bs4SMQFimDOLZxyc/50claJgnEMJn9uUPtOKWr+bITTYKdDdQLWHjBVQKfMA5erYGpXIiq/bgTNuuYBXuP5hWodb/dVkYV3XVFNDpl9aFC8BDj2eR9G07ubdFe34CkkvlvQfv2UsUpzX+DliUfUSjkear7SLlq7Lydg4ULcYcJYkWgrEmJsGsOSHtOCJQQEBAKnyxPaqUMzUSGisS0c6BAIffMk4FsKhzWeg5lZqtepkKBPqHq9oFYF5afC3j5fDiMEbjvU2LF3BnayBiIcPioUO5tliDB3y4sLojX0SfoppFuxRsLVOdaJqAQjeDwCYwQcO+MCStwd6AQWvW5AKgDqXbuR1Kr2Nv0Vl1pflQpREmLj2YWWHlWsw/8JB11FPlwzpzbs4MlGQz1LphW/FE+oGNqhb6EG7FVz8kmanlNqVVhY1bJW
-    password: AgCpNvWo8/3WDm3R3Zf5kVfghzTXk6HWHmV/rninbamNhuFMHiEd6QZC5jpfwad2lclSoBc7uzZm/5xWaTXOSPVm+tqSGbJ9auyGfzEb2dZYqdWOsiH2/BSAaH49IVvsLw9e4vZUjpN8WKTO8Vt8gifMbsIo1s/26eQJ4jPpYNP3p19X1rmgAeaNk3CMl9z+0vqya5RWAgW2nc3/dHSO98IGzCEkM+pOTkuoUx+7KuKEkjmJgzPnvxxpMqJ1L2oSAubjfrPPfxepTH3cO5ud9fc+BBE13tlTmQ1GyZm+J5K2y2D7s/91Xb2u1gSPbcI2z40UIzUI789Fmm4zUxnz5VdPqNU6YgcvOgp62QwysYQq19yo528UlJIayX6t16S6OR6L3yOQKQM3s/uwfU3eWdd5scjEYXIb4z5OAT89DbRa/+t3khKr02IggAAarBPCHBogPKUt8gGS5I1cagiJ3tJgi3jJiBBLUX88oxRdFhYiJd/UDOtOTEE9kEwkFjxOi10nwUx7PpXWKxE61UDG8tMqNZKR52CZcVlXv8tkPpFqIsW2Lu1PaYUWScZBB37RialcfSYaQOSgwyVRPNV2b99BP9PvCQGAoJm4ck7LXikqxxkZOAUFVPFah5+w6/SUjL8CvWUIWs3xu5W21raFwDlwqXKEwBoSF7ZNeBxx10xv2XjT3aCASF805oKTw8+j40RJcv+CtQ3TFa6wtiqEzPg5/++SLQqRjnHpcsqoiIfSJZKeavfU0Fmi
-  template:
-    type: Opaque
-    metadata:
-      labels:
-        argocd.argoproj.io/secret-type: "repository"
-
-
+  refreshInterval: 10m
+  secretStoreRef:
+    name: bitwarden-secretsmanager
+    kind: ClusterSecretStore
+  target:
+    template:
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: repository
+  data:
+    - secretKey: type
+      remoteRef:
+        key: "fe34b15e-0967-40c5-882f-b25b004fdf09"
+    - secretKey: url
+      remoteRef:
+        key: "3e508ef2-ef99-439c-b559-b25b00510cfa"
+    - secretKey: username
+      remoteRef:
+        key: "2f866246-1e26-4e2d-8668-b25b005156cf"
+    - secretKey: password
+      remoteRef:
+        key: "f23b930a-7020-4e4c-a62a-b25b005194b4"

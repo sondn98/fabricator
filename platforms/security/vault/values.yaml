@@ -52,7 +52,7 @@ vault:
     ingress:
       enabled: true
       pathType: ImplementationSpecific
-      hostname: vault.minikube.local
+      hostname: vault.fabricator.vn
       ingressClassName: "nginx"
       path: /
       annotations:

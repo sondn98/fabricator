@@ -1,5 +1,5 @@
 kube-prometheus:
-  clusterDomain: minikube.local
+  clusterDomain: fabricator.vn
 
   prometheus:
     enabled: true
@@ -39,7 +39,7 @@ kube-prometheus:
       create: false
 
     externalLabels:
-      cluster: minikube.local
+      cluster: fabricator.vn
 
   rbac:
     create: true
