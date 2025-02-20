@@ -4,17 +4,17 @@ global:
 
 apps:
   airflow:
-    enabled: false
+    enabled: true
   clickhouse:
-    enabled: false
+    enabled: true
   elasticsearch:
-    enabled: false
+    enabled: true
   grafana:
-    enabled: false
+    enabled: true
   jupyterhub:
-    enabled: false
+    enabled: true
   fluent:
-    enabled: false
+    enabled: true
   kafka:
     enabled: true
     enabled_schema_registry: true
@@ -22,15 +22,15 @@ apps:
   keycloak:
     enabled: true
   localstack:
-    enabled: false
+    enabled: true
   loki:
-    enabled: false
+    enabled: true
   metrics_server:
-    enabled: false
+    enabled: true
   minio:
-    enabled: false
+    enabled: true
   mysql:
-    enabled: false
+    enabled: true
   ## Nifi is still experimental
   nifi:
     enabled: false
@@ -38,17 +38,17 @@ apps:
     enabled: true
     enabled_pgbouncer: false
   prometheus:
-    enabled: false
+    enabled: true
   redis:
-    enabled: false
+    enabled: true
   spark:
     enabled: false
   strimzi:
-    enabled: false
+    enabled: true
     enabled_schema_registry: true
     enabled_akhq: true
   vault:
-    enabled: false
+    enabled: true
   zookeeper:
-    enabled: false
+    enabled: true
 
