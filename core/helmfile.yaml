@@ -7,6 +7,8 @@ repositories:
     url: https://charts.external-secrets.io
   - name: argo
     url: https://argoproj.github.io/argo-helm
+  - name: cloudflared
+    url: https://cloudflare.github.io/helm-charts
 
 helmDefaults:
   wait: true
@@ -20,6 +22,7 @@ helmfiles:
   # - path: sealed-secrets/helmfile.yaml
   - path: external-secrets/helmfile.yaml
   - path: cilium/helmfile.yaml
+  - path: cloudflared/helmfile.yaml
   # - path: metallb/helmfile.yaml
   - path: nginx-ingress-controller/helmfile.yaml
   - path: argo/helmfile.yaml
