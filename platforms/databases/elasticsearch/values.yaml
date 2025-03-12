@@ -114,10 +114,9 @@ kibana:
     type: ClusterIP
 
   ingress:
-    enabled: true
-    pathType: ImplementationSpecific
-    hostname: kibana.fabricator.vn
-    path: /
+    # Use cloudflare tunnel instead
+    enabled: false
+
   ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
   resourcesPreset: "small"
   resources: {}

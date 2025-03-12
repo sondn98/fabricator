@@ -1,7 +1,6 @@
 ---
 - hosts: homelab
-  remote_user: vagrant
+  remote_user: sondn98
   become: yes
   roles:
-    - setup
     - homelab

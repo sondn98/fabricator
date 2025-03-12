@@ -50,15 +50,8 @@ vault:
           internal: 8201
 
     ingress:
-      enabled: true
-      pathType: ImplementationSpecific
-      hostname: vault.fabricator.vn
-      ingressClassName: "nginx"
-      path: /
-      annotations:
-        kubernetes.io/ingress.class: nginx
-        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      # Use cloudflare tunnel instead
+      enabled: false
 
     rbac:
       create: true

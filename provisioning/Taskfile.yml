@@ -2,7 +2,10 @@ version: '3'
 
 silent: true
 
+vars:
+  INVENTORIES: '{{ .INVENTORIES | default "bare-metal" }}'
+
 tasks:
   provision:
     cmds:
-      - ansible-playbook -i inventories/{{ .INVENTORIES | vm }} playbook.yml
+      - ansible-playbook -i inventories/{{ .INVENTORIES }} playbook.yml

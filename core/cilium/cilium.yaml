@@ -131,3 +131,8 @@ etcd:
   service:
     ports:
       client: 2379
+
+  tolerations:
+    - key: "node.kubernetes.io/not-ready"
+      operator: "Exists"
+      effect: "NoSchedule"

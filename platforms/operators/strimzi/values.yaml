@@ -67,15 +67,7 @@ akhq:
             type: "confluent"
 
   ingress:
-    enabled: true
-    paths:
-      - /
-    pathType: "ImplementationSpecific"
-    hosts:
-      - akhq-strimzi.fabricator.vn
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    # Use cloudflare tunnel instead
+    enabled: false
 
   resources: {}
