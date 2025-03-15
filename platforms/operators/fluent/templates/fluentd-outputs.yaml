@@ -1,0 +1,13 @@
+apiVersion: fluentd.fluent.io/v1alpha1
+kind: ClusterOutput
+metadata:
+  name: fluentd-outputs
+  labels:
+    output.fluentd.fluent.io/enabled: "true"
+spec:
+  outputs:
+    - loki:
+        extractKubernetesLabels: true
+        includeThreadLabel: false
+        insecure: true
+        url: http://loki-grafana-loki-distributor.loki.svc.cluster.local:3100/loki/api/v1/push

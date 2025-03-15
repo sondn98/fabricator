@@ -21,48 +21,26 @@ fluent-operator:
     resources: {}
 
   fluentbit:
-    enable: true
-    crdsEnable: true
-    image:
-      repository: "ghcr.io/fluent/fluent-operator/fluent-bit"
-      tag: "3.1.7"
-    resources: {}
-
-    namespaceFluentBitCfgSelector: {}
-
-    input:
-      tail:
-        enable: true
-        refreshIntervalSeconds: 10
-        memBufLimit: 100MB
-        bufferMaxSize: ""
-        path: "/var/log/containers/*.log"
-        skipLongLines: true
-        readFromHead: false
-        storageType: memory
-        pauseOnChunksOverlimit: "off"
-
-      systemd:
-        enable: true
-        systemdFilter:
-          enable: true
-          filters: []
-        path: "/var/log/journal"
-        includeKubelet: true
-        stripUnderscores: "off"
-        storageType: memory
-        pauseOnChunksOverlimit: "off"
-
-    filter:
-      kubernetes:
-        enable: true
-        labels: false
-        annotations: false
-      containerd:
-        enable: true
-      systemd:
-        enable: true
+    # FluentBit is built on 4Kb page size system and is not compatible with my raspberry which is based on a 16Kb one.
+    # Changing page size might be an option but is not recommended as it could cause performance issues on either of them - or both
+    # Using Fluentd as an alternative is a great idea due to its independence from the underlying hardware
+    enable: false
+    crdsEnable: false
 
   fluentd:
+    enable: true
     crdsEnable: true
-    enable: false
+    name: fluentd
+    mode: "collector"
+    port: 24224
+    image:
+      repository: "ghcr.io/fluent/fluent-operator/fluentd"
+      tag: "v1.17.1"
+    replicas: 1
+    forward:
+      port: 24224
+    watchedNamespaces:
+      - kube-system
+      - argocd
+    resources: {}
+    output: {}
