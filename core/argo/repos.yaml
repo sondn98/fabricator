@@ -2,7 +2,7 @@ apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: fabricator-creds
-  namespace: argocd
+  namespace: argo
 spec:
   refreshInterval: 10m
   secretStoreRef:

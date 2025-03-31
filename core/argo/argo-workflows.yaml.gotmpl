@@ -1,0 +1,71 @@
+images:
+  tag: "v3.6.5"
+
+crds:
+  install: true
+  keep: true
+
+createAggregateRoles: true
+
+singleNamespace: false
+
+workflow:
+  rbac:
+    create: true
+
+controller:
+  image:
+    registry: quay.io
+    repository: argoproj/workflow-controller
+  parallelism: 1
+  resourceRateLimit:
+    limit: 10
+    burst: 1
+
+  rbac:
+    create: true
+
+  configMap:
+    create: true
+
+  namespaceParallelism: 3
+  metricsConfig:
+    enabled: false
+    path: /metrics
+    interval: 30s
+    port: 9090
+    metricsTTL: ""
+    ignoreErrors: false
+    secure: false
+    portName: metrics
+    servicePort: 8080
+    servicePortName: metrics
+    headlessService: false
+    honorLabels: false
+    relabelings: []
+    metricRelabelings: []
+    targetLabels: []
+
+  workflowWorkers: 3
+  workflowTTLWorkers: 3
+  podCleanupWorkers: 1
+  cronWorkflowWorkers: 3
+
+  telemetryConfig:
+    enabled: false
+
+  name: workflow-controller
+  workflowNamespaces:
+    - argo
+
+executor:
+  image:
+    registry: quay.io
+    repository: argoproj/argoexec
+
+server:
+  enabled: false
+
+useStaticCredentials: true
+artifactRepository:
+  archiveLogs: false
