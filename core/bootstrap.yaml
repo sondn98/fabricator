@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: bootstrap
-  namespace: argocd
+  namespace: argo
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -16,4 +16,4 @@ spec:
         - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: argo

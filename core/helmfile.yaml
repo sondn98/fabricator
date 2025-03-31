@@ -22,4 +22,4 @@ helmfiles:
   - path: cilium/helmfile.yaml
   # - path: metallb/helmfile.yaml
   - path: nginx-ingress-controller/helmfile.yaml
-  - path: argo-cd/helmfile.yaml
+  - path: argo/helmfile.yaml
