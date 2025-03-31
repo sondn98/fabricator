@@ -91,3 +91,25 @@ airflow:
     architecture: standalone
     master:
       resourcesPreset: "none"
+
+  metrics:
+    enabled: true
+    image:
+      registry: docker.io
+      repository: bitnami/statsd-exporter
+      tag: 0.28.0-debian-12-r11
+    containerPorts:
+      ingest: 9125
+      metrics: 9102
+    resourcesPreset: "none"
+    resources: {}
+    service:
+      ports:
+        ingest: 9125
+        metrics: 9102
+    serviceMonitor:
+      enabled: true
+      namespace: "prometheus"
+      interval: "30s"
+      scrapeTimeout: "30s"
+      honorLabels: true
