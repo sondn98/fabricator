@@ -5,8 +5,6 @@ repositories:
     url: https://charts.jetstack.io
   - name: external-secrets
     url: https://charts.external-secrets.io
-  - name: argo
-    url: https://argoproj.github.io/argo-helm
 
 helmDefaults:
   wait: true
@@ -21,5 +19,5 @@ helmfiles:
   - path: external-secrets/helmfile.yaml
   - path: cilium/helmfile.yaml
   # - path: metallb/helmfile.yaml
-  # - path: nginx-ingress-controller/helmfile.yaml
-  - path: argo/helmfile.yaml
+  - path: nginx-ingress-controller/helmfile.yaml
+  - path: argo-cd/helmfile.yaml

@@ -1,6 +1,6 @@
 global:
   repoURL: https://github.com/sondn98/fabricator.git
-  targetRevision: lab
+  targetRevision: master
 
 apps:
   airflow:
