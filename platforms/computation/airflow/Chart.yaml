@@ -8,5 +8,5 @@ name: airflow
 version: 1.0.0
 dependencies:
   - name: airflow
-    version: 19.0.2
+    version: 22.7.2
     repository: oci://registry-1.docker.io/bitnamicharts
