@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-statsd-mapping-config
+data:
+  mappings.yml: |-
+    {{- .Files.Get "files/statsd.conf" | nindent 4 }}
