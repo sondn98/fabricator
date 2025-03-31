@@ -21,5 +21,5 @@ helmfiles:
   - path: external-secrets/helmfile.yaml
   - path: cilium/helmfile.yaml
   # - path: metallb/helmfile.yaml
-  - path: nginx-ingress-controller/helmfile.yaml
+  # - path: nginx-ingress-controller/helmfile.yaml
   - path: argo/helmfile.yaml
