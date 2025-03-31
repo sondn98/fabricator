@@ -98,6 +98,7 @@ airflow:
       registry: docker.io
       repository: bitnami/statsd-exporter
       tag: 0.28.0-debian-12-r11
+    existingConfigmap: airflow-statsd-mapping-config
     containerPorts:
       ingest: 9125
       metrics: 9102
