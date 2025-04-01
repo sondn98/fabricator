@@ -61,6 +61,10 @@ airflow:
     backoffLimit: 10
     resourcesPreset: "none"
     resources: {}
+    annotations:
+      argocd.argoproj.io/hook: PostSync
+      argocd.argoproj.io/hook-delete-policy: BeforeHookCreation, HookSucceeded
+
 
   service:
     type: ClusterIP
