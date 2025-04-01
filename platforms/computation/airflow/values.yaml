@@ -6,91 +6,74 @@ airflow:
   executor: CeleryExecutor
   loadExamples: true
 
+  image:
+    registry: docker.io
+    repository: bitnami/airflow
+    tag: 2.10.5-debian-12-r7
+
   dags:
-    image:
-      registry: docker.io
-      repository: bitnami/os-shell
-      tag: 12-debian-12-r27
+    enabled: false
+
+  plugins:
+    enabled: false
+
+  defaultInitContainers:
+    prepareConfig:
+      resourcesPreset: "none"
+      resources: {}
+
+    waitForDBMigrations:
+      resourcesPreset: "none"
+      resources: {}
+
+    loadDAGsPlugins:
+      resourcesPreset: "none"
+      resources: {}
 
   web:
-    image:
-      registry: docker.io
-      repository: bitnami/airflow
-      tag: 2.10.0-debian-12-r1
-      debug: false
+    baseUrl: airflow.fabricator.work:443
     containerPorts:
       http: 8080
-    resourcesPreset: "none"
     replicaCount: 1
-    baseUrl: "airflow.fabricator.vn:80"
+    resourcesPreset: "none"
+    resources: {}
 
   scheduler:
-    image:
-      registry: docker.io
-      repository: bitnami/airflow-scheduler
-      tag: 2.10.0-debian-12-r0
-      debug: false
     replicaCount: 1
     resourcesPreset: "none"
+    resources: {}
+
+  dagProcessor:
+    enabled: false
+
+  triggerer:
+    enabled: false
 
   worker:
-    image:
-      registry: docker.io
-      repository: bitnami/airflow-worker
-      tag: 2.10.0-debian-12-r0
-      debug: false
     containerPorts:
       http: 8793
     replicaCount: 1
     resourcesPreset: "none"
-    autoscaling:
-      enabled: true
-      minReplicas: 1
-      maxReplicas: 3
-      targetCPU: 80
-      targetMemory: 80
+    resources: {}
 
-  git:
-    image:
-      registry: docker.io
-      repository: bitnami/git
-      tag: 2.46.0-debian-12-r0
-    dags:
-      enabled: false
-      repositories: []
-    sync:
-      interval: 60
-      resources: {}
-      resourcesPreset: "none"
+  setupDBJob:
+    enabled: true
+    backoffLimit: 10
+    resourcesPreset: "none"
+    resources: {}
 
   service:
     type: ClusterIP
     ports:
       http: 8080
 
-  postgresql:
-    enabled: false
-
-  externalDatabase:
-    host: postgresql.postgresql.svc.cluster.local
-    port: 5432
-    user: airflow
-    database: airflow
-    existingSecret: airflow-pg-secret
-    existingSecretPasswordKey: airflow-pg-password
-
   ingress:
-    # Use cloudflare tunnel instead
     enabled: false
 
-  redis:
-    enabled: true
-    auth:
-      enabled: true
-      existingSecret: "airflow-redis-secret"
-    architecture: standalone
-    master:
-      resourcesPreset: "none"
+  serviceAccount:
+    create: true
+  rbac:
+    create: false
 
   metrics:
     enabled: true
@@ -98,7 +81,7 @@ airflow:
       registry: docker.io
       repository: bitnami/statsd-exporter
       tag: 0.28.0-debian-12-r11
-    existingConfigmap: airflow-statsd-mapping-config
+    existingConfigmap: "airflow-statsd-mapping-config"
     containerPorts:
       ingest: 9125
       metrics: 9102
@@ -114,3 +97,27 @@ airflow:
       interval: "30s"
       scrapeTimeout: "30s"
       honorLabels: true
+
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    host: postgresql.postgresql.svc.cluster.local
+    port: 5432
+    user: airflow
+    database: airflow
+    existingSecret: airflow-pg-secret
+    existingSecretPasswordKey: airflow-pg-password
+
+  redis:
+    enabled: true
+    auth:
+      enabled: true
+      existingSecret: "airflow-redis-secret"
+    architecture: standalone
+    master:
+      service:
+        ports:
+          redis: 6379
+      resourcesPreset: "none"
+      resources: {}
