@@ -1,0 +1,24 @@
+code-server:
+  replicaCount: 1
+
+  image:
+    repository: codercom/code-server
+    tag: 4.96.4
+    pullPolicy: IfNotPresent
+
+  serviceAccount:
+    create: true
+
+  service:
+    type: ClusterIP
+    port: 8080
+
+  ingress:
+    enabled: false
+
+  resources: {}
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 10Gi

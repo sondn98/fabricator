@@ -1,0 +1,11 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for code server deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: code-server
+version: 1.0.0
+dependencies:
+  - name: code-server
+    version: 3.25.3
