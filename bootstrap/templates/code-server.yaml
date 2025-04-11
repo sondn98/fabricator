@@ -14,6 +14,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "fabricator.secretStore"
+          value: "{{ .Values.global.secretStore }}"
   destination:
     server: https://kubernetes.default.svc
     namespace: code-server

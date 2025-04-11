@@ -111,6 +111,3 @@ pgbouncer:
     type: ClusterIP
     ports:
       pgbouncer: 6432
-
-envConfig:
-  secretsManagement: "externalSecrets"
