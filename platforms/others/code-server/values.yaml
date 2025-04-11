@@ -6,6 +6,8 @@ code-server:
     tag: 4.96.4
     pullPolicy: IfNotPresent
 
+  existingSecret: "code-server-secret"
+
   serviceAccount:
     create: true
 
@@ -22,3 +24,29 @@ code-server:
     enabled: true
     accessMode: ReadWriteOnce
     size: 10Gi
+
+  extraSecretMounts:
+    - name: code-server-ssh
+      mountPath: /home/coder/.ssh
+      subPath: id_ed25519
+      secretName: code-server-secret-files
+      readOnly: true
+    - name: code-server-ssh
+      mountPath: /home/coder/.ssh
+      subPath: id_ed25519.pub
+      secretName: code-server-secret-files
+      readOnly: true
+
+  extraInitContainers:
+    - name: setup-fabricator-project
+      image: {{ .Values.code-server.image.repository }}:{{ .Values.code-server.image.tag }}
+      pullPolicy: IfNotPresent
+      command:
+        - sh
+        - -c
+        - |
+          ssh-keyscan github.com >> ./known_hosts
+          git clone git@github.com:sondn98/fabricator.git
+      volumeMounts:
+        - name: data
+          mountPath: /home/coder
