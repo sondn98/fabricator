@@ -39,7 +39,7 @@ code-server:
 
   extraInitContainers:
     - name: setup-fabricator-project
-      image: {{ .Values.code-server.image.repository }}:{{ .Values.code-server.image.tag }}
+      image: codercom/code-server:4.96.4
       pullPolicy: IfNotPresent
       command:
         - sh
