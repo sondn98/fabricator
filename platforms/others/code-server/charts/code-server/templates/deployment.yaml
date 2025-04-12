@@ -46,6 +46,7 @@ spec:
           - -c
           - |
             chown -R {{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.fsGroup }} /home/coder
+            ls -lah /home/coder/.ssh
         securityContext:
           runAsUser: {{ .Values.volumePermissions.securityContext.runAsUser }}
         volumeMounts:

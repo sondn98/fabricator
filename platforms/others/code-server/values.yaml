@@ -27,26 +27,38 @@ code-server:
 
   extraSecretMounts:
     - name: code-server-ssh
-      mountPath: /home/coder/.ssh
-      subPath: id_ed25519
-      secretName: code-server-secret-files
-      readOnly: true
-    - name: code-server-ssh
-      mountPath: /home/coder/.ssh
-      subPath: id_ed25519.pub
-      secretName: code-server-secret-files
-      readOnly: true
+      mountPath: /tmp
+      secretName: code-server-ssh
+      readOnly: false
 
-  extraInitContainers:
+  volumePermissions:
+    enabled: false
+
+  extraInitContainers: |
     - name: setup-fabricator-project
-      image: {{ .Values.code-server.image.repository }}:{{ .Values.code-server.image.tag }}
+      image: codercom/code-server:4.96.4
       pullPolicy: IfNotPresent
       command:
         - sh
         - -c
         - |
-          ssh-keyscan github.com >> ./known_hosts
-          git clone git@github.com:sondn98/fabricator.git
+          if [ ! -d /home/coder/.ssh ]; then
+            mkdir -p /home/coder/.ssh
+            cp /tmp/id_ed25519 /home/coder/.ssh
+            cp /tmp/id_ed25519.pub /home/coder/.ssh
+            chmod 700 /home/coder/.ssh
+            chmod 600 /home/coder/.ssh/id_ed25519
+            chmod 644 /home/coder/.ssh/id_ed25519.pub
+            ssh-keyscan github.com >> /home/coder/.ssh/known_hosts
+            chown -R coder:coder /home/coder
+          fi
+      securityContext:
+        runAsUser: 0
       volumeMounts:
         - name: data
           mountPath: /home/coder
+          readOnly: false
+        - name: code-server-ssh
+          mountPath: /tmp
+          secretName: code-server-ssh
+          readOnly: true
