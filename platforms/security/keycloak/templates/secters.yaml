@@ -4,15 +4,16 @@ metadata:
   name: keycloak-auth-secret
 spec:
   refreshInterval: 1h
-  secretStoreRef:
-    name: {{ .Values.fabricator.secretStore }}
-    kind: ClusterSecretStore
   target:
     name: keycloak-auth-secret
   data:
   - secretKey: keycloak-password
+    sourceRef:
+      storeRef:
+        name: bitwarden-secretsmanager
+        kind: ClusterSecretStore
     remoteRef:
-      key: /security/keycloak/keycloak-auth-secret/keycloak-password
+      key: d95b2732-ed9d-4ca8-a020-b2bc010b9baf
       version: v1
 ---
 apiVersion: external-secrets.io/v1beta1
@@ -21,13 +22,14 @@ metadata:
   name: keycloak-pg-secret
 spec:
   refreshInterval: 1h
-  secretStoreRef:
-    name: {{ .Values.fabricator.secretStore }}
-    kind: ClusterSecretStore
   target:
     name: keycloak-pg-secret
   data:
   - secretKey: keycloak-pg-password
+    sourceRef:
+      storeRef:
+        name: bitwarden-secretsmanager
+        kind: ClusterSecretStore
     remoteRef:
       key: /security/keycloak/keycloak-pg-secret/keycloak-pg-password
       version: v1

@@ -125,6 +125,3 @@ airflow:
           redis: 6379
       resourcesPreset: "none"
       resources: {}
-
-fabricator:
-  secretStore: bitwarden-secretsmanager
