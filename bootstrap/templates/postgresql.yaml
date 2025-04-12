@@ -17,8 +17,6 @@ spec:
       parameters:
         - name: "pgbouncer.enabled"
           value: "{{ .Values.apps.postgresql.enabled_pgbouncer }}"
-        - name: "fabricator.secretStore"
-          value: "{{ .Values.global.secretStore }}"
   destination:
     server: https://kubernetes.default.svc
     namespace: postgresql
