@@ -1,7 +1,6 @@
 global:
   repoURL: https://github.com/sondn98/fabricator.git
   targetRevision: lab
-  secretStore: bitwarden-secretsmanager
 
 apps:
   airflow:
