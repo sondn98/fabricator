@@ -1,8 +1,8 @@
-{{ if .Values.apps.postgresql.enabled }}
+{{ if .Values.apps.loki.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: postgresql
+  name: code-server
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -10,16 +10,13 @@ spec:
   source:
     repoURL: "{{ .Values.global.repoURL }}"
     targetRevision: "{{ .Values.global.targetRevision }}"
-    path: platforms/databases/postgresql
+    path: platforms/others/code-server
     helm:
       valueFiles:
         - values.yaml
-      parameters:
-        - name: "pgbouncer.enabled"
-          value: "{{ .Values.apps.postgresql.enabled_pgbouncer }}"
   destination:
     server: https://kubernetes.default.svc
-    namespace: postgresql
+    namespace: code-server
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
