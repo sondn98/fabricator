@@ -7,6 +7,8 @@ apps:
     enabled: true
   clickhouse:
     enabled: true
+  codeserver:
+    enabled: true
   elasticsearch:
     enabled: true
   grafana:
