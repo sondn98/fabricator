@@ -9,7 +9,7 @@ grafana:
     existingSecret: grafana-auth-secret
     existingSecretPasswordKey: grafana-password
 
-  plugins: ""
+  plugins: "grafana-oncall-app"
 
   dashboardsConfigMaps: []
 
