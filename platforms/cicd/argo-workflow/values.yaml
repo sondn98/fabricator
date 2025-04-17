@@ -1,0 +1,179 @@
+rbac:
+  singleNamespace: false
+createAggregateRoles: true
+
+server:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/argo-workflow-cli
+    tag: 3.6.5-debian-12-r1
+
+  replicaCount: 1
+
+  resourcesPreset: "none"
+  resources: {}
+
+  rbac:
+    create: true
+
+  auth:
+    enabled: true
+    mode: client
+
+  clusterWorkflowTemplates:
+    enabled: true
+    enableEditing: true
+
+  baseHref: /
+
+  containerPorts:
+    web: 2746
+
+  serviceAccount:
+    create: true
+
+  service:
+    type: ClusterIP
+
+controller:
+  image:
+    registry: docker.io
+    repository: bitnami/argo-workflow-controller
+    tag: 3.6.5-debian-12-r1
+
+  replicaCount: 1
+  resourcesPreset: "none"
+  resources: {}
+
+  config: |
+    {{- if .Values.controller.instanceID.enabled }}
+    {{- if .Values.controller.instanceID.useReleaseName }}
+    instanceID: {{ .Release.Name }}
+    {{- else }}
+    instanceID: {{ .Values.controller.instanceID.explicitID }}
+    {{- end }}
+    {{- end }}
+    ## How many workflows can be running at the same time
+    ##
+    parallelism:
+    ## Maximun number of workflows running in a namespace
+    ##
+    namespaceParallelism:
+    {{- if or .Values.executor.resources .Values.executor.extraEnvVars .Values.executor.containerSecurityContext }}
+    executor:
+      {{- if .Values.executor.resources }}
+      resources: {{- include "common.tplvalues.render" (dict "value" .Values.executor.resources "context" $) | nindent 4 }}
+      {{- else if ne .Values.executor.resourcesPreset "none" }}
+      resources: {{- include "common.resources.preset" (dict "type" .Values.executor.resourcesPreset) | nindent 4 }}
+      {{- end }}
+      {{- if .Values.executor.extraEnvVars }}
+      env: {{- include "common.tplvalues.render" (dict "value" .Values.executor.extraEnvVars "context" $) | nindent 4 }}
+      {{- end }}
+      {{- if .Values.executor.containerSecurityContext }}
+      securityContext: {{- omit .Values.executor.containerSecurityContext "enabled" | toYaml | nindent 4 }}
+      {{- end }}
+    {{- end }}
+    ## Uncomment to enable Artofact repository with the provided configuration
+    ## artifactRepository:
+    ##  archiveLogs: false
+    ##  configuration: {}
+    ##
+    {{- if .Values.controller.metrics.enabled }}
+    metricsConfig: {{- include "common.tplvalues.render" (dict "value" .Values.controller.metrics "context" $) | nindent 2 }}
+    {{- end }}
+    {{- if .Values.controller.telemetry.enabled }}
+    telemetryConfig: {{- include "common.tplvalues.render" (dict "value" .Values.controller.telemetry "context" $) | nindent 2 }}
+    {{- end }}
+    {{- if (include "argo-workflows.controller.persistence.enabled" .) }}
+    persistence:
+      connectionPool:
+        maxIdleConns: 100
+        maxOpenConns: 0
+      nodeStatusOffLoad: false
+      archive: {{ include "common.tplvalues.render" (dict "value" .Values.controller.persistence.archive.enabled "context" $) }}
+      {{- if or .Values.postgresql.enabled (and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "postgresql")) }}
+      postgresql:
+      {{- else if or .Values.mysql.enabled (and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "mysql")) }}
+      mysql:
+      {{- end }}
+        host: {{ include "argo-workflows.controller.database.host" . }}
+        port: {{ include "argo-workflows.controller.database.port" . }}
+        database: {{ include "argo-workflows.controller.database" . }}
+        tableName: argo_workflows
+        ## the database secrets must be in the same namespace of the controller
+        ##
+        userNameSecret:
+          name: {{ include "argo-workflows.controller.database.username.secret" . }}
+          key: username
+        passwordSecret:
+          name: {{ include "argo-workflows.controller.database.password.secret" . }}
+          key: {{ include "argo-workflows.controller.database.password.secret.key" . }}
+    {{- end }}
+    {{- if .Values.controller.workflowDefaults }}
+    workflowDefaults: {{- include "common.tplvalues.render" (dict "value" .Values.controller.workflowDefaults "context" $) | nindent 2 }}
+    {{- end }}
+    {{- if and .Values.server.auth.enabled .Values.server.auth.sso.enabled }}
+    sso: {{- include "common.tplvalues.render" (dict "value" .Values.server.auth.sso.config "context" $) | nindent 2 }}
+    {{- end }}
+    ## Uncomment to set workflowRestrictions
+    ## Ref: https://argoproj.github.io/argo-workflows/workflow-restrictions/
+    ## workflowRestrictions: {}
+    ## Uncomment to set links
+    ## Ref: https://argoproj.github.io/argo-workflows/links/
+    ## links: {}
+
+  instanceID:
+    enabled: false
+
+  clusterWorkflowTemplates:
+    enabled: true
+
+  metrics:
+    enabled: true
+    path: /metrics
+    serviceMonitor:
+      enabled: true
+
+  telemetry:
+    enabled: false
+
+  workflowWorkers: 8
+  workflowNamespaces:
+    - argocd
+
+  service:
+    type: ClusterIP
+    ports:
+      metrics: 8080
+      telemetry: 8081
+
+executor:
+  image:
+    registry: docker.io
+    repository: bitnami/argo-workflow-exec
+    tag: 3.6.5-debian-12-r2
+
+  resourcesPreset: "none"
+  resources: {}
+
+ingress:
+  enabled: false
+
+workflows:
+  serviceAccount:
+    create: true
+  rbac:
+    create: true
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  enabled: true
+  type: "postgresql"
+  host: postgresql.postgresql.svc
+  port: 3306
+  username: argo_workflows
+  database: argo_workflows
+  existingSecret: "argo-workflows-auth-secret"

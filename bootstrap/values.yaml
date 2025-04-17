@@ -5,6 +5,8 @@ global:
 apps:
   airflow:
     enabled: true
+  argo_workflow:
+    enabled: true
   clickhouse:
     enabled: true
   codeserver:
