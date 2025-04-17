@@ -1,10 +1,10 @@
 releases:
-  - name: argocd
-    namespace: argocd
+  - name: argo-cd
+    namespace: argo
     chart: bitnami/argo-cd
     version: 6.6.10
     values:
-      - ./argocd.yaml.gotmpl
+      - ./argo-cd.yaml.gotmpl
       - fullnameOverride: argocd
     hooks:
       - events: ["postsync"]
