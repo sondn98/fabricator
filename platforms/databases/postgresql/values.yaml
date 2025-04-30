@@ -6,7 +6,6 @@ postgresql:
 
   auth:
     enablePostgresUser: true
-    enablePostgresUser: true
     database: postgres
     username: admin
     replicationUsername: repl

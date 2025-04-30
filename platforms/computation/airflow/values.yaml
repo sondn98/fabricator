@@ -57,14 +57,9 @@ airflow:
     resources: {}
 
   setupDBJob:
-    enabled: true
-    backoffLimit: 10
-    resourcesPreset: "none"
-    resources: {}
-    annotations:
-      argocd.argoproj.io/hook: PostSync
-      argocd.argoproj.io/hook-delete-policy: BeforeHookCreation, HookSucceeded
-
+    # Disabled due to https://github.com/bitnami/charts/issues/32804
+    # Jump into a airflow pod and execute "airflow db init" instead
+    enabled: false
 
   service:
     type: ClusterIP
