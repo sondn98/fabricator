@@ -1,0 +1,82 @@
+{{- $syncCfg := .Values.syncConfig -}}
+{{- range $app := .Values.applications }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $app.name }}
+  namespace: {{ .Values.global.appNamespace | default "argocd" }}
+  {{ if $app.finalizers }}
+  finalizers:
+    {{- range $app.finalizers }}
+    - {{ . }}
+    {{- end }}
+  {{ end }}
+  {{ if $app.labels }}
+  labels:
+    {{- range $app.labels }}
+    - {{ . }}
+    {{- end }}
+  {{ end }}
+spec:
+  project: {{ $app.name | default "default" }}
+  source:
+    repoURL: {{ .Values.global.global }}
+    targetRevision: {{ .Values.global.targetRevision }}
+    path: {{ $app.path }}
+
+    helm:
+      passCredentials: false
+      {{ if $app.extraParams }}
+      parameters:
+        {{ toYaml $app.extraParams | indent 8 }}
+      {{ end}}
+      releaseName: {{ $app.name }}
+      valueFiles:
+        {{- range $app.valueFiles }}
+        - {{ . }}
+        {{- end }}
+      ignoreMissingValueFiles: false
+      valuesObject:
+        {{ toYaml $app.extraValues | indent 8 }}
+      skipCrds: false
+      skipSchemaValidation: false
+      version: {{ .Values.global.helmVersion }}
+      kubeVersion: {{ .Values.global.kubeVersion }}
+
+  destination:
+    server: {{ .Values.global.kubeServer | default "https://kubernetes.default.svc" }}
+    namespace: {{ $app.namespace }}
+
+  {{ if $app.info }}
+  info:
+    {{ toYaml $app.valueFiles | indent 4 }}
+  {{ end }}
+
+  syncPolicy:
+    {{ if $syncCfg.autoSync.enabled }}
+    automated:
+      prune: {{ $syncCfg.autoSync.prune }}
+      selfHeal: {{ $syncCfg.autoSync.selfHeal }}
+      allowEmpty: {{ $syncCfg.autoSync.allowEmpty }}
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+    {{ end }}
+    syncOptions:
+    {{- range $k, $v := $syncCfg.syncOptions }}
+      - $k=$v
+    {{- end }}
+    {{ if and $syncCfg.managedNamespaceMetadata $syncCfg.syncOptions.CreateNamespace }}
+    managedNamespaceMetadata:
+      {{ toYaml $syncCfg.managedNamespaceMetadata | indent 4 }}
+    {{ end }}
+  {{ if and $syncCfg.ignoreDifferences $syncCfg.syncOptions.RespectIgnoreDifferences }}
+  ignoreDifferences:
+    {{ toYaml $app.valueFiles | indent 4 }}
+  {{ end }}
+
+  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
+{{ end }}

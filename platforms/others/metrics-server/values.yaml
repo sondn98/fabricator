@@ -8,6 +8,7 @@ metrics-server:
   args:
     - --kubelet-insecure-tls
     - --secure-port=8443
+    - --metric-resolution=40s
 
   apiService:
     create: false
