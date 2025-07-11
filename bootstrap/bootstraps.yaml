@@ -1,0 +1,146 @@
+global:
+  repoURL: https://github.com/sondn98/fabricator.git
+  targetRevision: lab
+  appNamespace: argo
+
+applications:
+  - name: airflow
+    enabled: false
+    namespace: airflow
+    path: platforms/computation/airflow
+    valueFiles:
+      - values.yaml
+  - name: clickhouse
+    enabled: false
+    namespace: clickhouse
+    path: platforms/warehouse/clickhouse
+    valueFiles:
+      - values.yaml
+  - name: code-server
+    enabled: false
+    namespace: code-server
+    path: platforms/others/code-server
+    valueFiles:
+      - values.yaml
+  - name: elasticsearch
+    enabled: false
+    namespace: elasticsearch
+    path: platforms/databases/elasticsearch
+    valueFiles:
+      - values.yaml
+  - name: fluent
+    enabled: false
+    namespace: fluent
+    path: platforms/operators/fluent
+    valueFiles:
+      - values.yaml
+  - name: grafana
+    enabled: false
+    namespace: grafana
+    path: platforms/monitoring/grafana
+    valueFiles:
+      - values.yaml
+  - name: jupyterhub
+    enabled: false
+    namespace: jupyterhub
+    path: platforms/computation/jupyterhub
+    valueFiles:
+      - values.yaml
+  - name: kafka
+    enabled: false
+    namespace: kafka
+    path: platforms/streaming/kafka
+    valueFiles:
+      - values.yaml
+    extraParams:
+    - name: "schema-registry.enabled"
+      value: "true"
+    - name: "akhq.enabled"
+      value: "true"
+  - name: keycloak
+    enabled: false
+    namespace: keycloak
+    path: platforms/security/keycloak
+    valueFiles:
+      - values.yaml
+  - name: localstack
+    enabled: false
+    namespace: localstack
+    path: platforms/others/localstack
+    valueFiles:
+      - values.yaml
+  - name: loki
+    enabled: false
+    namespace: loki
+    path: platforms/monitoring/loki
+    valueFiles:
+      - values.yaml
+  - name: metrics-server
+    enabled: false
+    namespace: metrics-server
+    path: platforms/others/metrics-server
+    valueFiles:
+      - values.yaml
+  - name: minio
+    enabled: false
+    namespace: minio
+    path: platforms/storage/minio
+    valueFiles:
+      - values.yaml
+  - name: mysql
+    enabled: false
+    namespace: mysql
+    path: platforms/databases/mysql
+    valueFiles:
+      - values.yaml
+  - name: nifi
+    enabled: false
+    namespace: nifi
+    path: platforms/computation/nifi
+    valueFiles:
+      - values.yaml
+  - name: postgresql
+    enabled: false
+    namespace: postgresql
+    path: platforms/databases/postgresql
+    valueFiles:
+      - values.yaml
+    extraParams:
+    - name: "pgbouncer.enabled"
+      value: "false"
+  - name: prometheus
+    enabled: false
+    namespace: prometheus
+    path: platforms/monitoring/prometheus
+    valueFiles:
+      - values.yaml
+  - name: redis
+    enabled: false
+    namespace: redis
+    path: platforms/databases/redis
+    valueFiles:
+      - values.yaml
+  - name: spark
+    enabled: false
+    namespace: spark
+    path: platforms/operators/spark
+    valueFiles:
+      - values.yaml
+  - name: strimzi
+    enabled: false
+    namespace: strimzi
+    path: platforms/operators/strimzi
+    valueFiles:
+      - values.yaml
+  - name: vault
+    enabled: false
+    namespace: vault
+    path: platforms/security/vault
+    valueFiles:
+      - values.yaml
+  - name: zookeeper
+    enabled: false
+    namespace: zookeeper
+    path: platforms/others/zookeeper
+    valueFiles:
+      - values.yaml
