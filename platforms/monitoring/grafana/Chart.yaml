@@ -7,6 +7,11 @@ maintainers:
 name: grafana
 version: 1.0.0
 dependencies:
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    tags:
+    - bitnami-common
+    version: 2.x.x
   - name: grafana
     version: 11.3.19
     repository: oci://registry-1.docker.io/bitnamicharts

@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 3.1.0
+dependencies:
+- condition: fluentbit.crdsEnable
+  name: fluent-bit-crds
+  repository: fluent-bit-crds
+- condition: fluentd.crdsEnable
+  name: fluentd-crds
+  repository: fluentd-crds
+description: A Helm chart for Kubernetes
+name: fluent-operator
+version: 3.1.0

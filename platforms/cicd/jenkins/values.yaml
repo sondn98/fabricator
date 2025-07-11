@@ -1,0 +1,51 @@
+image:
+  registry: docker.io
+  repository: bitnami/jenkins
+  tag: 2.504.3-debian-12-r0
+
+jenkinsUser: jenkins
+jenkinsPassword: "SuperSecr3t"
+jenkinsHost: jenkins.fabricator.work
+jenkinsHome: /bitnami/jenkins/home
+disableInitialization: "no"
+
+configAsCode:
+  enabled: false
+
+agent:
+  enabled: false
+
+## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+resourcesPreset: "none"
+resources: {}
+
+containerPorts:
+  http: 8080
+  https: 8443
+  agentListener: 50000
+
+service:
+  type: ClusterIP
+  ports:
+    http: 80
+    https: 443
+
+agentListenerService:
+  enabled: true
+  type: ClusterIP
+  ports:
+    agentListener: 50000
+
+ingress:
+  enabled: false
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 8Gi
+
+rbac:
+  create: true
+serviceAccount:
+  create: true

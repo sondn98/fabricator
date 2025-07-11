@@ -1,0 +1,27 @@
+applications:
+  grafana:
+    enabled: false
+    path: platforms/monitoring/grafana
+    valueFiles:
+      - values.yaml
+  ## Note: Fluentd/FluentBit is unable to run on Raspberry Pi 5 due to an architectural incompatibility
+  fluent:
+    enabled: false
+    path: platforms/operators/fluent
+    valueFiles:
+      - values.yaml
+  loki:
+    enabled: false
+    path: platforms/monitoring/loki
+    valueFiles:
+      - values.yaml
+  prometheus:
+    enabled: false
+    path: platforms/monitoring/prometheus
+    valueFiles:
+      - alert-manager.yaml
+      - blackbox-exporter.yaml
+      - coredns.yaml
+      - kubernetes.yaml
+      - operator.yaml
+      - prometheus.yaml

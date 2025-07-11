@@ -1,0 +1,56 @@
+garage:
+  dbEngine: "lmdb"
+  blockSize: "1048576"
+  replicationMode: "3"
+  compressionLevel: "1"
+  rpcBindAddr: "[::]:3901"
+  kubernetesSkipCrd: false
+  s3:
+    api:
+      region: "garage"
+      rootDomain: ".s3.fabricator.work"
+    web:
+      rootDomain: ".fabricator.work"
+      index: "index.html"
+
+persistence:
+  enabled: true
+  meta:
+    size: 256Mi
+  data:
+    size: 5Gi
+
+deployment:
+  kind: StatefulSet
+  replicaCount: 3
+  podManagementPolicy: OrderedReady
+
+image:
+  repository: dxflrs/amd64_garage
+
+initImage:
+  repository: busybox
+  tag: stable
+
+serviceAccount:
+  create: true
+
+service:
+  type: ClusterIP
+  s3:
+    api:
+      port: 3900
+    web:
+      port: 3902
+
+resources: {}
+
+monitoring:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      path: /metrics
+      interval: 15s
+      scheme: http
+      scrapeTimeout: 10s

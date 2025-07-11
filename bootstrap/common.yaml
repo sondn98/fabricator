@@ -1,0 +1,114 @@
+global:
+  repoURL: https://github.com/sondn98/fabricator.git
+  targetRevision: lab
+  appNamespace: argo
+
+applications:
+  airflow:
+    enabled: false
+    path: platforms/computation/airflow
+    valueFiles:
+      - values.yaml
+  clickhouse:
+    enabled: false
+    path: platforms/warehouse/clickhouse
+    valueFiles:
+      - values.yaml
+  code-server:
+    enabled: false
+    path: platforms/others/code-server
+    valueFiles:
+      - values.yaml
+  elasticsearch:
+    enabled: false
+    path: platforms/databases/elasticsearch
+    valueFiles:
+      - values.yaml
+  fluent:
+    enabled: false
+    path: platforms/operators/fluent
+    valueFiles:
+      - values.yaml
+  jenkins:
+    enabled: false
+    path: platforms/cicd/jenkins
+    valueFiles:
+      - values.yaml
+  jupyterhub:
+    enabled: false
+    path: platforms/computation/jupyterhub
+    valueFiles:
+      - values.yaml
+  kafka:
+    enabled: false
+    path: platforms/streaming/kafka
+    valueFiles:
+      - values.yaml
+    extraParams:
+      - name: "schema-registry.enabled"
+        value: "true"
+      - name: "akhq.enabled"
+        value: "true"
+  keycloak:
+    enabled: false
+    path: platforms/security/keycloak
+    valueFiles:
+      - values.yaml
+  localstack:
+    enabled: false
+    path: platforms/others/localstack
+    valueFiles:
+      - values.yaml
+  minio:
+    enabled: false
+    path: platforms/storage/minio
+    valueFiles:
+      - values.yaml
+  mysql:
+    enabled: false
+    path: platforms/databases/mysql
+    valueFiles:
+      - values.yaml
+  nifi:
+    enabled: false
+    path: platforms/computation/nifi
+    valueFiles:
+      - values.yaml
+  postgresql:
+    enabled: true
+    path: platforms/databases/postgresql
+    valueFiles:
+      - values.yaml
+    extraParams:
+      - name: "pgbouncer.enabled"
+        value: "false"
+  redis:
+    enabled: false
+    path: platforms/databases/redis
+    valueFiles:
+      - values.yaml
+  spark:
+    enabled: false
+    path: platforms/operators/spark
+    valueFiles:
+      - values.yaml
+  strimzi:
+    enabled: false
+    path: platforms/operators/strimzi
+    valueFiles:
+      - values.yaml
+  unitycatalog:
+    enabled: false
+    path: platforms/computation/unitycatalog
+    valueFiles:
+      - values.yaml
+  vault:
+    enabled: false
+    path: platforms/security/vault
+    valueFiles:
+      - values.yaml
+  zookeeper:
+    enabled: false
+    path: platforms/others/zookeeper
+    valueFiles:
+      - values.yaml

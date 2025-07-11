@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for Jenkins deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: jenkins
+version: 1.0.0
+dependencies:
+  - name: jenkins
+    version: 13.6.12
+    repository: oci://registry-1.docker.io/bitnamicharts

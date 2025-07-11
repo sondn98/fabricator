@@ -2,7 +2,7 @@ global:
   # Optional Helm version to template with.
   # If omitted it will fall back to look at the 'apiVersion' in Chart.yaml and decide which Helm binary to use automatically.
   # This field can be either 'v2' or 'v3'.
-  helmVersion: v2
+  helmVersion: v3
   # You can specify the Kubernetes API version to pass to Helm when templating manifests.
   # By default, Argo CD uses the Kubernetes version of the target cluster.
   # The value must be semver formatted. Do not prefix with `v`.

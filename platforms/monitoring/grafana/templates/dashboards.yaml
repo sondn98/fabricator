@@ -1,0 +1,83 @@
+## Monitor K8S cluster
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-k8s-api-server
+data:
+  api_server.json: |-
+    {{- .Files.Get "files/dashboards/kubernetes/API_Server.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-k8s-view-global
+data:
+  view_global.json: |-
+    {{- .Files.Get "files/dashboards/kubernetes/Views_Global.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-k8s-view-namespaces
+data:
+  view_namespaces.json: |-
+    {{- .Files.Get "files/dashboards/kubernetes/Views_Namespaces.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-k8s-view-nodes
+data:
+  view_nodes.json: |-
+    {{- .Files.Get "files/dashboards/kubernetes/Views_Nodes.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-k8s-view-pods
+data:
+  view_pods.json: |-
+    {{- .Files.Get "files/dashboards/kubernetes/Views_Pods.json" | nindent 4 }}
+---
+
+## Monitor nodes
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-nodes-hardware
+data:
+  hardware.json: |-
+    {{- .Files.Get "files/dashboards/nodes/Hardware.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-nodes-network
+data:
+  network.json: |-
+    {{- .Files.Get "files/dashboards/nodes/Network.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-nodes-resources
+data:
+  resources.json: |-
+    {{- .Files.Get "files/dashboards/nodes/Resources.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-nodes-storage
+data:
+  storage.json: |-
+    {{- .Files.Get "files/dashboards/nodes/Storage.json" | nindent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboards-nodes-system
+data:
+  system.json: |-
+    {{- .Files.Get "files/dashboards/nodes/System.json" | nindent 4 }}
+---

@@ -1,0 +1,12 @@
+applications:
+  ## Note: Garage is unable to run on Raspberry Pi 5 due to an architectural incompatibility
+  garage:
+    enabled: false
+    path: platforms/storage/garage
+    valueFiles:
+      - values.yaml
+  minio:
+    enabled: false
+    path: platforms/storage/minio
+    valueFiles:
+      - values.yaml

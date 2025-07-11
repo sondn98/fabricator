@@ -30,6 +30,42 @@ grafana:
     resourcesPreset: "none"
     resources: {}
 
+  dashboardsProvider:
+    enabled: true
+    configMapName: "grafana-dashboard-provider"
+  dashboardsConfigMaps:
+    - configMapName: dashboards-k8s-api-server
+      folderName: Kubernetes
+      fileName: api_server.json
+    - configMapName: dashboards-k8s-view-global
+      folderName: Kubernetes
+      fileName: view_global.json
+    - configMapName: dashboards-k8s-view-namespaces
+      folderName: Kubernetes
+      fileName: view_namespaces.json
+    - configMapName: dashboards-k8s-view-nodes
+      folderName: Kubernetes
+      fileName: view_nodes.json
+    - configMapName: dashboards-k8s-view-pods
+      folderName: Kubernetes
+      fileName: view_pods.json
+
+    - configMapName: dashboards-nodes-hardware
+      folderName: Nodes
+      fileName: hardware.json
+    - configMapName: dashboards-nodes-network
+      folderName: Nodes
+      fileName: network.json
+    - configMapName: dashboards-nodes-resources
+      folderName: Nodes
+      fileName: resources.json
+    - configMapName: dashboards-nodes-storage
+      folderName: Nodes
+      fileName: storage.json
+    - configMapName: dashboards-nodes-system
+      folderName: Nodes
+      fileName: system.json
+
   persistence:
     enabled: true
     accessMode: ReadWriteOnce

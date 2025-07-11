@@ -1,0 +1,11 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for UnityCatalog deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: unitycatalog
+version: 1.0.0
+dependencies:
+  - name: unitycatalog
+    version: 0.0.1-pre.1

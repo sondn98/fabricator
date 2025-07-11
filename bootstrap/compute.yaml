@@ -1,0 +1,16 @@
+applications:
+  airflow:
+    enabled: false
+    path: platforms/computation/airflow
+    valueFiles:
+      - values.yaml
+  unitycatalog:
+    enabled: false
+    path: platforms/computation/unitycatalog
+    valueFiles:
+      - values.yaml
+  jupyterhub:
+    enabled: false
+    path: platforms/computation/jupyterhub
+    valueFiles:
+      - values.yaml

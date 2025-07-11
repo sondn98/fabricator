@@ -1,0 +1,85 @@
+unitycatalog:
+  storage:
+    modelStorageRoot: file:/tmp/ucroot
+
+    credentials: {}
+
+  auth:
+    enabled: false
+
+  server:
+    enabled: true
+
+    db:
+      type: postgresql
+      postgresqlConfig:
+        host: postgresql.postgresql.svc
+        port: 5432
+        dbName: ucdb
+        username: ucdb
+        passwordSecretName: unitycatalog-pg-secret
+        passwordSecretKey: unitycatalog-pg-password
+        ssl:
+          enabled: false
+
+    service:
+      type: ClusterIP
+      port: 8080
+
+    deployment:
+      replicaCount: 1
+      port: 8080
+
+      initContainer:
+        image:
+          repository: alpine
+          tag: latest
+
+      image:
+        repository: unitycatalog/unitycatalog
+        tag: v0.3.0
+
+      resources: {}
+
+    createUsersJob:
+      image:
+        repository: alpine
+        tag: latest
+
+    jwtKeypairSecret:
+      create: false
+
+    logLevel: info
+
+  ui:
+    enabled: true
+
+    service:
+      port: 3000
+
+    proxyApiRequests: true
+    serverUrl: http://unitycatalog-server.unitycatalog.svc:8080
+
+    extraEnvVars:
+      - name: DANGEROUSLY_DISABLE_HOST_CHECK
+        value: "true"
+
+    deployment:
+      port: 3000
+      replicaCount: 1
+
+      initContainer:
+        image:
+          repository: busybox
+
+      image:
+        repository: unitycatalog/unitycatalog-ui
+        tag: main
+
+      resources: {}
+
+  ingress:
+    enabled: false
+
+  serviceAccount:
+    create: false

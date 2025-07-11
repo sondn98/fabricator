@@ -1,55 +1,63 @@
+{{- $global := .Values.global }}
 {{- $syncCfg := .Values.syncConfig -}}
-{{- range $app := .Values.applications }}
+{{- range $appName, $appCfg := .Values.applications }}
+{{- if $appCfg.enabled }}
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $app.name }}
-  namespace: {{ .Values.global.appNamespace | default "argocd" }}
-  {{ if $app.finalizers }}
+  name: {{ $appName }}
+  namespace: {{ $global.appNamespace | default "argocd" }}
+  {{ if $appCfg.finalizers }}
   finalizers:
-    {{- range $app.finalizers }}
+    {{- range $appCfg.finalizers }}
     - {{ . }}
     {{- end }}
   {{ end }}
-  {{ if $app.labels }}
+  {{ if $appCfg.labels }}
   labels:
-    {{- range $app.labels }}
+    {{- range $appCfg.labels }}
     - {{ . }}
     {{- end }}
   {{ end }}
 spec:
-  project: {{ $app.name | default "default" }}
+  project: {{ $appCfg.project | default "default" }}
   source:
-    repoURL: {{ .Values.global.global }}
-    targetRevision: {{ .Values.global.targetRevision }}
-    path: {{ $app.path }}
+    repoURL: {{ $global.repoURL }}
+    targetRevision: {{ $global.targetRevision }}
+    path: {{ $appCfg.path }}
 
     helm:
       passCredentials: false
-      {{ if $app.extraParams }}
+      {{ if $appCfg.extraParams }}
       parameters:
-        {{ toYaml $app.extraParams | indent 8 }}
+        {{ range $appCfg.extraParams }}
+        - name: {{ .name | quote }}
+          value: {{ .value | quote }}
+        {{- end }}
       {{ end}}
-      releaseName: {{ $app.name }}
+      releaseName: {{ $appName }}
       valueFiles:
-        {{- range $app.valueFiles }}
+        {{- range $appCfg.valueFiles }}
         - {{ . }}
         {{- end }}
       ignoreMissingValueFiles: false
+      {{ if $appCfg.extraValues }}
       valuesObject:
-        {{ toYaml $app.extraValues | indent 8 }}
+        {{ toYaml $appCfg.extraValues | indent 8 }}
+      {{ end }}
       skipCrds: false
-      skipSchemaValidation: false
-      version: {{ .Values.global.helmVersion }}
-      kubeVersion: {{ .Values.global.kubeVersion }}
+      # skipSchemaValidation: false
+      version: {{ $global.helmVersion }}
+      # kubeVersion: {{ $global.kubeVersion }}
 
   destination:
-    server: {{ .Values.global.kubeServer | default "https://kubernetes.default.svc" }}
-    namespace: {{ $app.namespace }}
+    server: {{ $global.kubeServer | default "https://kubernetes.default.svc" }}
+    namespace: {{ $appCfg.namespace | default $appName }}
 
-  {{ if $app.info }}
+  {{ if $appCfg.info }}
   info:
-    {{ toYaml $app.valueFiles | indent 4 }}
+    {{ toYaml $appCfg.valueFiles | indent 4 }}
   {{ end }}
 
   syncPolicy:
@@ -67,7 +75,7 @@ spec:
     {{ end }}
     syncOptions:
     {{- range $k, $v := $syncCfg.syncOptions }}
-      - $k=$v
+      - {{ $k }}={{ $v }}
     {{- end }}
     {{ if and $syncCfg.managedNamespaceMetadata $syncCfg.syncOptions.CreateNamespace }}
     managedNamespaceMetadata:
@@ -75,8 +83,9 @@ spec:
     {{ end }}
   {{ if and $syncCfg.ignoreDifferences $syncCfg.syncOptions.RespectIgnoreDifferences }}
   ignoreDifferences:
-    {{ toYaml $app.valueFiles | indent 4 }}
+    {{ toYaml $appCfg.valueFiles | indent 4 }}
   {{ end }}
 
-  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
-{{ end }}
+  revisionHistoryLimit: {{ $global.revisionHistoryLimit }}
+{{- end }}
+{{- end }}
