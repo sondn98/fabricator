@@ -13,7 +13,7 @@ spec:
     path: bootstrap/chart
     helm:
       valueFiles:
-        - values.yaml
+        - ../bootstraps.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argo
