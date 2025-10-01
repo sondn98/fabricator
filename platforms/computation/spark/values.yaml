@@ -1,0 +1,66 @@
+spark:
+  global:
+    security:
+      allowInsecureImages: true
+
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/spark
+    tag: 4.0.0-debian-12-r20
+
+  master:
+    enabled: true
+
+    containerPorts:
+      http: 8080
+      https: 8480
+      cluster: 7077
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources: {}
+
+  worker:
+    enabled: true
+
+    containerPorts:
+      http: 8080
+      https: 8480
+
+    ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge
+    resourcesPreset: "none"
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 2048Mi
+
+  security:
+    rpc:
+      authenticationEnabled: false
+      encryptionEnabled: false
+    storageEncryptionEnabled: false
+    ssl:
+      enabled: false
+
+  service:
+    type: ClusterIP
+    ports:
+      http: 80
+      https: 443
+      cluster: 7077
+
+  metrics:
+    enabled: true
+
+    masterAnnotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/path: '/metrics/'
+      prometheus.io/port: '{{ .Values.master.containerPorts.http }}'
+
+    workerAnnotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/path: '/metrics/'
+      prometheus.io/port: '{{ .Values.worker.containerPorts.http }}'

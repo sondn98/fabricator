@@ -87,9 +87,14 @@ applications:
     path: platforms/databases/redis
     valueFiles:
       - values.yaml
-  spark:
+  spark-operator:
     enabled: false
     path: platforms/operators/spark
+    valueFiles:
+      - values.yaml
+  spark:
+    enabled: false
+    path: platforms/computation/spark
     valueFiles:
       - values.yaml
   strimzi:

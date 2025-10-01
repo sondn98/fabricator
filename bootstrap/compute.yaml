@@ -14,3 +14,8 @@ applications:
     path: platforms/computation/jupyterhub
     valueFiles:
       - values.yaml
+  spark:
+    enabled: true
+    path: platforms/computation/spark
+    valueFiles:
+      - values.yaml
