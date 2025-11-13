@@ -1,5 +1,0 @@
----
-- name: Setup essential tools
-  ansible.builtin.apt:
-    update_cache: yes
-    name: net-tools

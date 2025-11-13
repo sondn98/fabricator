@@ -1,0 +1,28 @@
+# [local]
+# localhost ansible_host=127.0.0.1
+
+# [master]
+# 192.168.1.27 ansible_python_interpreter=/usr/bin/python3
+
+# [worker]
+# 192.168.1.70 ansible_python_interpreter=/usr/bin/python3
+
+# [homelab:children]
+# master
+# worker
+
+k3s_cluster:
+  children:
+    server:
+      hosts:
+        192.168.1.27:
+    agent:
+      hosts:
+        192.168.1.70:
+
+  vars:
+    ansible_port: 22
+    ansible_user: sondn98
+    k3s_version: v1.31.12+k3s1
+    token: "pyAmUO9tDvISa2uYkj99m6/bd5fq2Cu5892aAXyLE2WUaHrjOzTwrR8dc4aMFO7X"
+    api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
