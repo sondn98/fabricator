@@ -1,106 +1,65 @@
-extraDeploy:
-  - |
-    {{ tpl (readFile "secrets.yaml") . | nindent 4 | trim }}
-  - |
+crds:
+  install: true
+  keep: true
+
+configs:
+  cm:
+    create: true
+    {{ tpl (readFile "config.yaml") . | nindent 4 | trim }}
+
+  params:
+    create: true
+
+  rbac:
+    create: true
+
+extraObjects:
+  - | 
     {{ tpl (readFile "repos.yaml") . | nindent 4 | trim }}
 
-image:
-  registry: docker.io
-  repository: bitnami/argo-cd
-  tag: 2.11.7-debian-12-r1
-
 controller:
-  kind: Deployment
-  replicaCount: 1
-  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge. This is ignored if controller.resources is set
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
-  ##
-  resourcesPreset: "micro"
-
-  serviceAccount:
-    create: true
-
-  clusterAdminAccess: true
-
-  metrics:
-    enabled: true
-
-  automountServiceAccountToken: true
-
-applicationSet:
-  enabled: false
-
-notifications:
-  enabled: false
-
-server:
-  replicaCount: 1
-
-  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if server.resources is set
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
-  ##
-  resourcesPreset: "nano"
-
-  ingress:
-    enabled: true
-    pathType: ImplementationSpecific
-    hostname: argocd.fabricator.vn
-    ingressClassName: nginx
-    path: /
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-
-  insecure: true
-
-  metrics:
-    enabled: true
-
-  ingressGrpc:
-    enabled: false
-
+  name: application-controller
+  replicas: 1
+  dynamicClusterDistribution: false
+  heartbeatTime: 20
+  resources: {}
+  
   containerPorts:
-    http: 8080
-    https: 8443
-    metrics: 8083
+    metrics: 8082
 
   serviceAccount:
     create: true
-
-repoServer:
-  replicaCount: 1
-
-  ## Allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge. This is ignored if repoServer.resources is set
-  ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
-  ##
-  resourcesPreset: "nano"
-
-  metrics:
-    enabled: true
-
-  serviceAccount:
-    create: true
-
+    
 dex:
-  enabled: false
-
-config:
-  secret:
-    create: true
-    argocdServerAdminPassword: '{{ requiredEnv "K8S_ARGOCD_ADMIN_PASSWORD" }}'
-
-rbac:
-  create: true
-
+  enabled: true
+  name: dex-server
+  
 redis:
   enabled: true
-  image:
-    registry: docker.io
-    repository: bitnami/redis
-    tag: 7.2.5-debian-12-r3
-  auth:
-    enabled: true
-    existingSecret: redis-auth-secret
-    existingSecretPasswordKey: redis-password
-  architecture: standalone
+  name: redis
+  
+  resources: {}
+  servicePort: 6379
+  
+server:
+  name: server
+  replicas: 1
+  
+  extensions:
+    enabled: false
+    
+  resources: {}
+  
+  containerPorts:
+    server: 8080
+    metrics: 8083
+    
+repoServer:
+  name: repo-server
+  replicas: 1
+  
+  resources: {}
+  containerPorts:
+    server: 8081
+    metrics: 8084
+    

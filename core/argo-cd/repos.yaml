@@ -1,28 +1,30 @@
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: fabricator-creds
-  namespace: argocd
+  name: argocd-git-repo-secret
+  namespace: argo
 spec:
   refreshInterval: 10m
   secretStoreRef:
     name: bitwarden-secretsmanager
-    kind: ClusterSecretStore
+    kind: ClusterSecretStore  
   target:
+    name: argocd-git-repo-secret
+    creationPolicy: Owner
     template:
+      type: Opaque
       metadata:
         labels:
           argocd.argoproj.io/secret-type: repository
+      data:
+        type: "git"
+        url: "https://github.com/sondn98/fabricator.git"
+        username: "{{ .username }}"
+        password: "{{ .password }}"
   data:
-    - secretKey: type
-      remoteRef:
-        key: "fe34b15e-0967-40c5-882f-b25b004fdf09"
-    - secretKey: url
-      remoteRef:
-        key: "3e508ef2-ef99-439c-b559-b25b00510cfa"
     - secretKey: username
       remoteRef:
-        key: "2f866246-1e26-4e2d-8668-b25b005156cf"
+        key: "34fe44ab-ccff-4beb-b64d-b3e6010ac4e2"
     - secretKey: password
       remoteRef:
-        key: "f23b930a-7020-4e4c-a62a-b25b005194b4"
+        key: "f08af11e-4bed-4c00-bab5-b3e6010bf833"

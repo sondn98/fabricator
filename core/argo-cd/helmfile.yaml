@@ -1,12 +1,12 @@
 releases:
   - name: argo-cd
     namespace: argo
-    chart: bitnami/argo-cd
-    version: 6.6.10
+    chart: argo-cd/argo-cd
+    version: 9.0.0
     values:
       - ./argo-cd.yaml.gotmpl
-      - fullnameOverride: argocd
-    hooks:
-      - events: ["postsync"]
-        command: "kubectl"
-        args: ["apply", "-f", "../bootstrap.yaml"]
+      - fullnameOverride: argo-cd
+    # hooks:
+    #   - events: ["postsync"]
+    #     command: "kubectl"
+    #     args: ["apply", "-f", "../bootstrap.yaml"]

@@ -20,7 +20,7 @@ metadata:
 spec:
   project: {{ $app.name | default "default" }}
   source:
-    repoURL: {{ .Values.global.global }}
+    repoURL: {{ .Values.global.repoURL }}
     targetRevision: {{ .Values.global.targetRevision }}
     path: {{ $app.path }}
 

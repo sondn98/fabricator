@@ -1,0 +1,11 @@
+cloudflare:
+  tunnelName: fabricator
+  secretName: cloudflare-secret
+
+image:
+  repository: cloudflare/cloudflared
+  tag: 2024.8.3
+
+replicaCount: 2
+
+resources: {}
