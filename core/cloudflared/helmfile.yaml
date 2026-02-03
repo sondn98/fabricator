@@ -1,0 +1,8 @@
+releases:
+  - name: cloudflared
+    namespace: cloudflare
+    chart: cloudflare/cloudflare-tunnel
+    version: 0.3.2
+    values:
+      - ./cloudflared.yaml
+      - fullnameOverride: cloudflared

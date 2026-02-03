@@ -5,6 +5,10 @@ repositories:
     url: https://charts.jetstack.io
   - name: external-secrets
     url: https://charts.external-secrets.io
+  - name: argo-cd
+    url: https://argoproj.github.io/argo-helm
+  - name: cloudflare
+    url: https://cloudflare.github.io/helm-charts
 
 helmDefaults:
   wait: true
@@ -16,7 +20,5 @@ helmDefaults:
 helmfiles:
   - path: cert-manager/helmfile.yaml
   - path: external-secrets/helmfile.yaml
-  # - path: cilium/helmfile.yaml
-  # - path: metallb/helmfile.yaml
-  # - path: nginx-ingress-controller/helmfile.yaml
-  # - path: argo-cd/helmfile.yaml
+  - path: cloudflared/helmfile.yaml
+  - path: argo-cd/helmfile.yaml
