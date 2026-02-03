@@ -1,10 +1,12 @@
 {{- $syncCfg := .Values.syncConfig -}}
+{{- $global := .Values.global -}}
 {{- range $app := .Values.applications }}
+{{- if $app.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ $app.name }}
-  namespace: {{ .Values.global.appNamespace | default "argocd" }}
+  namespace: {{ $global.appNamespace | default "argocd" }}
   {{ if $app.finalizers }}
   finalizers:
     {{- range $app.finalizers }}
@@ -20,15 +22,15 @@ metadata:
 spec:
   project: {{ $app.name | default "default" }}
   source:
-    repoURL: {{ .Values.global.repoURL }}
-    targetRevision: {{ .Values.global.targetRevision }}
+    repoURL: {{ $global.repoURL }}
+    targetRevision: {{ $global.targetRevision }}
     path: {{ $app.path }}
 
     helm:
       passCredentials: false
       {{ if $app.extraParams }}
       parameters:
-        {{ toYaml $app.extraParams | indent 8 }}
+        {{ toYaml $app.extraParams | nindent 8 }}
       {{ end}}
       releaseName: {{ $app.name }}
       valueFiles:
@@ -36,15 +38,17 @@ spec:
         - {{ . }}
         {{- end }}
       ignoreMissingValueFiles: false
+      {{ if $app.extraValues -}}
       valuesObject:
         {{ toYaml $app.extraValues | indent 8 }}
+      {{ end -}}
       skipCrds: false
       skipSchemaValidation: false
-      version: {{ .Values.global.helmVersion }}
-      kubeVersion: {{ .Values.global.kubeVersion }}
+      version: {{ $global.helmVersion }}
+      kubeVersion: {{ $global.kubeVersion }}
 
   destination:
-    server: {{ .Values.global.kubeServer | default "https://kubernetes.default.svc" }}
+    server: {{ $global.kubeServer | default "https://kubernetes.default.svc" }}
     namespace: {{ $app.namespace }}
 
   {{ if $app.info }}
@@ -67,7 +71,7 @@ spec:
     {{ end }}
     syncOptions:
     {{- range $k, $v := $syncCfg.syncOptions }}
-      - $k=$v
+      - {{ $k }}={{ $v }}
     {{- end }}
     {{ if and $syncCfg.managedNamespaceMetadata $syncCfg.syncOptions.CreateNamespace }}
     managedNamespaceMetadata:
@@ -78,5 +82,7 @@ spec:
     {{ toYaml $app.valueFiles | indent 4 }}
   {{ end }}
 
-  revisionHistoryLimit: {{ .Values.global.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ $global.revisionHistoryLimit }}
+---
+{{ end }}
 {{ end }}
