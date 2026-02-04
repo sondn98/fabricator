@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/sondn98/fabricator.git
-    targetRevision: master
+    targetRevision: lab
     path: bootstrap/chart
     helm:
       valueFiles:
