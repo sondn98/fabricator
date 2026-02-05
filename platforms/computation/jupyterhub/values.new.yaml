@@ -1,0 +1,195 @@
+hub:
+  revisionHistoryLimit: 2
+  config:
+    JupyterHub:
+      admin_access: true
+  service:
+    type: ClusterIP
+  baseUrl: /
+  concurrentSpawnLimit: 64
+  consecutiveFailureLimit: 5
+  activeServerLimit: 4
+  deploymentStrategy:
+    type: Recreate
+  db:
+    type: sqlite-pvc
+    pvc:
+      accessModes:
+        - ReadWriteOnce
+      storage: 1Gi
+    url:
+    password:
+  image:
+    name: quay.io/jupyterhub/k8s-hub
+    tag: "4.3.2"
+    
+  resources: {}
+  
+  allowNamedServers: false
+  shutdownOnLogout: true
+
+rbac:
+  create: true
+  
+proxy:
+  secretToken:
+  
+  service:
+    type: ClusterIP
+  chp:
+    revisionHistoryLimit: 2
+    image:
+      name: quay.io/jupyterhub/configurable-http-proxy
+      tag: "5.1.0"
+      
+    resources: {}
+    
+singleuser:
+  podNameTemplate: "" # TBD
+  
+  networkTools:
+    image:
+      name: quay.io/jupyterhub/k8s-network-tools
+      tag: "4.3.2"
+    resources: {}
+
+  cloudMetadata:
+    blockWithIptables: true
+    ip: 169.254.169.254
+    
+  events: true
+  allowPrivilegeEscalation: false
+  uid: 1000
+  fsGid: 100
+  storage:
+    type: dynamic
+    static:
+      pvcName:
+      subPath: "{username}"
+    capacity: 2Gi
+    homeMountPath: /home/jovyan
+  image:
+    name: quay.io/jupyterhub/k8s-singleuser-sample
+    tag: "4.3.2"
+  startTimeout: 300
+  cpu:
+    limit: "1"
+    guarantee: "200m"
+  memory:
+    limit: 1G
+    guarantee: 200MB
+  cmd: jupyterhub-singleuser
+  
+scheduling:
+  userScheduler:
+    enabled: true
+    revisionHistoryLimit: 2
+    replicas: 2
+    logLevel: 4
+    plugins:
+      score:
+        disabled:
+          - name: NodeResourcesBalancedAllocation
+          - name: NodeAffinity
+          - name: InterPodAffinity
+          - name: NodeResourcesFit
+          - name: ImageLocality
+        enabled:
+          - name: NodeAffinity
+            weight: 14631
+          - name: InterPodAffinity
+            weight: 1331
+          - name: NodeResourcesFit
+            weight: 121
+          - name: ImageLocality
+            weight: 11
+    pluginConfig:
+      - name: NodeResourcesFit
+        args:
+          scoringStrategy:
+            type: MostAllocated
+            resources:
+              - name: cpu
+                weight: 1
+              - name: memory
+                weight: 1
+    image:
+      name: registry.k8s.io/kube-scheduler
+      tag: "v1.30.14"
+      
+    resources: {}
+    
+  userPlaceholder:
+    enabled: true
+    image:
+      name: registry.k8s.io/pause
+      tag: "3.10.1"
+    resources: {}
+  corePods:
+    tolerations:
+      - key: hub.jupyter.org/dedicated
+        operator: Equal
+        value: core
+        effect: NoSchedule
+      - key: hub.jupyter.org_dedicated
+        operator: Equal
+        value: core
+        effect: NoSchedule
+    nodeAffinity:
+      matchNodePurpose: prefer
+  userPods:
+    tolerations:
+      - key: hub.jupyter.org/dedicated
+        operator: Equal
+        value: user
+        effect: NoSchedule
+      - key: hub.jupyter.org_dedicated
+        operator: Equal
+        value: user
+        effect: NoSchedule
+    nodeAffinity:
+      matchNodePurpose: prefer
+
+prePuller:
+  revisionHistoryLimit:
+  resources: {}
+  hook:
+    enabled: true
+    pullOnlyOnChanges: true
+    image:
+      name: quay.io/jupyterhub/k8s-image-awaiter
+      tag: "4.3.2"
+    podSchedulingWaitDuration: 10
+    resources: {}
+    
+  continuous:
+    enabled: true
+    
+  pullProfileListImages: true
+  
+  pause:
+    image:
+      name: registry.k8s.io/pause
+      tag: "3.10.1"
+
+ingress:
+  enabled: false
+
+httpRoute:
+  enabled: false
+  
+cull:
+  enabled: true
+  users: false
+  adminUsers: true
+  removeNamedServers: false
+  timeout: 3600
+  every: 600
+  concurrency: 10
+  maxAge: 0
+
+debug:
+  enabled: false
+
+global:
+  safeToShowValues: false
