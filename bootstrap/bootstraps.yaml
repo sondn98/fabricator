@@ -41,7 +41,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: jupyterhub
-    enabled: false
+    enabled: true
     namespace: jupyterhub
     path: platforms/computation/jupyterhub
     valueFiles:

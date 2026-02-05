@@ -314,3 +314,5 @@ docker/other/strapi/app
 **/.env
 **/.credentials
 kubernetes/platforms/security/sealed-secrets/secrets
+core/arc/charts
+core/arc/Chart.lock
