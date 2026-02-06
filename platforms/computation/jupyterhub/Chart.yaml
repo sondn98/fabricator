@@ -9,4 +9,3 @@ version: 1.0.0
 dependencies:
   - name: jupyterhub
     version: 4.3.2
-    repository: oci://registry-1.docker.io/bitnamicharts
