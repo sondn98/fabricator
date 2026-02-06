@@ -71,12 +71,9 @@ jupyterhub:
       name: quay.io/jupyterhub/k8s-singleuser-sample
       tag: "4.3.2"
     startTimeout: 300
-    cpu:
-      limit: 2
-      guarantee: 1
     memory:
       limit: 1G
-      guarantee: 200MB
+      guarantee: 200M
     cmd: jupyterhub-singleuser
     
   scheduling:
