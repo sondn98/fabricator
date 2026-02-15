@@ -4,7 +4,7 @@ jupyterhub:
     config:
       JupyterHub:
         admin_access: true
-        authenticator_class: remoteuser
+        authenticator_class: CloudflareAuthenticator
       RemoteUserAuthenticator:
         header_name: Cf-Access-Authenticated-User-Email
         auto_login: true
@@ -36,6 +36,25 @@ jupyterhub:
     
     allowNamedServers: false
     shutdownOnLogout: true
+    extraConfig:
+      00-cloudflare-auth: |
+        from jupyterhub.auth import Authenticator
+        from tornado import web
+
+        class CloudflareAuthenticator(Authenticator):
+          async def authenticate(self, handler, data=None):
+            email = handler.request.headers.get(
+              "Cf-Access-Authenticated-User-Email"
+            )
+
+            if not email:
+              raise web.HTTPError(403)
+
+            return email
+        
+        c.JupyterHub.authenticator_class = CloudflareAuthenticator
+        c.Authenticator.auto_login = True
+        c.Authenticator.allow_all = True
 
   rbac:
     create: true
@@ -76,8 +95,8 @@ jupyterhub:
       capacity: 2Gi
       homeMountPath: /home/jovyan
     image:
-      name: quay.io/jupyterhub/k8s-singleuser-sample
-      tag: "4.3.2"
+      name: jupyter/pyspark-notebook
+      tag: "latest"
     startTimeout: 300
     memory:
       limit: 1G
