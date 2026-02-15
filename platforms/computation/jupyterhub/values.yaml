@@ -4,6 +4,14 @@ jupyterhub:
     config:
       JupyterHub:
         admin_access: true
+        authenticator_class: remoteuser
+      RemoteUserAuthenticator:
+        header_name: Cf-Access-Authenticated-User-Email
+        auto_login: true
+        create_system_users: false
+      Authenticator:
+        admin_users:
+          - dongocson.work@gmail.com
     service:
       type: ClusterIP
     baseUrl: /
