@@ -102,6 +102,8 @@ jupyterhub:
       limit: 1G
       guarantee: 200M
     cmd: jupyterhub-singleuser
+    extraEnv:
+      JUPYTER_GATEWAY_URL: http://enterprise-gateway.jupyterhub.svc.cluster.local:8888
     
   scheduling:
     userScheduler:
@@ -239,6 +241,7 @@ enterprise-gateway:
     replicas: 1
     extraEnv:
       EG_INHERITED_ENVS: "PATH"
+      EG_LISTEN_IP: 0.0.0.0
 
   logLevel: DEBUG
   mirrorWorkingDirs: false
