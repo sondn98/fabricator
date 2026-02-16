@@ -6,7 +6,7 @@ spark-operator:
 
   controller:
     replicas: 1
-    workers: 5
+    workers: 3
 
     logLevel: info
 
@@ -41,7 +41,7 @@ spark-operator:
 
   spark:
     jobNamespaces:
-    - spark
+      - spark
 
   prometheus:
     metrics:

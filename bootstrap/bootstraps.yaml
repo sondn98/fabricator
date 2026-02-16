@@ -121,7 +121,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: spark
-    enabled: false
+    enabled: true
     namespace: spark
     path: platforms/operators/spark
     valueFiles:

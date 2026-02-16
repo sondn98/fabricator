@@ -20,7 +20,7 @@ metadata:
     {{- end }}
   {{ end }}
 spec:
-  project: {{ $app.name | default "default" }}
+  project: default
   source:
     repoURL: {{ $global.repoURL }}
     targetRevision: {{ $global.targetRevision }}
