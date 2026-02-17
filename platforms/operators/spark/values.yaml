@@ -42,6 +42,7 @@ spark-operator:
   spark:
     jobNamespaces:
       - spark
+      - jupyterhub
 
   prometheus:
     metrics:

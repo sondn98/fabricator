@@ -221,7 +221,7 @@ jupyterhub:
 
 enterprise-gateway:
   enabled: true
-  image: elyra/enterprise-gateway:3.2.3
+  image: sondn1/enterprise-gateway:3.2.3-rc1
   
   service:
     type: "ClusterIP"
@@ -241,28 +241,25 @@ enterprise-gateway:
     replicas: 1
     extraEnv:
       EG_INHERITED_ENVS: "PATH"
-      EG_LISTEN_IP: 0.0.0.0
+      # EG_LISTEN_IP: 0.0.0.0
+      # EG_RESPONSE_IP: 0.0.0.0
+      EG_RESPONSE_ADDRESS: enterprise-gateway.jupyterhub.svc.cluster.local:8877
+      RESPONSE_ADDRESS: enterprise-gateway.jupyterhub.svc.cluster.local:8877
 
   logLevel: DEBUG
   mirrorWorkingDirs: false
 
   kernel:
     clusterRole: kernel-controller
-    shareGatewayNamespace: false
+    shareGatewayNamespace: true
     launchTimeout: 60
     cullIdleTimeout: 3600
     cullConnected: false
     allowedKernels:
-      - r_kubernetes
       - python_kubernetes
-      - python_tf_kubernetes
-      - python_tf_gpu_kubernetes
-      - scala_kubernetes
-      - spark_r_kubernetes
       - spark_python_kubernetes
-      - spark_scala_kubernetes
       - spark_python_operator
-    defaultKernelName: python_kubernetes
+    defaultKernelName: spark_python_operator
 
   nfs:
     enabled: false
