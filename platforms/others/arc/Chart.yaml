@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for ARC deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: arc
+version: 1.0.0
+dependencies:
+  - name: gha-runner-scale-set-controller
+    version: 0.13.1
+    repository: oci://ghcr.io/actions/actions-runner-controller-charts
+  - name: gha-runner-scale-set
+    version: 0.13.1
+    repository: oci://ghcr.io/actions/actions-runner-controller-charts

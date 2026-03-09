@@ -41,7 +41,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: jupyterhub
-    enabled: true
+    enabled: false
     namespace: jupyterhub
     path: platforms/computation/jupyterhub
     valueFiles:
@@ -108,6 +108,12 @@ applications:
     extraParams:
     - name: "pgbouncer.enabled"
       value: "false"
+  - name: qdrant
+    enabled: true
+    namespace: qdrant
+    path: platforms/databases/qdrant
+    valueFiles:
+      - values.yaml
   - name: prometheus
     enabled: false
     namespace: prometheus
@@ -121,7 +127,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: spark
-    enabled: true
+    enabled: false
     namespace: spark
     path: platforms/operators/spark
     valueFiles:
@@ -142,5 +148,11 @@ applications:
     enabled: false
     namespace: zookeeper
     path: platforms/others/zookeeper
+    valueFiles:
+      - values.yaml
+  - name: arc
+    enabled: true
+    namespace: arc
+    path: platforms/others/arc
     valueFiles:
       - values.yaml
