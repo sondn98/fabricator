@@ -1,0 +1,72 @@
+qdrant:
+  replicaCount: 1
+
+  image:
+    repository: docker.io/qdrant/qdrant
+    pullPolicy: IfNotPresent
+    tag: v1.17.0
+
+  service:
+    type: ClusterIP
+    ports:
+      - name: http
+        port: 6333
+        targetPort: 6333
+        protocol: TCP
+        checksEnabled: true
+      - name: grpc
+        port: 6334
+        targetPort: 6334
+        protocol: TCP
+        checksEnabled: false
+      - name: p2p
+        port: 6335
+        targetPort: 6335
+        protocol: TCP
+        checksEnabled: false
+
+  ingress:
+    enabled: false
+
+  resources: {}
+
+  persistence:
+    accessModes: ["ReadWriteOnce"]
+    size: 10Gi
+
+  # If you use snapshots or the snapshot shard transfer mechanism, we recommend
+  # creating a separate volume of the same size as your main volume so that your
+  # cluster won't crash if the snapshot is too big.
+  snapshotPersistence:
+    enabled: false
+
+  snapshotRestoration:
+    enabled: false
+    
+  config:
+    cluster:
+      enabled: true
+      p2p:
+        port: 6335
+        enable_tls: false
+      consensus:
+        tick_period_ms: 100
+    service:
+      enable_tls: false
+
+  metrics:
+    serviceMonitor:
+      enabled: false
+
+  podManagementPolicy: Parallel
+
+  chartTests:
+    dbInteraction:
+      image: registry.suse.com/bci/bci-base:latest
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+        limits:
+          cpu: 100m
+          memory: 200Mi
