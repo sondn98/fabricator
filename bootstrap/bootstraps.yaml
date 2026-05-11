@@ -99,6 +99,12 @@ applications:
     path: platforms/computation/nifi
     valueFiles:
       - values.yaml
+  - name: ollama
+    enabled: true
+    namespace: ollama
+    path: platforms/ai/ollama
+    valueFiles:
+      - values.yaml
   - name: postgresql
     enabled: false
     namespace: postgresql

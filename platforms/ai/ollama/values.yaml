@@ -1,0 +1,26 @@
+unichart:
+  applicationName: ollama
+
+  deployment:
+    image:
+      repository: docker.io/ollama/ollama
+      tag: 0.23.2
+
+    ports:
+      - containerPort: 11434
+        name: http
+        protocol: TCP
+
+    resources: {}
+
+  service:
+    ports:
+      - port: 11434
+        name: http
+        protocol: TCP
+        targetPort: 11434
+
+  rbac:
+    enabled: true
+    serviceAccount:
+      enabled: true
