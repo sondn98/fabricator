@@ -69,6 +69,9 @@ applications:
     path: platforms/databases/opensearch
     valueFiles:
       - values.yaml
+    extraParams:
+    - name: "opensearchDashboards.enabled"
+      value: "true"
   - name: postgresql
     enabled: false
     namespace: postgresql
