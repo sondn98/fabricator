@@ -18,6 +18,10 @@ opensearch:
       cluster.name: opensearch-cluster
       network.host: 0.0.0.0
 
+  envFrom:
+    - secretRef:
+        name: opensearch-admin-secret
+
   image:
     repository: "opensearchproject/opensearch"
     # override image tag, which is .Chart.AppVersion by default
@@ -46,7 +50,6 @@ opensearch:
   httpHostPort: ""
   transportHostPort: ""
 
-
   service:
     type: ClusterIP
     httpPortName: http
@@ -56,3 +59,35 @@ opensearch:
   maxUnavailable: 1
   terminationGracePeriod: 120
   sysctlVmMaxMapCount: 262144
+
+opensearchDashboards:
+  enabled: <Injected in runtime>
+  # Copyright OpenSearch Contributors
+  # SPDX-License-Identifier: Apache-2.0
+
+  # Default values for opensearch-dashboards.
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+
+  opensearchHosts: "https://opensearch-cluster-master:9200"
+  replicaCount: 1
+
+  image:
+    repository: "opensearchproject/opensearch-dashboards"
+    tag: "3.6.0"
+
+  serviceAccount:
+    create: true
+  rbac:
+    create: true
+
+  serverHost: "0.0.0.0"
+
+  service:
+    type: ClusterIP
+    port: 5601
+    metricsPort: 9601
+    httpPortName: http
+    metricsPortName: metrics
+
+  resources: {}
