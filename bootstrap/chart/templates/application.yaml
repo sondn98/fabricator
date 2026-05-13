@@ -27,7 +27,7 @@ spec:
     path: {{ $app.path }}
 
     helm:
-      passCredentials: false
+      # passCredentials: false
       {{ if $app.extraParams }}
       parameters:
         {{ toYaml $app.extraParams | nindent 8 }}
@@ -37,13 +37,13 @@ spec:
         {{- range $app.valueFiles }}
         - {{ . }}
         {{- end }}
-      ignoreMissingValueFiles: false
+      # ignoreMissingValueFiles: false
       {{ if $app.extraValues -}}
       valuesObject:
         {{ toYaml $app.extraValues | indent 8 }}
       {{ end -}}
-      skipCrds: false
-      skipSchemaValidation: false
+      # skipCrds: false
+      # skipSchemaValidation: false
       version: {{ $global.helmVersion }}
       kubeVersion: {{ $global.kubeVersion }}
 

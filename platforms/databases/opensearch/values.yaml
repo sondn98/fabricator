@@ -1,0 +1,58 @@
+opensearch:
+  clusterName: "opensearch-cluster"
+  nodeGroup: "master"
+
+  singleNode: true
+  masterService: "opensearch-cluster-master"
+
+  roles:
+    - master
+    - ingest
+    - data
+    - remote_cluster_client
+
+  opensearchHome: /usr/share/opensearch
+
+  config:
+    opensearch.yml: |
+      cluster.name: opensearch-cluster
+      network.host: 0.0.0.0
+
+  image:
+    repository: "opensearchproject/opensearch"
+    # override image tag, which is .Chart.AppVersion by default
+    tag: "3.6.0"
+
+  opensearchJavaOpts: "-Xmx2g -Xms2g"
+
+  resources: {}
+  networkHost: "0.0.0.0"
+
+  persistence:
+    enabled: true
+    enableInitChown: true
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+
+  antiAffinityTopologyKey: "kubernetes.io/hostname"
+  antiAffinity: "soft"
+  enableServiceLinks: true
+
+  protocol: https
+  httpPort: 9200
+  transportPort: 9300
+  metricsPort: 9600
+  httpHostPort: ""
+  transportHostPort: ""
+
+
+  service:
+    type: ClusterIP
+    httpPortName: http
+    transportPortName: transport
+    metricsPortName: metrics
+    
+  maxUnavailable: 1
+  terminationGracePeriod: 120
+  sysctlVmMaxMapCount: 262144
