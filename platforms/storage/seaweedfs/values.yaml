@@ -190,6 +190,20 @@ seaweedfs:
             
     resources: {}
 
+  s3:
+    enabled: true
+    replicas: 1
+    bindAddress: 0.0.0.0
+    port: 8333
+    httpsPort: 0
+    metricsPort: 9327
+    existingConfigSecret: seaweedfs-s3
+    
+    resources: {}
+    
+    service:
+      type: ClusterIP
+
   certificates:
     commonName: "SeaweedFS CA"
     ipAddresses: []
