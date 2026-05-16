@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for Open WebUI deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: open-webui
+version: 1.0.0
+dependencies:
+  - name: open-webui
+    version: 14.5.0
+    repository: https://helm.openwebui.com/

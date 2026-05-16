@@ -15,10 +15,10 @@ applications:
     path: platforms/ai/ollama
     valueFiles:
       - values.yaml
-  - name: onyx
-    enabled: false
-    namespace: onyx
-    path: platforms/ai/onyx
+  - name: open-webui
+    enabled: true
+    namespace: open-webui
+    path: platforms/ai/open-webui
     valueFiles:
       - values.yaml
 
