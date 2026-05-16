@@ -51,11 +51,6 @@ seaweedfs:
     electionTimeout: "10s"
     heartbeatInterval: "300ms"
 
-    config: |-
-      # Enter any extra configuration for master.toml here.
-      # It may be a multi-line string.
-
-
     data:
       type: "hostPath"
       hostPathPrefix: /ssd

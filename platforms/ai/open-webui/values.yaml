@@ -1,0 +1,56 @@
+open-webui:
+  ollama:
+    enabled: false
+
+  ollamaUrls:
+    - http://ollama.ollama.svc.cluster.local:11434/api/
+  ollamaUrlsFromExtraEnv: false
+
+  pipelines:
+    enabled: false
+
+  tika:
+    enabled: false
+
+  terminals:
+    enabled: false
+
+  websocket:
+    enabled: true
+    manager: redis
+    existingSecretKey: "redis-url"
+    redis:
+      enabled: true
+      image:
+        repository: redis
+        tag: 7.4.2-alpine3.21
+        
+      resources: {}
+      service:
+        containerPort: 6379
+        type: ClusterIP
+        portName: http
+        port: 6379
+
+  clusterDomain: cluster.local
+  replicaCount: 1
+  revisionHistoryLimit: 10
+
+  image:
+    repository: ghcr.io/open-webui/open-webui
+    tag: "0.9.5"
+    
+  persistence:
+    enabled: true
+    size: 2Gi
+    accessModes:
+      - ReadWriteOnce
+    provider: local
+
+  service:
+    type: ClusterIP
+    port: 80
+    containerPort: 8080
+    
+  enableOpenaiApi: false
+  
