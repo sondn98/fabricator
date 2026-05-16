@@ -171,6 +171,12 @@ applications:
     path: platforms/storage/minio
     valueFiles:
       - values.yaml
+  - name: seaweedfs
+    enabled: true
+    namespace: seaweedfs
+    path: platforms/storage/seaweedfs
+    valueFiles:
+      - values.yaml
 
   ######################################################################
   #
