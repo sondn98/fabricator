@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-models
+data:
+  gemma3_1b-Modelfile: |-
+    {{- .Files.Get "files/models/gemma3:1b/Modelfile" | nindent 4 }}
+
+  qwen2.5_1.5b-Modelfile: |-
+    {{- .Files.Get "files/models/qwen2.5:1.5b/Modelfile" | nindent 4 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-init-models-script
+data:
+  init-models.sh: |-
+    {{- .Files.Get "files/init-models.sh" | nindent 4 }}

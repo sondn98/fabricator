@@ -64,7 +64,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: opensearch
-    enabled: true
+    enabled: false
     namespace: opensearch
     path: platforms/databases/opensearch
     valueFiles:
@@ -172,7 +172,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: seaweedfs
-    enabled: true
+    enabled: false
     namespace: seaweedfs
     path: platforms/storage/seaweedfs
     valueFiles:
