@@ -1,0 +1,322 @@
+# =========================================================
+# OLLAMA MODELFILE
+# Model: Gemma 3 1B
+# Runtime: Ollama
+# =========================================================
+
+# Base model
+FROM gemma3:1b
+
+# =========================================================
+# SYSTEM PROMPT
+# =========================================================
+# Default behavior/personality of the assistant.
+# This is injected before every conversation.
+
+SYSTEM """
+You are a helpful AI assistant.
+"""
+
+# =========================================================
+# MANDATORY PARAMETERS
+# =========================================================
+
+# Context window size.
+# Defines how many tokens the model can "remember"
+# in a single conversation/request.
+#
+# 32768 = 32k context window.
+#
+# WARNING:
+# Increasing context size also increases:
+# - RAM usage
+# - VRAM usage
+# - KV cache size
+#
+# Some models are not natively trained for long context,
+# so quality may degrade near the context limit.
+
+PARAMETER num_ctx 32768
+
+# =========================================================
+# OPTIONAL GENERATION PARAMETERS
+# =========================================================
+# All parameters below are OPTIONAL.
+# Uncomment them only if you want to override
+# Ollama's default behavior.
+# =========================================================
+
+# ---------------------------------------------------------
+# temperature
+# ---------------------------------------------------------
+# Controls randomness/creativity.
+#
+# Lower values:
+# - more deterministic
+# - more stable
+# - less creative
+#
+# Higher values:
+# - more creative
+# - more diverse
+# - more hallucinations
+#
+# Common values:
+# 0.1 ~ 0.3  -> coding / factual tasks
+# 0.7        -> balanced default
+# 1.0+       -> creative writing
+#
+# PARAMETER temperature 0.7
+
+
+# ---------------------------------------------------------
+# top_k
+# ---------------------------------------------------------
+# Restricts token selection to the K most likely tokens.
+#
+# Lower values:
+# - safer
+# - more predictable
+#
+# Higher values:
+# - more diversity
+#
+# Common range:
+# 20 ~ 100
+#
+# PARAMETER top_k 40
+
+
+# ---------------------------------------------------------
+# top_p
+# ---------------------------------------------------------
+# Nucleus sampling.
+#
+# The model chooses from the smallest set of tokens
+# whose cumulative probability exceeds top_p.
+#
+# Lower:
+# - more focused
+# - less random
+#
+# Higher:
+# - more creative
+#
+# Common values:
+# 0.8 ~ 0.95
+#
+# PARAMETER top_p 0.9
+
+
+# ---------------------------------------------------------
+# min_p
+# ---------------------------------------------------------
+# Filters out extremely unlikely tokens.
+#
+# Helps reduce nonsense generation.
+#
+# Usually used together with top_p.
+#
+# PARAMETER min_p 0.05
+
+
+# ---------------------------------------------------------
+# repeat_penalty
+# ---------------------------------------------------------
+# Penalizes repeating the same phrases/tokens.
+#
+# Higher values:
+# - less repetition
+# - may reduce coherence
+#
+# Common values:
+# 1.05 ~ 1.2
+#
+# PARAMETER repeat_penalty 1.1
+
+
+# ---------------------------------------------------------
+# repeat_last_n
+# ---------------------------------------------------------
+# Number of previous tokens considered when applying
+# repeat penalty.
+#
+# Larger values:
+# - stronger anti-repetition
+# - slightly slower
+#
+# PARAMETER repeat_last_n 64
+
+
+# ---------------------------------------------------------
+# seed
+# ---------------------------------------------------------
+# Random seed.
+#
+# Use the same seed to get reproducible outputs.
+#
+# Remove/comment this parameter for true randomness.
+#
+# PARAMETER seed 42
+
+
+# ---------------------------------------------------------
+# num_predict
+# ---------------------------------------------------------
+# Maximum number of generated tokens.
+#
+# -1 means unlimited generation until stop condition.
+#
+# Examples:
+# 128   -> short answer
+# 512   -> normal answer
+# 2048  -> long response
+#
+# PARAMETER num_predict -1
+
+
+# =========================================================
+# OPTIONAL PERFORMANCE PARAMETERS
+# =========================================================
+
+# ---------------------------------------------------------
+# num_gpu
+# ---------------------------------------------------------
+# Number of layers offloaded to GPU.
+#
+# Higher:
+# - faster inference
+# - more VRAM usage
+#
+# 0 = CPU only
+#
+# 999 usually means:
+# "offload as much as possible"
+#
+# PARAMETER num_gpu 999
+
+
+# ---------------------------------------------------------
+# num_thread
+# ---------------------------------------------------------
+# Number of CPU threads used during inference.
+#
+# Usually set close to:
+# - physical CPU cores
+# - or logical threads
+#
+# Too high may reduce performance.
+#
+# PARAMETER num_thread 8
+
+
+# ---------------------------------------------------------
+# num_batch
+# ---------------------------------------------------------
+# Batch size used during prompt processing.
+#
+# Higher:
+# - faster prompt ingestion
+# - more RAM/VRAM usage
+#
+# PARAMETER num_batch 512
+
+
+# =========================================================
+# OPTIONAL MEMORY PARAMETERS
+# =========================================================
+
+# ---------------------------------------------------------
+# use_mmap
+# ---------------------------------------------------------
+# Enables memory-mapped model loading.
+#
+# Benefits:
+# - lower RAM usage
+# - faster startup
+#
+# Usually should remain enabled.
+#
+# PARAMETER use_mmap true
+
+
+# ---------------------------------------------------------
+# use_mlock
+# ---------------------------------------------------------
+# Locks model memory into RAM.
+#
+# Prevents swapping to disk.
+#
+# Benefits:
+# - more stable latency
+#
+# Downsides:
+# - higher RAM pressure
+# - may require elevated privileges
+#
+# PARAMETER use_mlock false
+
+
+# =========================================================
+# OPTIONAL STOP TOKENS
+# =========================================================
+# Generation stops when these tokens appear.
+#
+# Useful for:
+# - chat templates
+# - role separation
+# - preventing runaway generation
+#
+
+# PARAMETER stop "<start_of_turn>"
+# PARAMETER stop "<end_of_turn>"
+
+
+# =========================================================
+# OPTIONAL TEMPLATE
+# =========================================================
+# Defines how prompts are formatted internally.
+#
+# Usually NOT necessary unless:
+# - building custom chat formats
+# - integrating special agents
+# - modifying role behavior
+#
+
+# TEMPLATE """
+# {{ if .System }}<start_of_turn>system
+# {{ .System }}<end_of_turn>
+# {{ end }}
+#
+# {{ if .Prompt }}<start_of_turn>user
+# {{ .Prompt }}<end_of_turn>
+# {{ end }}
+#
+# <start_of_turn>model
+# {{ .Response }}
+# """
+
+
+# =========================================================
+# OPTIONAL ADAPTER / LORA
+# =========================================================
+# Loads a LoRA adapter on top of the base model.
+#
+# Useful for:
+# - fine-tuning
+# - domain specialization
+# - lightweight customization
+#
+
+# ADAPTER ./my-lora-adapter.gguf
+
+
+# =========================================================
+# OPTIONAL LICENSE
+# =========================================================
+# Custom license metadata.
+#
+
+# LICENSE """
+# Your custom license text here
+# """

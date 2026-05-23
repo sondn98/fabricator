@@ -12,6 +12,43 @@ unichart:
         protocol: TCP
 
     resources: {}
+    lifecycle:
+      postStart:
+        exec:
+          command:
+            - /bin/sh
+            - -c
+            - /scripts/init-models.sh >/tmp/init-models.log 2>&1 &
+    volumeMounts:
+      - name: ollama-data
+        mountPath: /root/.ollama
+      - name: ollama-models
+        mountPath: /models
+      - name: ollama-init-models-script
+        mountPath: /scripts
+    volumes:
+      - name: ollama-data
+        persistentVolumeClaim:
+          claimName: ollama-pvc
+      - name: ollama-models
+        configMap:
+          name: ollama-models
+          items:
+            - key: gemma3_1b-Modelfile
+              path: gemma3:1b/Modelfile
+            # - key: qwen2.5_1.5b-Modelfile
+            #   path: qwen2.5:1.5b/Modelfile
+      - name: ollama-init-models-script
+        configMap:
+          name: ollama-init-models-script
+          defaultMode: 0755
+
+  
+  persistence:
+    name: ollama-pvc
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 5Gi
 
   service:
     ports:
