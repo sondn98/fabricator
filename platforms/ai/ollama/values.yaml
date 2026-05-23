@@ -10,11 +10,17 @@ unichart:
       - containerPort: 11434
         name: http
         protocol: TCP
-
-    resources: {}
+    resources:
+      limits:
+        cpu: 2
+        memory: 4Gi
+      requests:
+        cpu: 1
+        memory: 2Gi
     lifecycle:
       postStart:
         exec:
+          # Run this in the background to avoid blocking the container startup
           command:
             - /bin/sh
             - -c
