@@ -18,7 +18,7 @@ gha-runner-scale-set-controller:
     updateStrategy: "immediate"
 
 gha-runner-scale-set:
-  githubConfigUrl: "https://github.com/sondn98/fabricator-images"
+  githubConfigUrl: "https://github.com/sondn98/jarvis"
   githubConfigSecret: arc-github-secret
   maxRunners: 3
   minRunners: 0
