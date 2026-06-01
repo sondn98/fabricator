@@ -9,6 +9,12 @@ applications:
   # AI
   #
   ######################################################################
+  - name: jarvis
+    enabled: true
+    namespace: jarvis
+    path: platforms/ai/jarvis
+    valueFiles:
+      - values.yaml
   - name: ollama
     enabled: true
     namespace: ollama
