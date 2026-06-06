@@ -4,7 +4,7 @@ unichart:
   deployment:
     image:
       repository: docker.io/sondn1/jarvis
-      tag: v0.2.1
+      tag: v0.3.1
 
     ports:
       - containerPort: 8000
@@ -16,6 +16,8 @@ unichart:
         value: http://ollama.ollama.svc:11434
       DEFAULT_MODEL:
         value: gemma3:1b
+      ENABLE_AGENT_ORCHESTRATION: 
+        value: 'True'
 
   service:
     ports:
