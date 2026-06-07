@@ -4,7 +4,7 @@ unichart:
   deployment:
     image:
       repository: docker.io/sondn1/jarvis
-      tag: v0.3.3
+      tag: v0.3.4
 
     ports:
       - containerPort: 8000
