@@ -4,7 +4,7 @@ unichart:
   deployment:
     image:
       repository: docker.io/sondn1/jarvis
-      tag: v0.3.1
+      tag: v0.3.3
 
     ports:
       - containerPort: 8000
@@ -18,6 +18,9 @@ unichart:
         value: gemma3:1b
       ENABLE_AGENT_ORCHESTRATION: 
         value: 'True'
+      LOG_LEVEL:
+        value: DEBUG
+      
 
   service:
     ports:
