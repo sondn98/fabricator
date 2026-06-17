@@ -6,8 +6,8 @@ data:
   gemma3_1b-Modelfile: |-
     {{- .Files.Get "files/models/gemma3:1b/Modelfile" | nindent 4 }}
 
-  qwen2.5_1.5b-Modelfile: |-
-    {{- .Files.Get "files/models/qwen2.5:1.5b/Modelfile" | nindent 4 }}
+  qwen3_1.7b-Modelfile: |-
+    {{- .Files.Get "files/models/qwen3:1.7b/Modelfile" | nindent 4 }}
 
 ---
 apiVersion: v1

@@ -40,10 +40,10 @@ unichart:
         configMap:
           name: ollama-models
           items:
-            - key: gemma3_1b-Modelfile
-              path: gemma3:1b/Modelfile
-            # - key: qwen2.5_1.5b-Modelfile
-            #   path: qwen2.5:1.5b/Modelfile
+            # - key: gemma3_1b-Modelfile
+            #   path: gemma3:1b/Modelfile
+            - key: qwen3_1.7b-Modelfile
+              path: qwen3:1.7b/Modelfile
       - name: ollama-init-models-script
         configMap:
           name: ollama-init-models-script
