@@ -1,11 +1,11 @@
 # =========================================================
 # OLLAMA MODELFILE
-# Model: Qwen 2.5 1.5B
+# Model: Qwen 3 1.7B
 # Runtime: Ollama
 # =========================================================
 
 # Base model
-FROM qwen2.5:1.5b
+FROM qwen3:1.7b
 
 # =========================================================
 # SYSTEM PROMPT
@@ -40,7 +40,7 @@ You are a helpful AI assistant specialized in:
 #
 # Long context quality may still degrade near the limit.
 
-PARAMETER num_ctx 32768
+PARAMETER num_ctx 65536
 
 # =========================================================
 # OPTIONAL GENERATION PARAMETERS
