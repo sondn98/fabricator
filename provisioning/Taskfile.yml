@@ -3,7 +3,7 @@ version: '3'
 silent: true
 
 vars:
-  INVENTORIES: '{{ .INVENTORIES | default "bare-metal" }}'
+  INVENTORIES: '{{ .INVENTORIES | default "bare-metal.yml" }}'
 
 tasks:
   provision:
