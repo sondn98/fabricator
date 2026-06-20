@@ -5,7 +5,16 @@ unichart:
     image:
       repository: docker.io/ollama/ollama
       tag: 0.23.2
-
+    selector:
+      matchLabels:
+        dedicated: ai_agent
+    nodeSelector:
+      dedicated: ai_agent
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "ai_agent"
+        effect: "NoSchedule"
     ports:
       - containerPort: 11434
         name: http
