@@ -21,7 +21,7 @@ unichart:
         protocol: TCP
     resources:
       limits:
-        cpu: 3
+        cpu: 3800m
         memory: 12Gi
       requests:
         cpu: 1
