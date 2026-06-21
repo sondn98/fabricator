@@ -4,7 +4,7 @@ unichart:
   deployment:
     image:
       repository: docker.io/sondn1/jarvis
-      tag: v0.3.5
+      tag: v0.4.0
 
     ports:
       - containerPort: 8000
@@ -19,7 +19,9 @@ unichart:
       ENABLE_AGENT_ORCHESTRATION: 
         value: 'True'
       LOG_LEVEL:
-        value: DEBUG
+        value: TRACE
+      REQUEST_TIMEOUT:
+        value: "300"
       
 
   service:
