@@ -1,0 +1,21 @@
+kube-prometheus-stack:
+  grafana:
+    enabled: true
+    defaultDashboardsEnabled: true
+    defaultDashboardsTimezone: utc
+    defaultDashboardsEditable: true
+    defaultDashboardsInterval: 1m
+    
+    admin:
+      existingSecret: "grafana-auth-secret"
+
+    serviceAccount:
+      create: true
+      autoMount: true
+
+    service:
+      portName: http-web
+
+    serviceMonitor:
+      enabled: true
+      
