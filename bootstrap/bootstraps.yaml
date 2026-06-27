@@ -105,23 +105,23 @@ applications:
   # Monitoring
   #
   ######################################################################
-  - name: grafana
-    enabled: false
-    namespace: grafana
-    path: platforms/monitoring/grafana
-    valueFiles:
-      - values.yaml
   - name: loki
     enabled: false
     namespace: loki
     path: platforms/monitoring/loki
     valueFiles:
       - values.yaml
-  - name: prometheus
-    enabled: false
-    namespace: prometheus
-    path: platforms/monitoring/prometheus
+  - name: observability
+    enabled: true
+    namespace: observability
+    path: platforms/monitoring/observability
     valueFiles:
+      - alert-manager.yaml
+      - grafana.yaml
+      - kube.yaml
+      - node-exporter.yaml
+      - prometheus.yaml
+      - thanos.yaml
       - values.yaml
 
   ######################################################################

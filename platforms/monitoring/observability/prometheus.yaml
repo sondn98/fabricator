@@ -1,0 +1,93 @@
+kube-prometheus-stack:
+  prometheus-windows-exporter:
+    prometheus:
+      monitor:
+        enabled: true
+        jobLabel: jobLabel
+    releaseLabel: true
+    podLabels:
+      jobLabel: windows-exporter
+    config: |-
+      collectors:
+        enabled: '[defaults],memory,container'
+    
+  prometheus-node-exporter:
+    podLabels:
+      jobLabel: node-exporter
+    releaseLabel: true
+    extraArgs:
+      - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run/containerd/.+|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+      - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs|erofs)$
+    service:
+      portName: http-metrics
+      labels:
+        jobLabel: node-exporter
+        
+    prometheus:
+      monitor:
+        enabled: true
+        sampleLimit: 0
+        targetLimit: 0
+        labelLimit: 0
+        labelNameLengthLimit: 0
+        labelValueLengthLimit: 0
+        
+  prometheusOperator:
+    enabled: true
+    revisionHistoryLimit: 10
+    tls:
+      enabled: true
+      tlsMinVersion: VersionTLS13
+      internalPort: 10250
+
+      patch:
+        enabled: true
+        image:
+          registry: ghcr.io
+          repository: jkroepke/kube-webhook-certgen
+          tag: 1.8.4
+          
+    service:
+      type: ClusterIP
+
+    kubeletService:
+      enabled: true
+      namespace: kube-system
+    kubeletEndpointsEnabled: true
+    kubeletEndpointSliceEnabled: false
+    
+    resources: {}
+    env:
+      GOGC: "30"
+      
+    image:
+      registry: quay.io
+      repository: prometheus-operator/prometheus-operator
+      # if not set appVersion field from Chart.yaml is used
+      tag: v0.92.0
+      
+    prometheusConfigReloader:
+      image:
+        registry: quay.io
+        repository: prometheus-operator/prometheus-config-reloader
+        tag: v0.92.0
+      resources: {}
+
+  prometheus:
+    enabled: true
+    agentMode: false
+    service:
+      enabled: true
+      port: 9090
+      targetPort: 9090
+      reloaderWebPort: 8080
+      type: ClusterIP
+
+    serviceMonitor:
+      selfMonitor: true
+      sampleLimit: 0
+      targetLimit: 0
+      labelLimit: 0
+      labelNameLengthLimit: 0
+      labelValueLengthLimit: 0
+      

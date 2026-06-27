@@ -1,3 +1,0 @@
-kube-prometheus:
-  alertmanager:
-    enabled: false
