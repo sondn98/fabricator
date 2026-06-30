@@ -1,0 +1,99 @@
+mongodb-kubernetes:
+  managedSecurityContext: false
+
+  operator:
+    env: prod
+    mdbDefaultArchitecture: non-static
+    name: mongodb-kubernetes-operator
+    operator_image_name: mongodb-kubernetes
+    version: 1.8.1
+
+    watchedResources:
+    - mongodb
+    - opsmanagers
+    - mongodbusers
+    - mongodbcommunity
+    - mongodbsearch
+    - voyageais
+    
+    resources: {}
+    
+    maxConcurrentReconciles: 1
+    createOperatorServiceAccount: true
+    createResourcesServiceAccountsAndRoles: true
+    enableClusterMongoDBRoles: true
+    enablePVCResize: true
+    
+    replicas: 1
+
+    webhook:
+      installClusterRole: true
+      registerConfiguration: true
+      
+  database:
+    name: mongodb-kubernetes-database
+    version: 1.8.1
+
+  initDatabase:
+    name: mongodb-kubernetes-init-database
+    version: 1.8.1
+
+  opsManager:
+    name: mongodb-enterprise-ops-manager-ubi
+
+  initOpsManager:
+    name: mongodb-kubernetes-init-ops-manager
+    version: 1.8.1
+
+  agent:
+    name: mongodb-agent
+    version: 108.0.12.8846-1
+
+  versionUpgradeHook:
+    name: mongodb-kubernetes-operator-version-upgrade-post-start-hook
+    version: 1.0.10
+  readinessProbe:
+    name: mongodb-kubernetes-readinessprobe
+    version: 1.0.24
+    
+  mongodb:
+    name: mongodb-enterprise-server
+    repo: quay.io/mongodb
+    appdbAssumeOldFormat: false
+
+  registry:
+    pullPolicy: IfNotPresent
+    operator: quay.io/mongodb
+    database: quay.io/mongodb
+    initDatabase: quay.io/mongodb
+    initOpsManager: quay.io/mongodb
+    opsManager: quay.io/mongodb
+    agent: quay.io/mongodb
+
+    versionUpgradeHook: quay.io/mongodb
+    readinessProbe: quay.io/mongodb
+    
+  community:
+    mongodb:
+      repo: quay.io/mongodb
+      name: mongodb-community-server
+      imageType: ubi8
+    agent:
+      name: mongodb-agent
+      version: 108.0.2.8729-1
+    registry:
+      agent: quay.io/mongodb
+    resource:
+      name: mongodb-replica-set
+      version: 4.4.0
+      members: 3
+      
+  search:
+    repo: quay.io/mongodb
+    name: mongodb-search
+    version: 1.70.1
+    envoyImage: envoyproxy/envoy:v1.37-latest
+    metricsForwarderImage: otel/opentelemetry-collector-contrib:0.152.0
+
+  voyageai:
+    repo: quay.io/mongodb/voyageai

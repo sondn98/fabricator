@@ -63,6 +63,12 @@ applications:
     path: platforms/databases/elasticsearch
     valueFiles:
       - values.yaml
+  - name: mongodb
+    enabled: true
+    namespace: mongodb
+    path: platforms/databases/mongodb
+    valueFiles:
+      - values.yaml
   - name: mysql
     enabled: false
     namespace: mysql
