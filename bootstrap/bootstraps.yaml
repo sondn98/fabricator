@@ -27,6 +27,12 @@ applications:
     path: platforms/ai/open-webui
     valueFiles:
       - values.yaml
+  - name: openclaw
+    enabled: true
+    namespace: openclaw
+    path: platforms/ai/openclaw
+    valueFiles:
+      - values.yaml
 
   ######################################################################
   #
@@ -64,7 +70,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: mongodb
-    enabled: true
+    enabled: false
     namespace: mongodb
     path: platforms/databases/mongodb
     valueFiles:
@@ -231,7 +237,7 @@ applications:
   #
   ######################################################################
   - name: arc
-    enabled: true
+    enabled: false
     namespace: arc
     path: platforms/others/arc
     valueFiles:

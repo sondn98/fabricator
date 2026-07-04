@@ -1,0 +1,99 @@
+unichart:
+  applicationName: openclaw
+
+  deployment:
+    image:
+      repository: ghcr.io/openclaw/openclaw
+      tag: slim
+    
+    initContainers:
+      init-config:
+        image: busybox:1.37
+        imagePullPolicy: IfNotPresent
+        command:
+          - sh
+          - -c
+          - |
+            cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+            mkdir -p /home/node/.openclaw/workspace
+            cp /config/AGENTS.md /home/node/.openclaw/workspace/AGENTS.md
+            cp /config/SOUL.md /home/node/.openclaw/workspace/SOUL.md
+            cp /config/TOOLS.md /home/node/.openclaw/workspace/TOOLS.md
+            cp /config/IDENTITY.md /home/node/.openclaw/workspace/IDENTITY.md
+            cp /config/USER.md /home/node/.openclaw/workspace/USER.md
+            cp /config/HEARTBEAT.md /home/node/.openclaw/workspace/HEARTBEAT.md
+        resources: {}
+        volumeMounts:
+          - name: openclaw-home
+            mountPath: /home/node/.openclaw
+          - name: config
+            mountPath: /config
+    command:
+      - node
+      - /app/dist/index.js
+      - gateway
+      - run
+    ports:
+      - containerPort: 18789
+        name: gateway
+        protocol: TCP
+    resources: {}
+
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    env:
+      HOME:
+        value: /home/node
+      OPENCLAW_CONFIG_DIR:
+        value: /home/node/.openclaw
+      NODE_ENV:
+        value: production
+      OPENCLAW_GATEWAY_TOKEN:
+        valueFrom:
+          secretKeyRef:
+            name: openclaw-secret
+            key: OPENCLAW_GATEWAY_TOKEN
+      ANTHROPIC_API_KEY:
+        valueFrom:
+          secretKeyRef:
+            name: openclaw-secret
+            key: ANTHROPIC_API_KEY
+            optional: true
+    
+    volumeMounts:
+      openclaw-home:
+        mountPath: /home/node/.openclaw
+      tmp-volume:
+        mountPath: /tmp
+    volumes:
+      openclaw-home:
+        persistentVolumeClaim:
+          claimName: openclaw-home-pvc
+      config:
+        configMap:
+          name: openclaw-config
+      tmp-volume:
+        emptyDir: {}
+  
+  persistence:
+    enabled: true
+    name: openclaw-home-pvc
+    accessMode: ReadWriteOnce
+    size: 10Gi          
+
+  service:
+    ports:
+      - port: 18789
+        name: gateway
+        protocol: TCP
+        targetPort: 18789
+
+  rbac:
+    enabled: true
+    serviceAccount:
+      enabled: true

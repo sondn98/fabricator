@@ -1,0 +1,48 @@
+{
+    "gateway": {
+        "mode": "local",
+        "bind": "lan",
+        "port": 18789,
+        "auth": {
+            "mode": "token"
+        },
+        "controlUi": {
+            "enabled": true,
+            "allowedOrigins": [
+                "https://agent.thefabricator.work"
+            ]
+        },
+        "http": {
+            "endpoints": {
+                "chatCompletions": {
+                    "enabled": true
+                }
+            }
+        }
+    },
+    "agents": {
+        "defaults": {
+            "workspace": "~/.openclaw/workspace",
+            "model": {
+                "primary": "anthropic/claude-opus-4-8"
+            },
+            "models": {
+                "anthropic/claude-opus-4-8": {
+                    "agentRuntime": {
+                        "id": "claude-cli"
+                    }
+                }
+            }
+        },
+        "list": [
+            {
+                "id": "default",
+                "name": "OpenClaw Assistant",
+                "workspace": "~/.openclaw/workspace"
+            }
+        ]
+    },
+    "cron": {
+        "enabled": false
+    }
+}
