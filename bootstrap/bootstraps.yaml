@@ -10,25 +10,25 @@ applications:
   #
   ######################################################################
   - name: jarvis
-    enabled: true
+    enabled: false
     namespace: jarvis
     path: platforms/ai/jarvis
     valueFiles:
       - values.yaml
   - name: ollama
-    enabled: true
+    enabled: false
     namespace: ollama
     path: platforms/ai/ollama
     valueFiles:
       - values.yaml
   - name: open-webui
-    enabled: true
+    enabled: false
     namespace: open-webui
     path: platforms/ai/open-webui
     valueFiles:
       - values.yaml
   - name: openclaw
-    enabled: true
+    enabled: false
     namespace: openclaw
     path: platforms/ai/openclaw
     valueFiles:
@@ -190,7 +190,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: seaweedfs
-    enabled: false
+    enabled: true
     namespace: seaweedfs
     path: platforms/storage/seaweedfs
     valueFiles:
