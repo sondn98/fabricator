@@ -6,7 +6,3 @@ releases:
     values:
       - ./argo-cd.yaml.gotmpl
       - fullnameOverride: argo-cd
-    # hooks:
-    #   - events: ["postsync"]
-    #     command: "kubectl"
-    #     args: ["apply", "-f", "../bootstrap.yaml"]
