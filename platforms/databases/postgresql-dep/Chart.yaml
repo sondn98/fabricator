@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for postgresql deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: postgresql
+version: 1.0.0
+dependencies:
+  - name: postgresql
+    version: 15.5.24
+    repository: oci://registry-1.docker.io/bitnamicharts
+  - name: pgbouncer
+    version: 0.1.0
+    condition: pgbouncer.enabled

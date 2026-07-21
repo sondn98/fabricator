@@ -95,7 +95,7 @@ applications:
     namespace: postgresql
     path: platforms/databases/postgresql
     valueFiles:
-      - values.yaml
+      - cnpg.yaml
     extraParams:
     - name: "pgbouncer.enabled"
       value: "false"
