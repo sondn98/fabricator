@@ -1,0 +1,327 @@
+# =========================================================
+# OLLAMA MODELFILE
+# Model: Qwen 3 1.7B
+# Runtime: Ollama
+# =========================================================
+
+# Base model
+FROM qwen3:1.7b
+
+# =========================================================
+# SYSTEM PROMPT
+# =========================================================
+# Default assistant behavior.
+# Injected before every conversation.
+
+SYSTEM """
+You are a helpful AI assistant specialized in:
+- software engineering
+- Kubernetes
+- DevOps
+- AI infrastructure
+"""
+
+# =========================================================
+# MANDATORY PARAMETERS
+# =========================================================
+
+# Context window size.
+#
+# Qwen models generally support long context relatively well.
+#
+# 32768 = 32k context window.
+#
+# WARNING:
+# Larger context windows increase:
+# - RAM usage
+# - VRAM usage
+# - KV cache size
+# - latency
+#
+# Long context quality may still degrade near the limit.
+
+PARAMETER num_ctx 65536
+
+# =========================================================
+# OPTIONAL GENERATION PARAMETERS
+# =========================================================
+# Uncomment only when customization is needed.
+# =========================================================
+
+# ---------------------------------------------------------
+# temperature
+# ---------------------------------------------------------
+# Controls creativity/randomness.
+#
+# Lower:
+# - more deterministic
+# - better for coding/math
+#
+# Higher:
+# - more creative
+# - more diverse outputs
+#
+# Common values:
+# 0.1 ~ 0.3 -> coding
+# 0.7       -> balanced
+# 1.0+      -> creative generation
+#
+# PARAMETER temperature 0.7
+
+
+# ---------------------------------------------------------
+# top_k
+# ---------------------------------------------------------
+# Restricts token selection to the top K candidates.
+#
+# Smaller values:
+# - safer
+# - more predictable
+#
+# Larger values:
+# - more diverse
+#
+# PARAMETER top_k 40
+
+
+# ---------------------------------------------------------
+# top_p
+# ---------------------------------------------------------
+# Nucleus sampling.
+#
+# Model samples from the smallest set of tokens
+# whose cumulative probability exceeds top_p.
+#
+# Lower:
+# - more focused
+#
+# Higher:
+# - more creative
+#
+# PARAMETER top_p 0.9
+
+
+# ---------------------------------------------------------
+# min_p
+# ---------------------------------------------------------
+# Filters extremely low-probability tokens.
+#
+# Helps reduce nonsense outputs.
+#
+# PARAMETER min_p 0.05
+
+
+# ---------------------------------------------------------
+# typical_p
+# ---------------------------------------------------------
+# Typical decoding sampling.
+#
+# Helps maintain natural token distribution.
+#
+# Usually kept at 1.0 unless experimenting.
+#
+# PARAMETER typical_p 1.0
+
+
+# ---------------------------------------------------------
+# repeat_penalty
+# ---------------------------------------------------------
+# Penalizes repetitive outputs.
+#
+# Higher:
+# - less repetition
+# - may reduce coherence
+#
+# Common range:
+# 1.05 ~ 1.2
+#
+# PARAMETER repeat_penalty 1.1
+
+
+# ---------------------------------------------------------
+# repeat_last_n
+# ---------------------------------------------------------
+# Number of recent tokens checked for repetition.
+#
+# Larger values:
+# - stronger repetition prevention
+# - slightly slower inference
+#
+# PARAMETER repeat_last_n 64
+
+
+# ---------------------------------------------------------
+# seed
+# ---------------------------------------------------------
+# Fixed random seed.
+#
+# Useful for:
+# - reproducible outputs
+# - debugging
+# - benchmarking
+#
+# Remove/comment for true randomness.
+#
+# PARAMETER seed 42
+
+
+# ---------------------------------------------------------
+# num_predict
+# ---------------------------------------------------------
+# Maximum generated tokens.
+#
+# -1 means unlimited until stop condition.
+#
+# Examples:
+# 128  -> short answer
+# 512  -> normal response
+# 2048 -> long-form generation
+#
+# PARAMETER num_predict -1
+
+
+# =========================================================
+# OPTIONAL PERFORMANCE PARAMETERS
+# =========================================================
+
+# ---------------------------------------------------------
+# num_gpu
+# ---------------------------------------------------------
+# Number of layers offloaded to GPU.
+#
+# Higher:
+# - faster inference
+# - more VRAM usage
+#
+# 0 = CPU-only inference
+#
+# 999 means:
+# offload as much as possible
+#
+# PARAMETER num_gpu 999
+
+
+# ---------------------------------------------------------
+# num_thread
+# ---------------------------------------------------------
+# Number of CPU threads.
+#
+# Recommended:
+# near physical core count.
+#
+# Too many threads may hurt performance.
+#
+# PARAMETER num_thread 8
+
+
+# ---------------------------------------------------------
+# num_batch
+# ---------------------------------------------------------
+# Prompt processing batch size.
+#
+# Higher:
+# - faster prompt ingestion
+# - more memory usage
+#
+# PARAMETER num_batch 512
+
+
+# =========================================================
+# OPTIONAL MEMORY PARAMETERS
+# =========================================================
+
+# ---------------------------------------------------------
+# use_mmap
+# ---------------------------------------------------------
+# Memory-map model files instead of fully loading
+# into RAM.
+#
+# Benefits:
+# - lower RAM usage
+# - faster startup
+#
+# Usually recommended.
+#
+# PARAMETER use_mmap true
+
+
+# ---------------------------------------------------------
+# use_mlock
+# ---------------------------------------------------------
+# Locks model memory into RAM.
+#
+# Prevents swapping to disk.
+#
+# Benefits:
+# - lower latency spikes
+#
+# Downsides:
+# - higher RAM pressure
+# - may require elevated permissions
+#
+# PARAMETER use_mlock false
+
+
+# =========================================================
+# OPTIONAL STOP TOKENS
+# =========================================================
+# Stops generation when these tokens appear.
+#
+# Useful for:
+# - structured chat
+# - role formatting
+# - preventing runaway generation
+#
+
+# PARAMETER stop "<|im_start|>"
+# PARAMETER stop "<|im_end|>"
+
+
+# =========================================================
+# OPTIONAL TEMPLATE
+# =========================================================
+# Defines internal prompt formatting.
+#
+# Usually unnecessary unless:
+# - custom chat systems
+# - agent frameworks
+# - advanced orchestration
+#
+
+# TEMPLATE """
+# {{ if .System }}<|im_start|>system
+# {{ .System }}<|im_end|>
+# {{ end }}
+#
+# {{ if .Prompt }}<|im_start|>user
+# {{ .Prompt }}<|im_end|>
+# {{ end }}
+#
+# <|im_start|>assistant
+# {{ .Response }}
+# """
+
+
+# =========================================================
+# OPTIONAL ADAPTER / LORA
+# =========================================================
+# Loads LoRA adapter on top of base model.
+#
+# Useful for:
+# - lightweight fine-tuning
+# - domain adaptation
+# - custom behavior specialization
+#
+
+# ADAPTER ./my-qwen-lora.gguf
+
+
+# =========================================================
+# OPTIONAL LICENSE
+# =========================================================
+# Custom metadata/license block.
+#
+
+# LICENSE """
+# Your custom license text here
+# """

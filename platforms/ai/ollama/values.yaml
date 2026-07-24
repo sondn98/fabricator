@@ -1,0 +1,78 @@
+unichart:
+  applicationName: ollama
+
+  deployment:
+    image:
+      repository: docker.io/ollama/ollama
+      tag: 0.23.2
+    selector:
+      matchLabels:
+        dedicated: ai_agent
+    nodeSelector:
+      dedicated: ai_agent
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "ai_agent"
+        effect: "NoSchedule"
+    ports:
+      - containerPort: 11434
+        name: http
+        protocol: TCP
+    resources:
+      limits:
+        cpu: 3800m
+        memory: 12Gi
+      requests:
+        cpu: 1
+        memory: 2Gi
+    lifecycle:
+      postStart:
+        exec:
+          # Run this in the background to avoid blocking the container startup
+          command:
+            - /bin/sh
+            - -c
+            - /scripts/init-models.sh >/tmp/init-models.log 2>&1 &
+    volumeMounts:
+      - name: ollama-data
+        mountPath: /root/.ollama
+      - name: ollama-models
+        mountPath: /models
+      - name: ollama-init-models-script
+        mountPath: /scripts
+    volumes:
+      - name: ollama-data
+        persistentVolumeClaim:
+          claimName: ollama-pvc
+      - name: ollama-models
+        configMap:
+          name: ollama-models
+          items:
+            # - key: gemma3_1b-Modelfile
+            #   path: gemma3:1b/Modelfile
+            - key: qwen3_1.7b-Modelfile
+              path: qwen3:1.7b/Modelfile
+      - name: ollama-init-models-script
+        configMap:
+          name: ollama-init-models-script
+          defaultMode: 0755
+
+  
+  persistence:
+    name: ollama-pvc
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 5Gi
+
+  service:
+    ports:
+      - port: 11434
+        name: http
+        protocol: TCP
+        targetPort: 11434
+
+  rbac:
+    enabled: true
+    serviceAccount:
+      enabled: true

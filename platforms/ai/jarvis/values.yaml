@@ -1,0 +1,37 @@
+unichart:
+  applicationName: jarvis
+
+  deployment:
+    image:
+      repository: docker.io/sondn1/jarvis
+      tag: v0.4.0
+
+    ports:
+      - containerPort: 8000
+        name: http
+        protocol: TCP
+    resources: {}
+    env:
+      OLLAMA_BASE_URL:
+        value: http://ollama.ollama.svc:11434
+      DEFAULT_MODEL:
+        value: qwen3:1.7b
+      ENABLE_AGENT_ORCHESTRATION: 
+        value: 'True'
+      LOG_LEVEL:
+        value: TRACE
+      REQUEST_TIMEOUT:
+        value: "300"
+      
+
+  service:
+    ports:
+      - port: 8000
+        name: http
+        protocol: TCP
+        targetPort: 8000
+
+  rbac:
+    enabled: true
+    serviceAccount:
+      enabled: true

@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for ollama deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: ollama
+version: 1.0.0
+dependencies:
+  - name: unichart
+    version: 1.0.1
+    repository: oci://ghcr.io/sondn98/charts

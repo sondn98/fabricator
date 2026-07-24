@@ -1,0 +1,11 @@
+kube-prometheus-stack:
+  nodeExporter:
+    enabled: true
+    operatingSystems:
+      linux:
+        enabled: true
+      aix:
+        enabled: false
+      darwin:
+        enabled: false
+        

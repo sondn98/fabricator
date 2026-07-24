@@ -1,0 +1,37 @@
+gha-runner-scale-set-controller:
+  replicaCount: 1
+
+  image:
+    repository: "ghcr.io/actions/gha-runner-scale-set-controller"
+    tag: "0.13.1"
+
+  serviceAccount:
+    create: true
+
+  resources: {}
+
+  flags:
+    logLevel: "debug"
+    logFormat: "text"
+
+    runnerMaxConcurrentReconciles: 2
+    updateStrategy: "immediate"
+
+gha-runner-scale-set:
+  githubConfigUrl: "https://github.com/sondn98/fabricator"
+  githubConfigSecret:
+    github_token: "<specified in runtime>"
+  maxRunners: 3
+  minRunners: 0
+  runnerGroup: "default"
+  controllerServiceAccount:
+    name: arc-gha-rs-controller
+    namespace: arc
+  
+  ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
+  template:
+    spec:
+      containers:
+        - name: runner
+          image: ghcr.io/actions/actions-runner:latest
+          command: ["/home/runner/run.sh"]

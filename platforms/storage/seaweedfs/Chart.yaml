@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for seaweedfs deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: seaweedfs
+version: 1.0.0
+dependencies:
+  - name: seaweedfs
+    version: 4.24.0
+    repository: https://seaweedfs.github.io/seaweedfs/helm

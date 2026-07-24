@@ -4,40 +4,45 @@ global:
   appNamespace: argo
 
 applications:
+  ######################################################################
+  #
+  # AI
+  #
+  ######################################################################
+  - name: jarvis
+    enabled: false
+    namespace: jarvis
+    path: platforms/ai/jarvis
+    valueFiles:
+      - values.yaml
+  - name: ollama
+    enabled: false
+    namespace: ollama
+    path: platforms/ai/ollama
+    valueFiles:
+      - values.yaml
+  - name: open-webui
+    enabled: false
+    namespace: open-webui
+    path: platforms/ai/open-webui
+    valueFiles:
+      - values.yaml
+  - name: openclaw
+    enabled: false
+    namespace: openclaw
+    path: platforms/ai/openclaw
+    valueFiles:
+      - values.yaml
+
+  ######################################################################
+  #
+  # Computation
+  #
+  ######################################################################
   - name: airflow
     enabled: false
     namespace: airflow
     path: platforms/computation/airflow
-    valueFiles:
-      - values.yaml
-  - name: clickhouse
-    enabled: false
-    namespace: clickhouse
-    path: platforms/warehouse/clickhouse
-    valueFiles:
-      - values.yaml
-  - name: code-server
-    enabled: false
-    namespace: code-server
-    path: platforms/others/code-server
-    valueFiles:
-      - values.yaml
-  - name: elasticsearch
-    enabled: false
-    namespace: elasticsearch
-    path: platforms/databases/elasticsearch
-    valueFiles:
-      - values.yaml
-  - name: fluent
-    enabled: false
-    namespace: fluent
-    path: platforms/operators/fluent
-    valueFiles:
-      - values.yaml
-  - name: grafana
-    enabled: false
-    namespace: grafana
-    path: platforms/monitoring/grafana
     valueFiles:
       - values.yaml
   - name: jupyterhub
@@ -46,45 +51,28 @@ applications:
     path: platforms/computation/jupyterhub
     valueFiles:
       - values.yaml
-  - name: kafka
+  - name: nifi
     enabled: false
-    namespace: kafka
-    path: platforms/streaming/kafka
+    namespace: nifi
+    path: platforms/computation/nifi
     valueFiles:
       - values.yaml
-    extraParams:
-    - name: "schema-registry.enabled"
-      value: "true"
-    - name: "akhq.enabled"
-      value: "true"
-  - name: keycloak
+
+  ######################################################################
+  #
+  # Databases
+  #
+  ######################################################################
+  - name: elasticsearch
     enabled: false
-    namespace: keycloak
-    path: platforms/security/keycloak
+    namespace: elasticsearch
+    path: platforms/databases/elasticsearch
     valueFiles:
       - values.yaml
-  - name: localstack
+  - name: mongodb
     enabled: false
-    namespace: localstack
-    path: platforms/others/localstack
-    valueFiles:
-      - values.yaml
-  - name: loki
-    enabled: false
-    namespace: loki
-    path: platforms/monitoring/loki
-    valueFiles:
-      - values.yaml
-  - name: metrics-server
-    enabled: false
-    namespace: metrics-server
-    path: platforms/others/metrics-server
-    valueFiles:
-      - values.yaml
-  - name: minio
-    enabled: false
-    namespace: minio
-    path: platforms/storage/minio
+    namespace: mongodb
+    path: platforms/databases/mongodb
     valueFiles:
       - values.yaml
   - name: mysql
@@ -93,12 +81,15 @@ applications:
     path: platforms/databases/mysql
     valueFiles:
       - values.yaml
-  - name: nifi
+  - name: opensearch
     enabled: false
-    namespace: nifi
-    path: platforms/computation/nifi
+    namespace: opensearch
+    path: platforms/databases/opensearch
     valueFiles:
       - values.yaml
+    extraParams:
+    - name: "opensearchDashboards.enabled"
+      value: "true"
   - name: postgresql
     enabled: false
     namespace: postgresql
@@ -108,10 +99,10 @@ applications:
     extraParams:
     - name: "pgbouncer.enabled"
       value: "false"
-  - name: prometheus
+  - name: qdrant
     enabled: false
-    namespace: prometheus
-    path: platforms/monitoring/prometheus
+    namespace: qdrant
+    path: platforms/databases/qdrant
     valueFiles:
       - values.yaml
   - name: redis
@@ -120,8 +111,44 @@ applications:
     path: platforms/databases/redis
     valueFiles:
       - values.yaml
-  - name: spark
+
+  ######################################################################
+  #
+  # Monitoring
+  #
+  ######################################################################
+  - name: loki
+    enabled: false
+    namespace: loki
+    path: platforms/monitoring/loki
+    valueFiles:
+      - values.yaml
+  - name: observability
     enabled: true
+    namespace: observability
+    path: platforms/monitoring/observability
+    valueFiles:
+      - alert-manager.yaml
+      - grafana.yaml
+      - kube.yaml
+      - node-exporter.yaml
+      - prometheus.yaml
+      - thanos.yaml
+      - values.yaml
+
+  ######################################################################
+  #
+  # Operators
+  #
+  ######################################################################
+  - name: fluent
+    enabled: false
+    namespace: fluent
+    path: platforms/operators/fluent
+    valueFiles:
+      - values.yaml
+  - name: spark
+    enabled: false
     namespace: spark
     path: platforms/operators/spark
     valueFiles:
@@ -132,10 +159,99 @@ applications:
     path: platforms/operators/strimzi
     valueFiles:
       - values.yaml
+
+  ######################################################################
+  #
+  # Security
+  #
+  ######################################################################
+  - name: keycloak
+    enabled: false
+    namespace: keycloak
+    path: platforms/security/keycloak
+    valueFiles:
+      - values.yaml
   - name: vault
     enabled: false
     namespace: vault
     path: platforms/security/vault
+    valueFiles:
+      - values.yaml
+
+  ######################################################################
+  #
+  # Storage
+  #
+  ######################################################################
+  - name: minio
+    enabled: false
+    namespace: minio
+    path: platforms/storage/minio
+    valueFiles:
+      - values.yaml
+  - name: seaweedfs
+    enabled: true
+    namespace: seaweedfs
+    path: platforms/storage/seaweedfs
+    valueFiles:
+      - values.yaml
+
+  ######################################################################
+  #
+  # Streaming
+  #
+  ######################################################################
+  - name: debezium
+    enabled: false
+    namespace: debezium
+    path: platforms/streaming/debezium
+    valueFiles:
+      - values.yaml
+  - name: kafka
+    enabled: false
+    namespace: kafka
+    path: platforms/streaming/kafka
+    valueFiles:
+      - values.yaml
+
+  ######################################################################
+  #
+  # Warehouse
+  #
+  ######################################################################
+  - name: clickhouse
+    enabled: false
+    namespace: clickhouse
+    path: platforms/warehouse/clickhouse
+    valueFiles:
+      - values.yaml
+    extraParams:
+    - name: "schema-registry.enabled"
+      value: "true"
+    - name: "akhq.enabled"
+      value: "true"
+
+  ######################################################################
+  #
+  # Others
+  #
+  ######################################################################
+  - name: code-server
+    enabled: false
+    namespace: code-server
+    path: platforms/others/code-server
+    valueFiles:
+      - values.yaml
+  - name: localstack
+    enabled: false
+    namespace: localstack
+    path: platforms/others/localstack
+    valueFiles:
+      - values.yaml
+  - name: metrics-server
+    enabled: false
+    namespace: metrics-server
+    path: platforms/others/metrics-server
     valueFiles:
       - values.yaml
   - name: zookeeper

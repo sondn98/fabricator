@@ -10,10 +10,10 @@ spec:
   usages:
   - server auth
   - client auth
-  commonName: bitwarden-sdk-server.fabricator.com
+  commonName: bitwarden-sdk-server.thefabricator.work
   dnsNames:
   - bitwarden-sdk-server.external-secrets.svc.cluster.local
-  - bitwarden-sdk-server.fabricator.com
+  - bitwarden-sdk-server.thefabricator.work
   issuerRef:
     group: cert-manager.io
     kind:  ClusterIssuer

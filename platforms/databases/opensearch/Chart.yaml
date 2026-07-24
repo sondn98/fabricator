@@ -1,0 +1,16 @@
+apiVersion: v2
+appVersion: 1.0.0
+description: A helm chart for OpenSearch deployed through argocd
+maintainers:
+- name: Do Ngoc Son
+  email: dongocson.work@gmail.com
+name: opensearch
+version: 1.0.0
+dependencies:
+  - name: opensearch
+    version: 3.6.0
+    repository: https://opensearch-project.github.io/helm-charts/
+  - name: opensearch-dashboards
+    version: 3.6.0
+    repository: https://opensearch-project.github.io/helm-charts/
+    condition: pgbouncer.enabled

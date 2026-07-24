@@ -2,3 +2,6 @@ collections:
   - name: https://github.com/k3s-io/k3s-ansible.git
     type: git
     version: 1.1.0
+  # Provides the kubernetes.core.helm module used to deploy the ARC chart.
+  - name: kubernetes.core
+    version: ">=3.0.0"

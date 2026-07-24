@@ -2,8 +2,11 @@ version: '3'
 
 silent: true
 
+dotenv:
+  - ../.env
+
 vars:
-  INVENTORIES: '{{ .INVENTORIES | default "bare-metal" }}'
+  INVENTORIES: '{{ .INVENTORIES | default "bare-metal.yml" }}'
 
 tasks:
   provision:

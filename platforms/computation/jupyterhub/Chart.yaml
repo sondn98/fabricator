@@ -9,3 +9,6 @@ version: 1.0.0
 dependencies:
   - name: jupyterhub
     version: 4.3.2
+  - name: enterprise-gateway
+    version: 3.2.3
+    condition: enterprise-gateway.enabled
