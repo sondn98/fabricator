@@ -18,8 +18,9 @@ gha-runner-scale-set-controller:
     updateStrategy: "immediate"
 
 gha-runner-scale-set:
-  githubConfigUrl: "https://github.com/sondn98/jarvis"
-  githubConfigSecret: arc-github-secret
+  githubConfigUrl: "https://github.com/sondn98/fabricator"
+  githubConfigSecret:
+    github_token: "<specified in runtime>"
   maxRunners: 3
   minRunners: 0
   runnerGroup: "default"

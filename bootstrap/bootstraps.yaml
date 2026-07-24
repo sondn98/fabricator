@@ -236,12 +236,6 @@ applications:
   # Others
   #
   ######################################################################
-  - name: arc
-    enabled: false
-    namespace: arc
-    path: platforms/others/arc
-    valueFiles:
-      - values.yaml
   - name: code-server
     enabled: false
     namespace: code-server
