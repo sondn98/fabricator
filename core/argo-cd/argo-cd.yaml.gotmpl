@@ -5,7 +5,7 @@ crds:
 configs:
   cm:
     create: true
-    {{ tpl (readFile "config.yaml") . | nindent 4 | trim }}
+    {{ readFile "config.yaml" | nindent 4 | trim }}
 
   params:
     create: true
@@ -15,7 +15,7 @@ configs:
 
 extraObjects:
   - | 
-    {{ tpl (readFile "repos.yaml") . | nindent 4 | trim }}
+    {{ readFile "repos.yaml" | nindent 4 | trim }}
 
 controller:
   name: application-controller

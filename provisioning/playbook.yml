@@ -42,8 +42,11 @@
         create_namespace: true
         dependency_update: true
         wait: true
-        values: 
-          gha-runner-scale-set:
+        values:
+          fabricator:
+            githubConfigSecret:
+              github_token: "{{ lookup('env', 'GITHUB_ARC_ACCESS_TOKEN') }}"
+          foundry:
             githubConfigSecret:
               github_token: "{{ lookup('env', 'GITHUB_ARC_ACCESS_TOKEN') }}"
         context: "{{ hostvars[groups['server'][0]]['cluster_context'] | default('k3s-ansible') }}"

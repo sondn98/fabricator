@@ -8,12 +8,12 @@ spec:
   renewBefore: 360h  # 15d
   isCA: false
   usages:
-  - server auth
-  - client auth
+    - server auth
+    - client auth
   commonName: bitwarden-sdk-server.thefabricator.work
   dnsNames:
-  - bitwarden-sdk-server.external-secrets.svc.cluster.local
-  - bitwarden-sdk-server.thefabricator.work
+    - bitwarden-sdk-server.external-secrets.svc.cluster.local
+    - bitwarden-sdk-server.thefabricator.work
   issuerRef:
     group: cert-manager.io
     kind:  ClusterIssuer

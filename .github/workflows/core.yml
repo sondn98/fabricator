@@ -1,0 +1,82 @@
+name: Core
+
+# Validates the core Helmfile deployments (cert-manager, external-secrets,
+# cloudflared, argo-cd) on every pull request, and applies them to the cluster
+# once the changes land on master.
+#
+# Jobs run on the in-cluster ARC scale set (`runs-on: arc-fabricator`), so helm/helmfile/
+# kubectl authenticate with the runner pod's ServiceAccount token - there is no
+# kubeconfig and no cluster credential secret. All tooling is baked into the
+# runner image (docker/arc-runner/Dockerfile); the workflow installs nothing.
+#
+# Every secret value reaches templating through `requiredEnv`, so nothing is
+# written to disk - the required secrets are documented in docs/cicd.md.
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+  push:
+    branches:
+      - master
+
+# Least privilege: nothing here needs a writable GITHUB_TOKEN.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate (helmfile template)
+    if: github.event_name == 'pull_request'
+    runs-on: arc-fabricator
+    # Stale runs for the same PR are pointless - cancel them to free runners.
+    concurrency:
+      group: core-validate-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    # Consumed by `requiredEnv` in core/cert-manager/secrets.yaml and
+    # core/external-secrets/bitwarden/ma-access-token.yaml.
+    env:
+      CERT_MANAGER_CA_TLS_CRT: ${{ secrets.CERT_MANAGER_CA_TLS_CRT }}
+      CERT_MANAGER_CA_TLS_KEY: ${{ secrets.CERT_MANAGER_CA_TLS_KEY }}
+      BITWARDEN_MA_ACCESS_TOKEN: ${{ secrets.BITWARDEN_MA_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      # Renders all four child helmfiles through the parent core/helmfile.yaml.
+      # Templating only - nothing is applied to the cluster on a pull request.
+      - name: Render core manifests
+        working-directory: core
+        run: helmfile repos && helmfile template
+
+  deploy:
+    name: Deploy (helmfile apply)
+    if: github.event_name == 'push'
+    runs-on: arc-fabricator
+    # Protected environment: the deploy waits for a required reviewer's approval.
+    environment: production
+    # A single, non-cancelling group so two applies never hit the cluster at the
+    # same time and an in-flight apply is never interrupted.
+    concurrency:
+      group: core-apply-master
+      cancel-in-progress: false
+    env:
+      CERT_MANAGER_CA_TLS_CRT: ${{ secrets.CERT_MANAGER_CA_TLS_CRT }}
+      CERT_MANAGER_CA_TLS_KEY: ${{ secrets.CERT_MANAGER_CA_TLS_KEY }}
+      BITWARDEN_MA_ACCESS_TOKEN: ${{ secrets.BITWARDEN_MA_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      # Requires the helm-diff plugin, which is preinstalled in the runner image.
+      - name: Apply core deployments
+        working-directory: core
+        run: helmfile apply
