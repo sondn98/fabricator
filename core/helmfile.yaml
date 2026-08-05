@@ -18,5 +18,5 @@ helmDefaults:
 helmfiles:
   - path: cert-manager/helmfile.yaml
   - path: external-secrets/helmfile.yaml
-  - path: cloudflared/helmfile.yaml
   - path: argo-cd/helmfile.yaml
+  - path: cloudflared/helmfile.yaml

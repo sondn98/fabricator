@@ -1,0 +1,28 @@
+# ServiceAccount for the ARC runner pods, referenced from
+# `gha-runner-scale-set.template.spec.serviceAccountName` in values.yaml.
+#
+# `helmfile apply` in .github/workflows/core.yml authenticates to the API server
+# with this account's projected token (in-cluster auth, no kubeconfig). The core
+# releases install CRDs, namespaces and other cluster-scoped objects, so in this
+# home-lab context the account is bound to cluster-admin.
+#
+# These manifests ship with the arc chart, so they are applied by the same
+# ansible run that installs ARC (`cd provisioning && task provision`) - no extra step.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: arc-runner
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: arc-runner-cluster-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: arc-runner
+    namespace: {{ .Release.Namespace }}
