@@ -79,4 +79,4 @@ jobs:
       # Requires the helm-diff plugin, which is preinstalled in the runner image.
       - name: Apply core deployments
         working-directory: core
-        run: helmfile apply
+        run: helmfile repos && helmfile apply
