@@ -6,3 +6,7 @@ releases:
     values:
       - ./cloudflared.yaml
       - fullnameOverride: cloudflared
+  
+  - name: cloudflared-secret
+    namespace: cloudflare
+    chart: ./secret

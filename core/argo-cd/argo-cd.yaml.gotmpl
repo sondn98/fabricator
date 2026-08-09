@@ -13,10 +13,6 @@ configs:
   rbac:
     create: true
 
-extraObjects:
-  - | 
-    {{ readFile "repos.yaml" | nindent 4 | trim }}
-
 controller:
   name: application-controller
   replicas: 1

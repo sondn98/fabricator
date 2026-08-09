@@ -14,7 +14,3 @@ dependencies:
     alias: fabricator
     version: 0.13.1
     repository: oci://ghcr.io/actions/actions-runner-controller-charts
-  - name: gha-runner-scale-set
-    alias: foundry
-    version: 0.13.1
-    repository: oci://ghcr.io/actions/actions-runner-controller-charts

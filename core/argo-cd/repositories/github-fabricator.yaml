@@ -1,7 +1,7 @@
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: argocd-git-repo-secret
+  name: argocd-github-fabricator-secret
   namespace: argo
 spec:
   refreshInterval: 10m
@@ -9,7 +9,7 @@ spec:
     name: bitwarden-secretsmanager
     kind: ClusterSecretStore  
   target:
-    name: argocd-git-repo-secret
+    name: argocd-github-fabricator-secret
     creationPolicy: Owner
     template:
       type: Opaque

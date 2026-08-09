@@ -6,3 +6,9 @@ releases:
     values:
       - ./external-secrets.yaml.gotmpl
       - fullnameOverride: external-secrets
+  
+  - name: bitwarden-secret-store
+    namespace: external-secrets
+    chart: ./secret-store
+    needs:
+      - external-secrets/external-secrets

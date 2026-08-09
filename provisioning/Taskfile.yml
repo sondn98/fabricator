@@ -9,6 +9,12 @@ vars:
   INVENTORIES: '{{ .INVENTORIES | default "bare-metal.yml" }}'
 
 tasks:
+  cluster:
+    cmds:
+      - ansible-playbook -i inventories/{{ .INVENTORIES }} playbook.yml --tags prepare_cluster
+  core-services:
+    cmds:
+      - ansible-playbook -i inventories/{{ .INVENTORIES }} playbook.yml --tags prepare_core_service
   provision:
     cmds:
       - ansible-playbook -i inventories/{{ .INVENTORIES }} playbook.yml
