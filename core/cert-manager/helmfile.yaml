@@ -8,5 +8,6 @@ releases:
       - fullnameOverride: cert-manager
     hooks:
       - events: ["postsync"]
-        command: "kubectl"
-        args: ["apply", "-f", "issuer-ca.yaml"]
+        showlogs: true
+        kubectlApply:
+          kustomize: ./issuer

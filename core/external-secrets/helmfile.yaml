@@ -6,3 +6,8 @@ releases:
     values:
       - ./external-secrets.yaml.gotmpl
       - fullnameOverride: external-secrets
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        kubectlApply:
+          kustomize: ./secret-store

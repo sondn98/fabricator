@@ -6,3 +6,9 @@ releases:
     values:
       - ./argo-cd.yaml.gotmpl
       - fullnameOverride: argo-cd
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        kubectlApply:
+          kustomize: ./resources
+          

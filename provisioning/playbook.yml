@@ -46,7 +46,4 @@
           fabricator:
             githubConfigSecret:
               github_token: "{{ lookup('env', 'GITHUB_ARC_ACCESS_TOKEN') }}"
-          foundry:
-            githubConfigSecret:
-              github_token: "{{ lookup('env', 'GITHUB_ARC_ACCESS_TOKEN') }}"
         context: "{{ hostvars[groups['server'][0]]['cluster_context'] | default('k3s-ansible') }}"

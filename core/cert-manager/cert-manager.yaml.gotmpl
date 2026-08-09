@@ -90,4 +90,4 @@ startupapicheck:
 
 extraObjects:
   - | 
-    {{ tpl (readFile "secrets.yaml") . | nindent 4 | trim }}
+    {{ tpl (readFile "issuer-secret.yaml") . | nindent 4 | trim }}

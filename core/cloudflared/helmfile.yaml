@@ -6,3 +6,8 @@ releases:
     values:
       - ./cloudflared.yaml
       - fullnameOverride: cloudflared
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        kubectlApply:
+          kustomize: ./secret

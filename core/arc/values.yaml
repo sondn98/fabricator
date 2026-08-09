@@ -42,33 +42,5 @@ fabricator:
           ## preinstalls helm, kubectl, helmfile and helm-diff, which the core
           ## workflow expects to find on PATH.
           ## e.g. ghcr.io/sondn98/fabricator-arc-runner:2.336.0
-          image: docker.io/sondn1/arc-runner:2.336.1-rc1
-          command: ["/home/runner/run.sh"]
-
-foundry:
-  runnerScaleSetName: "arc-foundry"
-  githubConfigUrl: "https://github.com/sondn98/foundry"
-  githubConfigSecret:
-    github_token: "<specified in runtime>"
-  maxRunners: 3
-  minRunners: 0
-  runnerGroup: "default"
-  controllerServiceAccount:
-    name: arc-gha-rs
-    namespace: arc
-  
-  ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
-  template:
-    spec:
-      ## Bound to cluster-admin in templates/runner-rbac.yaml. The core workflow
-      ## (.github/workflows/core.yml) runs `helmfile apply` with this account's
-      ## in-cluster token, so it carries the deploy permissions.
-      serviceAccountName: arc-runner
-      containers:
-        - name: runner
-          ## Replace with the image built from docker/arc-runner/Dockerfile - it
-          ## preinstalls helm, kubectl, helmfile and helm-diff, which the core
-          ## workflow expects to find on PATH.
-          ## e.g. ghcr.io/sondn98/fabricator-arc-runner:2.336.0
-          image: docker.io/sondn1/arc-runner:2.336.1-rc1
+          image: docker.io/sondn1/arc-runner:2.336.1-rc2
           command: ["/home/runner/run.sh"]
