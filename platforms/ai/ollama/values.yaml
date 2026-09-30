@@ -19,13 +19,13 @@ unichart:
       - containerPort: 11434
         name: http
         protocol: TCP
-    resources:
-      limits:
-        cpu: 3800m
-        memory: 12Gi
-      requests:
-        cpu: 1
-        memory: 2Gi
+    resources: {}
+      # limits:
+      #   cpu: 3800m
+      #   memory: 15Gi
+      # requests:
+      #   cpu: 1
+      #   memory: 2Gi
     lifecycle:
       postStart:
         exec:
@@ -58,7 +58,7 @@ unichart:
           name: ollama-init-models-script
           defaultMode: 0755
 
-  
+
   persistence:
     name: ollama-pvc
     enabled: true
