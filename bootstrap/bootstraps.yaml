@@ -9,20 +9,26 @@ applications:
   # AI
   #
   ######################################################################
+  - name: mcp
+    enabled: true
+    namespace: mcp
+    path: platforms/ai/mcp
+    valueFiles:
+      - kubernetes-mcp-server.yaml
   - name: jarvis
-    enabled: false
+    enabled: true
     namespace: jarvis
     path: platforms/ai/jarvis
     valueFiles:
       - values.yaml
   - name: ollama
-    enabled: false
+    enabled: true
     namespace: ollama
     path: platforms/ai/ollama
     valueFiles:
       - values.yaml
   - name: open-webui
-    enabled: false
+    enabled: true
     namespace: open-webui
     path: platforms/ai/open-webui
     valueFiles:
@@ -190,7 +196,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: seaweedfs
-    enabled: true
+    enabled: false
     namespace: seaweedfs
     path: platforms/storage/seaweedfs
     valueFiles:
