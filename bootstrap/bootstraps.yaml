@@ -9,6 +9,12 @@ applications:
   # AI
   #
   ######################################################################
+  - name: mcp
+    enabled: true
+    namespace: mcp
+    path: platforms/ai/mcp
+    valueFiles:
+      - kubernetes-mcp-server.yaml
   - name: jarvis
     enabled: true
     namespace: jarvis
