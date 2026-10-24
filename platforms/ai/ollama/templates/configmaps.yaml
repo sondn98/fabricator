@@ -9,9 +9,6 @@ data:
   qwen3_1.7b-Modelfile: |-
     {{- .Files.Get "files/models/qwen3:1.7b/Modelfile" | nindent 4 }}
 
-  qwen3_0.6b-Modelfile: |-
-    {{- .Files.Get "files/models/qwen3:0.6b/Modelfile" | nindent 4 }}
-
 ---
 apiVersion: v1
 kind: ConfigMap
