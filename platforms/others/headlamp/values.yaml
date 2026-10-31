@@ -1,0 +1,49 @@
+headlamp:
+  replicaCount: 1
+
+  image:
+    registry: ghcr.io
+    repository: headlamp-k8s/headlamp
+    tag: "v0.46.0"
+
+  config:
+    inCluster: true
+    inClusterContextName: "main"
+    sessionTTL: 86400
+    unsafeUseServiceAccountToken: true
+
+    pluginsDir: "/headlamp/plugins"
+    staticPlugins:
+      enabled: true
+    enableHelm: false
+    watchPlugins: false
+    clusterInventory:
+      enabled: false
+      accessProvidersConfig: {}
+      plugins: []
+      labelSelector: "!headlamp.dev/ignore"
+      namespaces: []
+    extraArgs:
+      - "-proxy-auth=true"
+      - "-proxy-auth-username-header=Cf-Access-Authenticated-User-Email"
+      - "-proxy-auth-email-header=Cf-Access-Authenticated-User-Email"
+  automountServiceAccountToken: true
+
+  serviceAccount:
+    create: true
+
+  clusterRoleBinding:
+    create: true
+    clusterRoleName: cluster-admin
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  persistentVolumeClaim:
+    enabled: false
+
+  resources: {}
+
+  pluginsManager:
+    enabled: false

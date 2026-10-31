@@ -248,6 +248,12 @@ applications:
     path: platforms/others/code-server
     valueFiles:
       - values.yaml
+  - name: headlamp
+    enabled: true
+    namespace: headlamp
+    path: platforms/others/headlamp
+    valueFiles:
+      - values.yaml
   - name: localstack
     enabled: false
     namespace: localstack
