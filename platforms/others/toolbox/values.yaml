@@ -1,0 +1,19 @@
+unichart:
+  applicationName: toolbox
+
+  deployment:
+    image:
+      repository: docker.io/sondn1/toolbox
+      tag: 0.0.1
+    resources:
+      limits:
+        cpu: 400m
+        memory: 256Mi
+      requests:
+        cpu: 200m
+        memory: 128Mi
+
+  rbac:
+    enabled: true
+    serviceAccount:
+      enabled: true

@@ -266,6 +266,12 @@ applications:
     path: platforms/others/metrics-server
     valueFiles:
       - values.yaml
+  - name: toolbox
+    enabled: true
+    namespace: toolbox
+    path: platforms/others/toolbox
+    valueFiles:
+      - values.yaml
   - name: zookeeper
     enabled: false
     namespace: zookeeper
