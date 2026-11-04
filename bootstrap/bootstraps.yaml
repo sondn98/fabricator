@@ -21,6 +21,12 @@ applications:
     path: platforms/ai/jarvis
     valueFiles:
       - values.yaml
+  - name: litellm
+    enabled: true
+    namespace: litellm
+    path: platforms/ai/litellm
+    valueFiles:
+      - values.yaml
   - name: ollama
     enabled: true
     namespace: ollama
@@ -96,15 +102,16 @@ applications:
     extraParams:
     - name: "opensearchDashboards.enabled"
       value: "true"
-  - name: postgresql
-    enabled: false
-    namespace: postgresql
-    path: platforms/databases/postgresql
-    valueFiles:
-      - values.yaml
-    extraParams:
-    - name: "pgbouncer.enabled"
-      value: "false"
+  ## Deprecated bitnami helm charts
+  # - name: postgresql
+  #   enabled: true
+  #   namespace: postgresql
+  #   path: platforms/databases/postgresql
+  #   valueFiles:
+  #     - values.yaml
+  #   extraParams:
+  #   - name: "pgbouncer.enabled"
+  #     value: "false"
   - name: qdrant
     enabled: false
     namespace: qdrant
