@@ -1,0 +1,47 @@
+cloudnative-pg:
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/cloudnative-pg/cloudnative-pg
+    tag: 1.30.1
+
+  crds:
+    create: true
+
+  webhook:
+    port: 9443
+    mutating:
+      create: true
+      failurePolicy: Fail
+    validating:
+      create: true
+      failurePolicy: Fail
+    livenessProbe:
+      initialDelaySeconds: 3
+    readinessProbe:
+      initialDelaySeconds: 3
+    startupProbe:
+      failureThreshold: 6
+      periodSeconds: 5
+
+  config:
+    create: true
+    name: cnpg-controller-manager-config
+    secret: false
+    clusterWide: false
+    # The content of the configmap/secret, see https://cloudnative-pg.io/documentation/current/operator_conf/#available-options
+    data:
+      WATCH_NAMESPACE: cnpg
+    maxConcurrentReconciles: 10
+
+  serviceAccount:
+    create: true
+  rbac:
+    create: true
+
+  service:
+    type: ClusterIP
+    name: cnpg-webhook-service
+    port: 443
+
+  resources: {}

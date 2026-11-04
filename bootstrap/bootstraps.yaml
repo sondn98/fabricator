@@ -34,7 +34,7 @@ applications:
     valueFiles:
       - values.yaml
   - name: open-webui
-    enabled: true
+    enabled: false
     namespace: open-webui
     path: platforms/ai/open-webui
     valueFiles:
@@ -154,6 +154,12 @@ applications:
   # Operators
   #
   ######################################################################
+  - name: cnpg
+    enabled: true
+    namespace: cnpg
+    path: platforms/operators/cnpg
+    valueFiles:
+      - values.yaml
   - name: fluent
     enabled: false
     namespace: fluent
