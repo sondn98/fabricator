@@ -45,13 +45,3 @@ cloudnative-pg:
     port: 443
 
   resources: {}
-
-cluster:
-  type: postgresql
-  mode: standalone
-  version:
-    postgresql: "16"
-  cluster:
-    instances: 1
-  backups:
-    enabled: false

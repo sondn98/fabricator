@@ -1,0 +1,83 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: airflow
+spec:
+  name: airflow
+  cluster:
+    name: cnpg
+  ensure: present
+  owner: airflow
+  template: template1
+  encoding: UTF8
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: jupyterhub
+spec:
+  name: jupyterhub
+  cluster:
+    name: cnpg
+  ensure: present
+  owner: jupyterhub
+  template: template1
+  encoding: UTF8
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: keycloak
+spec:
+  name: keycloak
+  cluster:
+    name: cnpg
+  ensure: present
+  owner: keycloak
+  template: template1
+  encoding: UTF8
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: argo-workflows
+spec:
+  name: argo_workflows
+  cluster:
+    name: cnpg
+  ensure: present
+  owner: argo_workflows
+  template: template1
+  encoding: UTF8
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: ucdb
+spec:
+  name: ucdb
+  cluster:
+    name: cnpg
+  ensure: present
+  owner: ucdb
+  template: template1
+  encoding: UTF8
+  databaseReclaimPolicy: retain
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: litellm
+spec:
+  name: litellm
+  cluster:
+    name: cnpg
+  ensure: present
+  owner: litellm
+  template: template1
+  encoding: UTF8
+  databaseReclaimPolicy: retain

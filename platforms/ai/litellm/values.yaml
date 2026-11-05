@@ -27,6 +27,7 @@ litellm-helm:
 
   db:
     useExisting: true
+    deployStandalone: false
 
     database: litellm
     port: 5432
@@ -42,13 +43,18 @@ litellm-helm:
       maxDbConnections: 20
       maxClientConn: 1000
 
-    deployStandalone: true
-
   migrationJob:
     enabled: true
     backoffLimit: 4
     activeDeadlineSeconds: 1800
     ttlSecondsAfterFinished: 120
     resources: {}
+
+
+    hooks:
+      argocd:
+        enabled: false
+      helm:
+        enabled: false
 
   logLevel: INFO
