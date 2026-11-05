@@ -252,42 +252,48 @@ applications:
 
   ######################################################################
   #
-  # Others
+  # Ultilities
   #
   ######################################################################
   - name: code-server
     enabled: false
     namespace: code-server
-    path: platforms/others/code-server
+    path: platforms/ultilities/code-server
+    valueFiles:
+      - values.yaml
+  - name: dbgate
+    enabled: true
+    namespace: dbgate
+    path: platforms/ultilities/dbgate
     valueFiles:
       - values.yaml
   - name: headlamp
     enabled: true
     namespace: headlamp
-    path: platforms/others/headlamp
+    path: platforms/ultilities/headlamp
     valueFiles:
       - values.yaml
   - name: localstack
     enabled: false
     namespace: localstack
-    path: platforms/others/localstack
+    path: platforms/ultilities/localstack
     valueFiles:
       - values.yaml
   - name: metrics-server
     enabled: false
     namespace: metrics-server
-    path: platforms/others/metrics-server
+    path: platforms/ultilities/metrics-server
     valueFiles:
       - values.yaml
   - name: toolbox
     enabled: true
     namespace: toolbox
-    path: platforms/others/toolbox
+    path: platforms/ultilities/toolbox
     valueFiles:
       - values.yaml
   - name: zookeeper
     enabled: false
     namespace: zookeeper
-    path: platforms/others/zookeeper
+    path: platforms/ultilities/zookeeper
     valueFiles:
       - values.yaml
