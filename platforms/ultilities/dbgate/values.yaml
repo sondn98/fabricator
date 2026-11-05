@@ -1,0 +1,25 @@
+unichart:
+  applicationName: dbgate
+
+  deployment:
+    image:
+      repository: docker.io/dbgate/dbgate
+      tag: 7.3.4
+
+    ports:
+      - containerPort: 3000
+        name: http
+        protocol: TCP
+    resources: {}
+
+  service:
+    ports:
+      - port: 3000
+        name: http
+        protocol: TCP
+        targetPort: 3000
+
+  rbac:
+    enabled: true
+    serviceAccount:
+      enabled: true
