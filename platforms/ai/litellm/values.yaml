@@ -11,12 +11,16 @@ litellm-helm:
   serviceAccount:
     create: true
 
+  environmentSecrets:
+    - litellm-masterkey-secret
+    - litellm-credentials-secret
+
   service:
     type: ClusterIP
     port: 4000
 
   masterkeySecretName: "litellm-masterkey-secret"
-  masterkeySecretKey: "master_key"
+  masterkeySecretKey: "MASTER_KEY"
 
   proxyConfigMap:
     create: false

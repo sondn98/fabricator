@@ -2,6 +2,7 @@ model_list:
   - model_name: gemini-3.6-flash
     litellm_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
       model: gemini/gemini-3.6-flash
-      api_base: https://generativelanguage.googleapis.com/v1beta/interactions
-      seed: 12
-      max_tokens: 20
+      max_tokens: 65536
+      api_key: os.environ/GEMINI_API_KEY
+general_settings:
+  master_key: os.environ/MASTER_KEY
