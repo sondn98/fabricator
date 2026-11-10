@@ -306,8 +306,6 @@ grafana-loki:
     enabled: false
 
   promtail:
-
-  promtail:
     enabled: true
 
     image:

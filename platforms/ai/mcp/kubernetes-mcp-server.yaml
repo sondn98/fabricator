@@ -12,6 +12,19 @@ kubernetes-mcp-server:
 
   rbac:
     create: true
+    extraClusterRoles:
+      - name: mcp-pod-reader
+        rules:
+          - apiGroups: [""]
+            resources: ["pods", "pods/log", "namespaces", "events", "services", "nodes"]
+            verbs: ["get", "list", "watch"]
+          - apiGroups: ["apps"]
+            resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+            verbs: ["get", "list", "watch"]
+    extraClusterRoleBindings:
+      - name: mcp-pod-reader
+        roleRef:
+          name: mcp-pod-reader
 
   service:
     type: ClusterIP
