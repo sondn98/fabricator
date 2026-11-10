@@ -4,25 +4,68 @@ unichart:
   deployment:
     image:
       repository: docker.io/sondn1/jarvis
-      tag: v0.4.0
+      tag: v1.0.0
 
     ports:
       - containerPort: 8000
         name: http
         protocol: TCP
+
     resources: {}
+
+    volumes:
+      - name: jarvis-mcp-config
+        configMap:
+          name: jarvis-mcp-config
+          items:
+            - key: mcp.json
+              path: mcp.json
+
+    volumeMounts:
+      jarvis-mcp-config:
+        name: jarvis-mcp-config
+        mountPath: /app/.config/mcp.json
+        subPath: mcp.json
+
     env:
-      OLLAMA_BASE_URL:
-        value: http://ollama.ollama.svc:11434
+      LLM_API_BASE:
+        value: http://litellm.litellm.svc:4000/v1
       DEFAULT_MODEL:
-        value: qwen3:1.7b
-      ENABLE_AGENT_ORCHESTRATION: 
+        value: litellm_proxy/gemini/gemini-3.6-flash
+      ENABLE_API_KEY_AUTH:
+        value: 'True'
+      ENABLE_AGENT_ORCHESTRATION:
         value: 'True'
       LOG_LEVEL:
         value: TRACE
       REQUEST_TIMEOUT:
         value: "300"
-      
+      MCP_CONFIG_PATH:
+        value: "/app/.config/mcp.json"
+      API_KEY:
+        valueFrom:
+          secretKeyRef:
+            name: jarvis-keys-secret
+            key: API_KEY
+      LLM_API_KEY:
+        valueFrom:
+          secretKeyRef:
+            name: jarvis-keys-secret
+            key: LLM_API_KEY
+
+  configMap:
+    enabled: true
+    files:
+      mcp-config:
+        mcp.json: |
+          {
+            "mcpServers": {
+              "kubernetes": {
+                "type": "http",
+                "url": "http://mcp-kubernetes-mcp-server.mcp.svc:8080/mcp"
+              }
+            }
+          }
 
   service:
     ports:
