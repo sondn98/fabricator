@@ -19,7 +19,7 @@ kubernetes-mcp-server:
             resources: ["pods", "pods/log", "namespaces", "events", "services", "nodes"]
             verbs: ["get", "list", "watch"]
           - apiGroups: ["apps"]
-            resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+            resources: ["*"]
             verbs: ["get", "list", "watch"]
     extraClusterRoleBindings:
       - name: mcp-pod-reader
